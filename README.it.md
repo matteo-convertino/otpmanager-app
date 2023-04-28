@@ -8,9 +8,7 @@
 
 # Screenshots
 
-<img src="resources/img/1.png" height="350">
-<img src="resources/img/2.png" height="350">
-<img src="resources/img/3.png" height="350">
+<img src="resources/img/1.png" height="350">&emsp;<img src="resources/img/2.png" height="350">&emsp;<img src="resources/img/3.png" height="350">
 
 <br>
 
