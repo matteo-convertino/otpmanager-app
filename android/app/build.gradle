@@ -68,6 +68,12 @@ android {
     }
 
     signingConfigs {
+        debug {
+            storeFile file(credentialsProperties.getProperty("storeFile"))
+            storePassword credentialsProperties.getProperty("storePassword")
+            keyAlias "otpmanager"
+            keyPassword credentialsProperties.getProperty("keyPassword")
+        }
         release {
             storeFile file(credentialsProperties.getProperty("storeFile"))
             storePassword credentialsProperties.getProperty("storePassword")
@@ -77,6 +83,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             signingConfig signingConfigs.release
         }

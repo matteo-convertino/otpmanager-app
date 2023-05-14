@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart' hide FileOutput;
+import 'package:otp_manager/logger/filter.dart';
 import 'package:provider/provider.dart';
 
 import "models/user.dart";
@@ -21,13 +22,16 @@ Future<void> main() async {
 }
 
 var logger = Logger(
+  filter: Filter(),
   printer: PrettyPrinter(
     printEmojis: false,
     printTime: true,
     colors: false,
+    methodCount: 4,
   ),
   output: MultiOutput([FileOutput(), ConsoleOutput()]),
 );
+
 late ObjectBox objectBox;
 
 String _getInitialRoute() {

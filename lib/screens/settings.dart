@@ -1,6 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otp_manager/logger/save_log.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
+import 'package:otp_manager/utils/launch_url.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +50,61 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Bug Report"),
+                  content: RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.titleMedium,
+                      text: "if you have found a bug and want to report "
+                          "it to the developer, contact him via email on ",
+                      children: [
+                        TextSpan(
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                          text: "matteo@convertino.cloud",
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              customLaunchUrl('mailto:matteo@convertino.cloud');
+                            },
+                        ),
+                        const TextSpan(text: " or open an issue on "),
+                        TextSpan(
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                          text: "github",
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              customLaunchUrl(
+                                  'https://github.com/matteo-convertino/otpmanager-app/issues');
+                            },
+                        ),
+                        const TextSpan(
+                            text: ", attaching the log"
+                                " file that you can download from here."),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: const Text("Close"),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    TextButton(
+                      child: const Text("Download Log"),
+                      onPressed: () => saveLog(),
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: const Icon(Icons.bug_report),
+          )
+        ],
       ),
       body: Center(
         child: ListView(
