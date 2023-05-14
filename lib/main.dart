@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart' hide FileOutput;
 import 'package:provider/provider.dart';
 
 import "models/user.dart";
@@ -7,6 +8,7 @@ import "object_box/objectbox.dart";
 import "routing/constants.dart";
 import 'routing/navigation_service.dart';
 import 'routing/router.dart';
+import 'logger/file_output.dart';
 
 Future<void> main() async {
   // This is required so ObjectBox can get the application directory
@@ -18,6 +20,14 @@ Future<void> main() async {
   runApp(const OtpManager());
 }
 
+var logger = Logger(
+  printer: PrettyPrinter(
+    printEmojis: false,
+    printTime: true,
+    colors: false,
+  ),
+  output: MultiOutput([FileOutput(), ConsoleOutput()]),
+);
 late ObjectBox objectBox;
 
 String _getInitialRoute() {

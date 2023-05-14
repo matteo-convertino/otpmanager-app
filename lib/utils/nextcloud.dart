@@ -3,12 +3,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../main.dart' show objectBox;
+import '../main.dart' show objectBox, logger;
 import '../models/account.dart';
 import '../models/user.dart';
 import '../object_box/objectbox.g.dart';
 import '../utils/toast.dart';
-import '../utils/uri_decoder.dart';
 
 class Nextcloud {
   Nextcloud({required this.user, this.callback});
@@ -23,12 +22,16 @@ class Nextcloud {
   int error = 0;
 
   void _returnError(String msg) {
+    logger.d("Nextcloud._returnError start");
+
     showToast(msg);
     error = -1;
     callback!();
   }
 
   Future<http.Response> _sendHttpRequest(resource, data) {
+    logger.d("Nextcloud._sendHttpRequest start");
+
     return http
         .post(Uri.parse("${user.url}/index.php/apps/otpmanager/$resource"),
             headers: {
@@ -38,6 +41,7 @@ class Nextcloud {
             body: jsonEncode({"data": data}))
         .timeout(const Duration(seconds: 5))
         .catchError((e, stackTrace) {
+      logger.e(e);
       _returnError(
           "The nextcloud server is unreachable now. Try to reload after a while!");
       return http.Response('', 600);
@@ -45,6 +49,8 @@ class Nextcloud {
   }
 
   void _updateNeverSync() {
+    logger.d("Nextcloud._updateNeverSync start");
+    
     _accountBox
         .query(Account_.toUpdate.equals(true) | Account_.isNew.equals(true))
         .build()
@@ -57,15 +63,15 @@ class Nextcloud {
   }
 
   void _addNewAccounts(List accounts) {
+    logger.d("Nextcloud._addNewAccounts start");
+    
     for (var account in accounts) {
       _accountBox.put(Account(
         name: account["name"],
         issuer: account["issuer"],
         secret: account["secret"],
         type: account["type"],
-        dbAlgorithm: account["algorithm"] is String
-            ? int.parse(account["algorithm"])
-            : account["algorithm"],
+        dbAlgorithm: account["algorithm"],
         digits: account["digits"],
         period: account["period"],
         counter: account["counter"],
@@ -77,6 +83,8 @@ class Nextcloud {
   }
 
   void _updateEditAccounts(List accounts) {
+    logger.d("Nextcloud._updateEditAccounts start");
+
     for (var account in accounts) {
       Account? accountToUpdate = _accountBox
           .query(Account_.secret.equals(account["secret"]))
@@ -86,8 +94,7 @@ class Nextcloud {
       accountToUpdate?.issuer = account["issuer"];
       accountToUpdate?.digits = account["digits"];
       accountToUpdate?.type = account["type"];
-      accountToUpdate?.dbAlgorithm =
-          UriDecoder.getAlgorithm(account["algorithm"]);
+      accountToUpdate?.dbAlgorithm = account["algorithm"];
       accountToUpdate?.period = account["period"];
       accountToUpdate?.counter = account["counter"];
       accountToUpdate?.position = account["position"];
@@ -96,6 +103,8 @@ class Nextcloud {
   }
 
   void _deleteOldAccounts(List accountIds) {
+    logger.d("Nextcloud._deleteOldAccounts start");
+    
     _accountBox
         .query(Account_.deleted.equals(true))
         .build()
@@ -108,6 +117,8 @@ class Nextcloud {
   }
 
   void _adjustAccountsPosition(int start, int difference) {
+    logger.d("Nextcloud._adjustAccountsPosition start");
+
     for (int i = start; i < _accounts.length; i++) {
       _accounts[i].position = _accounts[i].position! + difference;
       _accounts[i].toUpdate = true;
@@ -116,6 +127,8 @@ class Nextcloud {
   }
 
   void _checkPositions() {
+    logger.d("Nextcloud._checkPositions start");
+
     bool repairedError = false;
     _accounts = _accountBox
         .query(Account_.deleted.equals(false))
@@ -144,6 +157,8 @@ class Nextcloud {
   }
 
   void sync() async {
+    logger.d("Nextcloud.sync start");
+
     if (user.isGuest == true) return;
 
     error = 1;
@@ -153,23 +168,28 @@ class Nextcloud {
 
     var data = {"accounts": jsonDecode(_accounts.toString())};
 
-    http.Response response = await _sendHttpRequest("accounts/sync", data);
+    try {
+      http.Response response = await _sendHttpRequest("accounts/sync", data);
 
-    if (response.statusCode == 200) {
-      _updateNeverSync();
-      var body = jsonDecode(response.body);
-      if (body.isNotEmpty) {
-        _addNewAccounts(body["toAdd"]);
-        _deleteOldAccounts(body["toDelete"]);
-        _updateEditAccounts(body["toEdit"]);
+      if (response.statusCode == 200) {
+        _updateNeverSync();
+        var body = jsonDecode(response.body);
+        if (body.isNotEmpty) {
+          _addNewAccounts(body["toAdd"]);
+          _deleteOldAccounts(body["toDelete"]);
+          _updateEditAccounts(body["toEdit"]);
+        }
+
+        _checkPositions();
+        error = 0;
+        callback!();
+      } else if (response.statusCode != 600) {
+        logger.e("statusCode: ${response.statusCode}\nbody: ${response.body}");
+        _returnError(
+            "The nextcloud server returns an error. Try to reload after a while!");
       }
-
-      _checkPositions();
-      error = 0;
-      callback!();
-    } else if (response.statusCode != 600) {
-      _returnError(
-          "The nextcloud server returns an error. Try to reload after a while!");
+    } catch (e) {
+      logger.e(e);
     }
   }
 }

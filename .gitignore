@@ -120,3 +120,4 @@ app.*.symbols
 
 # matteo
 lib/object_box/objectbox.g.dart
+android/credentials.properties
