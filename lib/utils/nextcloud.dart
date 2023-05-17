@@ -167,6 +167,7 @@ class Nextcloud {
     _accounts = _accountBox.getAll();
 
     var data = {"accounts": jsonDecode(_accounts.toString())};
+    print(jsonEncode({"data": data}));
 
     try {
       http.Response response = await _sendHttpRequest("accounts/sync", data);

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart' hide Router;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart' hide FileOutput;
 import 'package:otp_manager/logger/filter.dart';
+import 'package:otp_manager/utils/clear_app_data.dart';
+import 'package:otp_manager/utils/toast.dart';
 import 'package:provider/provider.dart';
+import 'package:restart_app/restart_app.dart';
 
 import "models/user.dart";
 import "object_box/objectbox.dart";
@@ -12,11 +16,23 @@ import 'routing/router.dart';
 import 'logger/file_output.dart';
 
 Future<void> main() async {
-  // This is required so ObjectBox can get the application directory
-  // to store the database in.
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    // This is required so ObjectBox can get the application directory
+    // to store the database in.
+    WidgetsFlutterBinding.ensureInitialized();
 
-  objectBox = await ObjectBox.create();
+    objectBox = await ObjectBox.create();
+  } catch (e) {
+    // temporary solution for a severe bug with object box
+    showToast(
+      "An automatic logout was performed due to a bug in the previous version",
+      toastLength: Toast.LENGTH_LONG,
+    );
+    clearAppData();
+    logger.e(e);
+
+    Restart.restartApp();
+  }
 
   runApp(const OtpManager());
 }

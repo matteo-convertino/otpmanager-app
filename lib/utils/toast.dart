@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void showToast(String text) {
+void showToast(String text, {Toast toastLength = Toast.LENGTH_SHORT}) {
   Fluttertoast.showToast(
     msg: text,
-    toastLength: Toast.LENGTH_SHORT,
+    toastLength: toastLength,
     backgroundColor: Colors.grey,
     textColor: Colors.white,
     fontSize: 16,

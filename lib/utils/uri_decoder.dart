@@ -53,6 +53,20 @@ class UriDecoder {
 
     List<Account> accounts = [];
 
+    int? lastPosition =
+        (objectBox.store.box<Account>().query(Account_.deleted.equals(false))
+          ..order(Account_.position, flags: Order.descending))
+            .build()
+            .findFirst()
+            ?.position;
+    int position;
+
+    if (lastPosition != null) {
+      position = lastPosition + 1;
+    } else {
+      position = 0;
+    }
+
     payload.otpParameters.asMap().forEach((index, params) {
       var tmp = params.toProto3Json() as Map;
       tmp["name"] = Uri.decodeFull(tmp["name"].toString());
@@ -68,9 +82,11 @@ class UriDecoder {
         digits: 6,
         type: tmp["type"],
         period: 30,
+        position: position,
       );
 
       accounts.add(newAccount);
+      position++;
     });
 
     return accounts;
