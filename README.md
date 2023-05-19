@@ -21,3 +21,11 @@ With OTP Manager, you no longer have to worry about losing your OTP codes or not
 OTP Manager offers the convenient feature of importing OTP codes from Google Authenticator by scanning the QR code. This means you don't have to spend time manually entering each OTP code, but can simply scan the QR code that the Google app generates when exporting accounts, and OTP Manager will automatically import your associated accounts.
 
 This way, the transition from Google Authenticator to OTP Manager will be quick and easy, without having to waste time manually resetting all your OTP codes.
+
+# Planned Features
+- [ ] Be able to delete with [slidable](https://pub.dev/packages/flutter_slidable) 
+- [ ] Replace toast message with snackbar
+- [ ] Give the possibility to organize the accounts in folders or, assigning a tag to the accounts, filter them during the search
+- [ ] Show message if app is not the latest version available on the play store
+- [ ] [[Feature Request] Sort by Issuer / Username](https://github.com/matteo-convertino/otpmanager-app/issues/3)
+- [ ] [Backup accounts and codes](https://github.com/matteo-convertino/otpmanager-nextcloud/issues/2)
