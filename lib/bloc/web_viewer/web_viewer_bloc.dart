@@ -7,6 +7,7 @@ import 'package:otp_manager/bloc/web_viewer/web_viewer_state.dart';
 import 'package:otp_manager/models/user.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../main.dart' show logger;
 import '../../repository/local_repository.dart';
 import '../../routing/constants.dart';
 import '../../routing/navigation_service.dart';
@@ -94,10 +95,12 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
         .timeout(const Duration(seconds: 10))
         .catchError((error, stackTrace) {
       if (error is TimeoutException) {
+        logger.e(error);
         emit(
             state.copyWith(error: "The server is taking too time to respond!"));
         _navigationService.goBack();
       } else {
+        logger.e(error);
         emit(state.copyWith(
             error: "The url is not of a valid nextcloud server!"));
         _navigationService.goBack();
