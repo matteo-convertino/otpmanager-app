@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:base32/base32.dart';
+import 'package:otp/otp.dart';
 
 import '../../generated_protoc/google_auth.pb.dart';
 import '../main.dart';
@@ -33,7 +34,7 @@ class UriDecoder {
     return params;
   }
 
-  static int getAlgorithm(String algorithm) {
+  static int getAlgorithmFromString(String algorithm) {
     int algo = AlgorithmTypes.sha1.index;
 
     if (algorithm.contains("SHA256")) {
@@ -43,6 +44,16 @@ class UriDecoder {
     }
 
     return algo;
+  }
+
+  static String getAlgorithmFromAlgo(Algorithm? algorithm) {
+    if (algorithm == Algorithm.SHA256) {
+      return "SHA256";
+    } else if (algorithm == Algorithm.SHA512) {
+      return "SHA512";
+    } 
+    
+    return "SHA1";
   }
 
   List<Account> decodeGoogleUri(Uri uri) {
@@ -78,7 +89,7 @@ class UriDecoder {
         name:
             tmp["name"].contains(':') ? tmp["name"].split(':')[1] : tmp["name"],
         issuer: Uri.decodeFull(tmp["issuer"]),
-        dbAlgorithm: getAlgorithm(tmp["algorithm"]),
+        dbAlgorithm: getAlgorithmFromString(tmp["algorithm"]),
         digits: 6,
         type: tmp["type"],
         period: 30,
@@ -120,7 +131,7 @@ class UriDecoder {
         secret: tmp["secret"].toString().toUpperCase(),
         name: Uri.decodeFull(nameAndIssuer["name"]),
         issuer: Uri.decodeFull(nameAndIssuer["issuer"]),
-        dbAlgorithm: getAlgorithm(tmp["algorithm"].toString()),
+        dbAlgorithm: getAlgorithmFromString(tmp["algorithm"].toString()),
         digits: int.tryParse(tmp["digits"].toString()),
         type: uriDecoded.host,
         period: int.tryParse(tmp["period"].toString()),

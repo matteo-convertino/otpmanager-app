@@ -31,6 +31,7 @@ PinCodeTextField pin({
     onCompleted: onCompleted,
     onChanged: (value) {},
     pastedTextStyle: TextStyle(color: Theme.of(context).primaryColor),
+    autoDisposeControllers: false,
     beforeTextPaste: (text) {
       // check if copied text has only digits [0-9]
       if (RegExp(r'^\d+$').hasMatch(text!)) {

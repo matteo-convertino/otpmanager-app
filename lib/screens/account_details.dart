@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
+import 'package:otp_manager/bloc/account_details/account_details_state.dart';
+import 'package:otp_manager/utils/show_snackbar.dart';
 
-import '../main.dart' show objectBox;
-import '../models/account.dart';
-import '../models/user.dart';
-import '../object_box/objectbox.g.dart';
+import '../bloc/account_details/account_details_event.dart';
 import "../routing/constants.dart";
 import '../routing/navigation_service.dart';
 import '../utils/delete_modal.dart';
-import '../utils/nextcloud.dart';
-import '../utils/toast.dart';
 
 class AccountDetails extends StatelessWidget {
-  AccountDetails({Key? key, required this.account}) : super(key: key);
-
-  final Account account;
-
-  final NavigationService navigationService = NavigationService();
-
-  final User _user = objectBox.store.box<User>().getAll()[0];
+  const AccountDetails({Key? key}) : super(key: key);
 
   ListTile newItem(String title, String trailingText) {
     return ListTile(
@@ -41,66 +34,60 @@ class AccountDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              if (_user.pin == null || _user.pin == "") {
-                showToast("To edit an account you have to set a pin before");
+              if (context.read<AccountDetailsBloc>().state.pin == "") {
+                showSnackBar(
+                    context: context,
+                    msg: "To edit an account you have to set a pin before");
               } else {
                 NavigationService()
-                    .navigateTo(manualRoute, arguments: {"account": account});
+                    .navigateTo(manualRoute, arguments: {"account": context.read<AccountDetailsBloc>().state.account});
               }
             },
           ),
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              showDeleteModal(context, account, () {
-                var box = objectBox.store.box<Account>();
-                Account? accountToRemove = box
-                    .query(Account_.id.equals(account.id))
-                    .build()
-                    .findFirst();
-                accountToRemove?.deleted = true;
-
-                box
-                    .query(Account_.deleted.equals(false) &
-                        Account_.position
-                            .greaterThan(accountToRemove?.position ?? 0))
-                    .build()
-                    .find()
-                    .forEach((account) {
-                  account.position = account.position! - 1;
-                  account.toUpdate = true;
-                  box.put(account);
-                });
-
-                accountToRemove?.position = null;
-                box.put(accountToRemove!);
-
-                Nextcloud(user: objectBox.store.box<User>().getAll()[0]).sync();
-                showToast(
-                    "${account.type == "totp" ? "TOTP" : "HOTP"} has been removed");
-                navigationService.resetToScreen(homeRoute);
-              });
+              showDeleteModal(
+                context,
+                context.read<AccountDetailsBloc>().state.account,
+                () => context
+                    .read<AccountDetailsBloc>()
+                    .add(DeleteAccount()),
+              );
             },
           )
         ],
       ),
-      body: Center(
-        child: ListView(
-          children: ListTile.divideTiles(
-            context: context,
-            tiles: [
-              newItem("Name", account.name),
-              newItem("Issuer", account.issuer ?? ""),
-              newItem("Period", "${account.period}s"),
-              newItem("Digits", account.digits.toString()),
-              newItem("Algorithm", account.algorithm.toString().split(".")[1]),
-              newItem("Type", account.type.toUpperCase()),
-              if (account.type == "hotp")
-                newItem("Counter",
-                    account.counter != null ? account.counter.toString() : "")
-            ],
-          ).toList(),
-        ),
+      body: BlocConsumer<AccountDetailsBloc, AccountDetailsState>(
+        listener: (context, state) {
+          if (state.accountDeleted != "") {
+            showSnackBar(context: context, msg: state.accountDeleted);
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: ListView(
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: [
+                  newItem("Name", state.account.name),
+                  newItem("Issuer", state.account.issuer ?? ""),
+                  newItem("Period", "${state.account.period}s"),
+                  newItem("Digits", state.account.digits.toString()),
+                  newItem(
+                      "Algorithm", state.account.algorithm.toString().split(".")[1]),
+                  newItem("Type", state.account.type.toUpperCase()),
+                  if (state.account.type == "hotp")
+                    newItem(
+                        "Counter",
+                        state.account.counter != null
+                            ? state.account.counter.toString()
+                            : "")
+                ],
+              ).toList(),
+            ),
+          );
+        },
       ),
     );
   }

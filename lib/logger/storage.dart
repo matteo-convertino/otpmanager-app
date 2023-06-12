@@ -6,7 +6,6 @@ class LoggerStorage {
   static const String fileName = "log";
   static const String extension = "txt";
 
-
   static Future<String> _localPath() async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
