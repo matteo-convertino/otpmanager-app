@@ -79,7 +79,7 @@ class Home extends HookWidget {
             },
             duration: const Duration(milliseconds: 150),
             width: showSearchBar.value
-                ? MediaQuery.of(context).size.width - 135
+                ? MediaQuery.of(context).size.width - 90
                 : 0,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
