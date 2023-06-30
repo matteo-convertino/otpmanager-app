@@ -48,14 +48,3 @@ class IncrementCounter extends HomeEvent {
   @override
   List<Object> get props => [account];
 }
-
-
-
-/*class FilterChanged extends HomeEvent {
-  const FilterChanged({required this.filter});
-
-  final String filter;
-
-  @override
-  List<Object> get props => [filter];
-}*/

@@ -4,7 +4,6 @@ import 'package:otp_manager/models/user.dart';
 
 class HomeState extends Equatable {
   final Map<Account, String?> accounts;
-  //final String accountFilter;
   final int refreshTime;
   final int syncStatus; // 1 = SYNCING, 0 = OK, -1 = ERROR
   final String syncError;
@@ -14,7 +13,6 @@ class HomeState extends Equatable {
 
   const HomeState({
     required this.accounts,
-    // required this.accountFilter,
     required this.refreshTime,
     required this.syncStatus,
     required this.syncError,
@@ -25,7 +23,6 @@ class HomeState extends Equatable {
 
   HomeState.initial(User user)
       : accounts = {},
-        //accountFilter = "",
         refreshTime = 30,
         syncStatus = 1,
         syncError = "",
@@ -35,7 +32,6 @@ class HomeState extends Equatable {
 
   HomeState copyWith({
     Map<Account, String?>? accounts,
-    //String? accountFilter,
     int? refreshTime,
     int? syncStatus,
     String? syncError,
@@ -43,7 +39,6 @@ class HomeState extends Equatable {
   }) {
     return HomeState(
       accounts: accounts ?? this.accounts,
-      // accountFilter: accountFilter ?? this.accountFilter,
       refreshTime: refreshTime ?? this.refreshTime,
       syncStatus: syncStatus ?? this.syncStatus,
       syncError: syncError ?? this.syncError,
@@ -56,7 +51,6 @@ class HomeState extends Equatable {
   @override
   List<Object?> get props => [
         accounts,
-        //accountFilter,
         refreshTime,
         syncStatus,
         syncError,

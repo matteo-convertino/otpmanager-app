@@ -3,6 +3,7 @@ import 'package:otp/otp.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/bloc/home/home_state.dart';
 import 'package:otp_manager/domain/nextcloud_service.dart';
+import 'package:otp_manager/main.dart';
 import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/repository/local_repository.dart';
 import 'package:otp_manager/routing/constants.dart';
@@ -128,7 +129,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onDeleteAccount(DeleteAccount event, Emitter<HomeState> emit) {
-    if(localRepositoryImpl.setAccountAsDeleted(event.id)) {
+    if (localRepositoryImpl.setAccountAsDeleted(event.id)) {
       Account? accountDeleted = localRepositoryImpl.getAccount(event.id);
 
       add(const GetAccounts());
@@ -136,11 +137,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(state.copyWith(
           accountDeleted:
-          "${accountDeleted?.type == "totp" ? "TOTP" : "HOTP"} has been removed"));
+              "${accountDeleted?.type == "totp" ? "TOTP" : "HOTP"} has been removed"));
     } else {
       emit(state.copyWith(
-          accountDeleted:
-          "There was an error while deleting the account"));
+          accountDeleted: "There was an error while deleting the account"));
     }
 
     emit(state.copyWith(accountDeleted: ""));

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:otp_manager/bloc/home/home_bloc.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
@@ -26,8 +27,6 @@ class Home extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final appState = context.watch<OtpManagerBloc>().state;
-
     final textFieldSearchBarController = useTextEditingController();
     final countDownAnimationController = useAnimationController(
         duration:
@@ -167,40 +166,6 @@ class Home extends HookWidget {
               ],
             ),
           ),
-          PopupMenuButton(
-            padding: const EdgeInsets.all(0.0),
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem<Function>(
-                  value: () => _navigationService.navigateTo(settingsRoute),
-                  child: const Text("Settings"),
-                ),
-                PopupMenuItem<Function>(
-                  value: () => _navigationService.navigateTo(importRoute),
-                  child: const Text("Import OTP"),
-                ),
-                PopupMenuItem<Function>(
-                  value: () => context.read<HomeBloc>().add(NextcloudSync()),
-                  child: const Text("Sync now"),
-                ),
-                PopupMenuItem<Function>(
-                  value: () {
-                    //themeChange.darkTheme = false;
-                    context.read<HomeBloc>().add(Logout());
-                  },
-                  child: const Text("Logout"),
-                ),
-              ];
-            },
-            onSelected: (Function value) => value(),
-            icon: const Icon(
-              Icons.settings,
-              size: 25.0,
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(3.0)),
-            ),
-          ),
         ],
       ),
       body: BlocConsumer<HomeBloc, HomeState>(
@@ -303,133 +268,166 @@ class Home extends HookWidget {
                       String? otpCode = state.accounts[account];
 
                       return BlocBuilder<OtpManagerBloc, OtpManagerState>(
-                        key: ValueKey(account),
+                        key: ValueKey(account.id),
                         builder: (appContext, appState) {
-                          return ListTile(
-                            title: account.issuer != null &&
-                                    account.issuer != ""
-                                ? Text("${account.issuer} (${account.name})")
-                                : Text(account.name),
-                            leading: Row(
-                              mainAxisSize: MainAxisSize.min,
+                          return Slidable(
+                            endActionPane: ActionPane(
+                              motion: const DrawerMotion(),
                               children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: ReorderableDragStartListener(
-                                      key: ValueKey(index),
-                                      index: index,
-                                      child: const Icon(Icons.drag_handle),
-                                    ),
-                                  ),
-                                )
+                                SlidableAction(
+                                  onPressed: (_) => showDeleteModal(
+                                      context,
+                                      account,
+                                      () => context
+                                          .read<HomeBloc>()
+                                          .add(DeleteAccount(id: account.id))),
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  label: "Delete",
+                                ),
+                                SlidableAction(
+                                  onPressed: (_) {
+                                    if (state.pin == "") {
+                                      showSnackBar(
+                                        context: context,
+                                        msg:
+                                            "To edit an account you have to set a pin before",
+                                      );
+                                    } else {
+                                      _navigationService.navigateTo(
+                                        manualRoute,
+                                        arguments: {"account": account},
+                                      );
+                                    }
+                                  },
+                                  backgroundColor: Colors.blue,
+                                  icon: Icons.edit,
+                                  label: "Edit",
+                                ),
                               ],
                             ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (account.toUpdate == true || account.isNew)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                                    child: tooltip(
-                                      "Have to be synchronised",
-                                      const Icon(
-                                        Icons.sync,
-                                        size: 16,
-                                        color: Colors.blueAccent,
-                                      ),
-                                    ),
-                                  ),
-                                if (account.period != 30)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                                    child: tooltip(
-                                      "The TOTP's period is: ${account.period}s",
-                                      const Icon(
-                                        Icons.more_time_rounded,
-                                        size: 16,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                if (account.type == "hotp")
-                                  IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    icon: const Icon(Icons.refresh),
-                                    onPressed: () => context
-                                        .read<HomeBloc>()
-                                        .add(
-                                            IncrementCounter(account: account)),
-                                  ),
-                                if (appState.copyWithTap)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      icon: const Icon(Icons.more_vert),
-                                      onPressed: () =>
-                                          _navigationService.navigateTo(
-                                        accountDetailsRoute,
-                                        arguments: account,
+                            child: ListTile(
+                              title: account.issuer != null &&
+                                      account.issuer != ""
+                                  ? Text("${account.issuer} (${account.name})")
+                                  : Text(account.name),
+                              leading: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: ReorderableDragStartListener(
+                                        key: ValueKey(index),
+                                        index: index,
+                                        enabled: false,
+                                        child: const Icon(Icons.drag_handle),
                                       ),
                                     ),
                                   )
-                                else if (otpCode != null)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      icon: const Icon(Icons.copy),
-                                      onPressed: () {
-                                        Clipboard.setData(
-                                            ClipboardData(text: otpCode));
-                                        showToast(
-                                            "${account.type == "totp" ? "TOTP" : "HOTP"} code copied");
-                                      },
-                                    ),
-                                  )
-                              ],
-                            ),
-                            subtitle: Text(
-                              otpCode ?? "Click to generate code",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.blue,
+                                ],
                               ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (account.toUpdate == true || account.isNew)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                      child: tooltip(
+                                        "Have to be synchronised",
+                                        const Icon(
+                                          Icons.sync,
+                                          size: 16,
+                                          color: Colors.blueAccent,
+                                        ),
+                                      ),
+                                    ),
+                                  if (account.period != 30)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                      child: tooltip(
+                                        "The TOTP's period is: ${account.period}s",
+                                        const Icon(
+                                          Icons.more_time_rounded,
+                                          size: 16,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  if (account.type == "hotp")
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: const Icon(Icons.refresh),
+                                      onPressed: () => context
+                                          .read<HomeBloc>()
+                                          .add(IncrementCounter(
+                                              account: account)),
+                                    ),
+                                  if (appState.copyWithTap)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                      child: IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: const Icon(Icons.more_vert),
+                                        onPressed: () =>
+                                            _navigationService.navigateTo(
+                                          accountDetailsRoute,
+                                          arguments: account,
+                                        ),
+                                      ),
+                                    )
+                                  else if (otpCode != null)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                                      child: IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: const Icon(Icons.copy),
+                                        onPressed: () {
+                                          Clipboard.setData(
+                                              ClipboardData(text: otpCode));
+                                          showToast(
+                                              "${account.type == "totp" ? "TOTP" : "HOTP"} code copied");
+                                        },
+                                      ),
+                                    )
+                                ],
+                              ),
+                              subtitle: Text(
+                                otpCode ?? "Click to generate code",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              onTap: () {
+                                if (otpCode == null) {
+                                  context
+                                      .read<HomeBloc>()
+                                      .add(IncrementCounter(account: account));
+                                } else if (appState.copyWithTap) {
+                                  Clipboard.setData(
+                                      ClipboardData(text: otpCode));
+                                  showSnackBar(
+                                      context: context,
+                                      msg:
+                                          "${account.type == "totp" ? "TOTP" : "HOTP"} code copied");
+                                } else {
+                                  _navigationService.navigateTo(
+                                    accountDetailsRoute,
+                                    arguments: account,
+                                  );
+                                }
+                              },
                             ),
-                            onTap: () {
-                              if (otpCode == null) {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(IncrementCounter(account: account));
-                              } else if (appState.copyWithTap) {
-                                Clipboard.setData(ClipboardData(text: otpCode));
-                                showSnackBar(
-                                    context: context,
-                                    msg:
-                                        "${account.type == "totp" ? "TOTP" : "HOTP"} code copied");
-                              } else {
-                                _navigationService.navigateTo(
-                                  accountDetailsRoute,
-                                  arguments: account,
-                                );
-                              }
-                            },
-                            onLongPress: () => showDeleteModal(
-                                context,
-                                account,
-                                () => context
-                                    .read<HomeBloc>()
-                                    .add(DeleteAccount(id: account.id))),
                           );
                         },
                       );
@@ -461,6 +459,21 @@ class Home extends HookWidget {
             child: const Icon(Icons.qr_code_scanner),
             label: "Scan QR code",
             onTap: () => _navigationService.navigateTo(qrCodeScannerRoute),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.library_add_outlined),
+            label: "Import OTP",
+            onTap: () => _navigationService.navigateTo(qrCodeScannerRoute),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.settings),
+            label: "Settings",
+            onTap: () => _navigationService.navigateTo(settingsRoute),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.logout),
+            label: "Logout",
+            onTap: () => context.read<HomeBloc>().add(Logout()),
           ),
         ],
         spaceBetweenChildren: 10,
