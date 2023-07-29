@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,6 +31,15 @@ var logger = Logger(
   output: MultiOutput([FileOutput(), ConsoleOutput()]),
 );
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
   try {
     // This is required so ObjectBox can get the application directory
@@ -47,6 +58,9 @@ Future<void> main() async {
 
     Restart.restartApp();
   }
+
+  // ignore bad server certificate
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(
     MultiRepositoryProvider(
