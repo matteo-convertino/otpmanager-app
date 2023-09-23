@@ -10,6 +10,9 @@ class HomeState extends Equatable {
   final String pin;
   final bool isGuest;
   final String accountDeleted;
+  final bool sortedByNameDesc;
+  final bool sortedByIssuerDesc;
+  final bool sortedByIdDesc;
 
   const HomeState({
     required this.accounts,
@@ -19,6 +22,9 @@ class HomeState extends Equatable {
     required this.pin,
     required this.isGuest,
     required this.accountDeleted,
+    required this.sortedByNameDesc,
+    required this.sortedByIssuerDesc,
+    required this.sortedByIdDesc,
   });
 
   HomeState.initial(User user)
@@ -28,7 +34,10 @@ class HomeState extends Equatable {
         syncError = "",
         pin = user.pin ?? "",
         isGuest = user.isGuest,
-        accountDeleted = "";
+        accountDeleted = "",
+        sortedByNameDesc = true,
+        sortedByIssuerDesc = true,
+        sortedByIdDesc = true;
 
   HomeState copyWith({
     Map<Account, String?>? accounts,
@@ -36,6 +45,9 @@ class HomeState extends Equatable {
     int? syncStatus,
     String? syncError,
     String? accountDeleted,
+    bool? sortedByNameDesc,
+    bool? sortedByIssuerDesc,
+    bool? sortedByIdDesc,
   }) {
     return HomeState(
       accounts: accounts ?? this.accounts,
@@ -45,6 +57,9 @@ class HomeState extends Equatable {
       pin: pin,
       isGuest: isGuest,
       accountDeleted: accountDeleted ?? this.accountDeleted,
+      sortedByNameDesc: sortedByNameDesc ?? this.sortedByNameDesc,
+      sortedByIssuerDesc: sortedByIssuerDesc ?? this.sortedByIssuerDesc,
+      sortedByIdDesc: sortedByIdDesc ?? this.sortedByIdDesc,
     );
   }
 
@@ -55,5 +70,8 @@ class HomeState extends Equatable {
         syncStatus,
         syncError,
         accountDeleted,
+        sortedByNameDesc,
+        sortedByIssuerDesc,
+        sortedByIdDesc
       ];
 }

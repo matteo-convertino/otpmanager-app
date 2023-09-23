@@ -44,7 +44,7 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
               ),
             );
 
-            if (url.endsWith("grant")) {
+            if (url.endsWith("grant") || url.endsWith("apptoken")) {
               client.core
                   .getLoginFlowResult(token: init.poll.token)
                   .then((result) {

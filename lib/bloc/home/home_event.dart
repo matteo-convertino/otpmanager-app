@@ -12,6 +12,10 @@ class NextcloudSync extends HomeEvent {}
 
 class Logout extends HomeEvent {}
 
+class SortById extends HomeEvent {}
+class SortByName extends HomeEvent {}
+class SortByIssuer extends HomeEvent {}
+
 class GetAccounts extends HomeEvent {
   const GetAccounts({this.filter = ""});
 

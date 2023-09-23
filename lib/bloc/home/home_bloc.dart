@@ -28,6 +28,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<Reorder>(_onReorder);
     on<DeleteAccount>(_onDeleteAccount);
     on<IncrementCounter>(_onIncrementCounter);
+    on<SortByName>(_onSortByName);
+    on<SortByIssuer>(_onSortByIssuer);
+    on<SortById>(_onSortById);
   }
 
   String? _getOtp(Account account) {
@@ -151,6 +154,81 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     event.account.counter = event.account.counter! + 1;
     event.account.toUpdate = true;
     localRepositoryImpl.updateAccount(event.account);
+    add(const GetAccounts());
+    add(NextcloudSync());
+  }
+
+  void _onSortById(SortById event, Emitter<HomeState> emit) {
+    List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
+
+    if (state.sortedByIdDesc) {
+      accounts.sort((b, a) => a.id.compareTo(b.id));
+    } else {
+      accounts.sort((a, b) => a.id.compareTo(b.id));
+    }
+
+    emit(state.copyWith(
+      sortedByIdDesc: !state.sortedByIdDesc,
+      sortedByNameDesc: true,
+      sortedByIssuerDesc: true,
+    ));
+
+    for (int i = 0; i < accounts.length; i++) {
+      accounts[i].position = i;
+      accounts[i].toUpdate = true;
+      localRepositoryImpl.updateAccount(accounts[i]);
+    }
+
+    add(const GetAccounts());
+    add(NextcloudSync());
+  }
+
+  void _onSortByName(SortByName event, Emitter<HomeState> emit) {
+    List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
+
+    if (state.sortedByNameDesc) {
+      accounts.sort((a, b) => a.name.compareTo(b.name));
+    } else {
+      accounts.sort((b, a) => a.name.compareTo(b.name));
+    }
+
+    emit(state.copyWith(
+      sortedByNameDesc: !state.sortedByNameDesc,
+      sortedByIdDesc: true,
+      sortedByIssuerDesc: true,
+    ));
+
+    for (int i = 0; i < accounts.length; i++) {
+      accounts[i].position = i;
+      accounts[i].toUpdate = true;
+      localRepositoryImpl.updateAccount(accounts[i]);
+    }
+
+    add(const GetAccounts());
+    add(NextcloudSync());
+  }
+
+  void _onSortByIssuer(SortByIssuer event, Emitter<HomeState> emit) {
+    List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
+
+    if (state.sortedByIssuerDesc) {
+      accounts.sort((a, b) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
+    } else {
+      accounts.sort((b, a) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
+    }
+
+    emit(state.copyWith(
+      sortedByIssuerDesc: !state.sortedByIssuerDesc,
+      sortedByIdDesc: true,
+      sortedByNameDesc: true,
+    ));
+
+    for (int i = 0; i < accounts.length; i++) {
+      accounts[i].position = i;
+      accounts[i].toUpdate = true;
+      localRepositoryImpl.updateAccount(accounts[i]);
+    }
+
     add(const GetAccounts());
     add(NextcloudSync());
   }

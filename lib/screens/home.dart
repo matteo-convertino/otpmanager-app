@@ -174,6 +174,60 @@ class Home extends HookWidget {
                 ],
               ),
             ),
+            BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+              return PopupMenuButton(
+                //padding: const EdgeInsets.all(0.0),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem<Function>(
+                      value: () => context.read<HomeBloc>().add(SortByName()),
+                      child: Row(
+                        children: [
+                          const Text("By Name"),
+                          Text(
+                            state.sortedByNameDesc ? " (A -> Z)" : " (Z -> A)",
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<Function>(
+                      value: () => context.read<HomeBloc>().add(SortByIssuer()),
+                      child: Row(
+                        children: [
+                          const Text("By Issuer"),
+                          Text(
+                            state.sortedByIssuerDesc
+                                ? " (A -> Z)"
+                                : " (Z -> A)",
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<Function>(
+                      value: () => context.read<HomeBloc>().add(SortById()),
+                      child: Row(
+                        children: [
+                          const Text("By Date"),
+                          Text(
+                            state.sortedByIdDesc
+                                ? " (most recent)"
+                                : " (most remote)",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ];
+                },
+                onSelected: (Function value) => value(),
+                icon: const Icon(
+                  Icons.sort,
+                  size: 25.0,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                ),
+              );
+            }),
           ],
         ),
         body: BlocConsumer<HomeBloc, HomeState>(
@@ -473,7 +527,7 @@ class Home extends HookWidget {
             SpeedDialChild(
               child: const Icon(Icons.library_add_outlined),
               label: "Import OTP",
-              onTap: () => _navigationService.navigateTo(qrCodeScannerRoute),
+              onTap: () => _navigationService.navigateTo(importRoute),
             ),
             SpeedDialChild(
               child: const Icon(Icons.settings),
