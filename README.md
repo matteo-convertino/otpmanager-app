@@ -24,5 +24,4 @@ This way, the transition from Google Authenticator to OTP Manager will be quick 
 
 # Planned Features
 - [ ] Give the possibility to organize the accounts in folders or, assigning a tag to the accounts, filter them during the search
-- [ ] [[Feature Request] Sort by Issuer / Username](https://github.com/matteo-convertino/otpmanager-app/issues/3)
 - [ ] [Backup accounts and codes](https://github.com/matteo-convertino/otpmanager-nextcloud/issues/2)
