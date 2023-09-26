@@ -3,7 +3,6 @@ import 'package:otp/otp.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/bloc/home/home_state.dart';
 import 'package:otp_manager/domain/nextcloud_service.dart';
-import 'package:otp_manager/main.dart';
 import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/repository/local_repository.dart';
 import 'package:otp_manager/routing/constants.dart';
@@ -31,6 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SortByName>(_onSortByName);
     on<SortByIssuer>(_onSortByIssuer);
     on<SortById>(_onSortById);
+    on<SearchBarValueChanged>(_onSearchBarValueChanged);
   }
 
   String? _getOtp(Account account) {
@@ -81,15 +81,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(state.copyWith(syncStatus: -1));
     }
 
-    _emitAccountsWithCode(localRepositoryImpl.getVisibleAccounts(), emit);
+    _emitAccountsWithCode(
+        state.searchBarValue == ""
+            ? localRepositoryImpl.getVisibleAccounts()
+            : localRepositoryImpl
+                .getVisibleFilteredAccounts(state.searchBarValue),
+        emit);
+
+    add(GetAccounts());
   }
 
   void _onGetAccounts(GetAccounts event, Emitter<HomeState> emit) {
-    if (event.filter == "") {
+    if (state.searchBarValue == "") {
       _emitAccountsWithCode(localRepositoryImpl.getVisibleAccounts(), emit);
     } else {
       _emitAccountsWithCode(
-          localRepositoryImpl.getVisibleFilteredAccounts(event.filter), emit);
+          localRepositoryImpl.getVisibleFilteredAccounts(state.searchBarValue),
+          emit);
     }
   }
 
@@ -127,7 +135,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     account?.position = newIndex;
     account?.toUpdate = true;
     localRepositoryImpl.updateAccount(account!);
-    add(const GetAccounts());
+
     add(NextcloudSync());
   }
 
@@ -135,7 +143,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (localRepositoryImpl.setAccountAsDeleted(event.id)) {
       Account? accountDeleted = localRepositoryImpl.getAccount(event.id);
 
-      add(const GetAccounts());
       add(NextcloudSync());
 
       emit(state.copyWith(
@@ -154,7 +161,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     event.account.counter = event.account.counter! + 1;
     event.account.toUpdate = true;
     localRepositoryImpl.updateAccount(event.account);
-    add(const GetAccounts());
     add(NextcloudSync());
   }
 
@@ -179,7 +185,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       localRepositoryImpl.updateAccount(accounts[i]);
     }
 
-    add(const GetAccounts());
     add(NextcloudSync());
   }
 
@@ -204,7 +209,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       localRepositoryImpl.updateAccount(accounts[i]);
     }
 
-    add(const GetAccounts());
     add(NextcloudSync());
   }
 
@@ -229,7 +233,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       localRepositoryImpl.updateAccount(accounts[i]);
     }
 
-    add(const GetAccounts());
     add(NextcloudSync());
+  }
+
+  void _onSearchBarValueChanged(
+      SearchBarValueChanged event, Emitter<HomeState> emit) {
+    emit(state.copyWith(searchBarValue: event.value));
   }
 }

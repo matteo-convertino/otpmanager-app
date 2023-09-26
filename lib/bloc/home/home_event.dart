@@ -13,17 +13,12 @@ class NextcloudSync extends HomeEvent {}
 class Logout extends HomeEvent {}
 
 class SortById extends HomeEvent {}
+
 class SortByName extends HomeEvent {}
+
 class SortByIssuer extends HomeEvent {}
 
-class GetAccounts extends HomeEvent {
-  const GetAccounts({this.filter = ""});
-
-  final String filter;
-
-  @override
-  List<Object> get props => [filter];
-}
+class GetAccounts extends HomeEvent {}
 
 class Reorder extends HomeEvent {
   const Reorder({required this.oldIndex, required this.newIndex});
@@ -51,4 +46,13 @@ class IncrementCounter extends HomeEvent {
 
   @override
   List<Object> get props => [account];
+}
+
+class SearchBarValueChanged extends HomeEvent {
+  const SearchBarValueChanged({required this.value});
+
+  final String value;
+
+  @override
+  List<Object> get props => [value];
 }

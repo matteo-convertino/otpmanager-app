@@ -13,6 +13,7 @@ class HomeState extends Equatable {
   final bool sortedByNameDesc;
   final bool sortedByIssuerDesc;
   final bool sortedByIdDesc;
+  final String searchBarValue;
 
   const HomeState({
     required this.accounts,
@@ -25,6 +26,7 @@ class HomeState extends Equatable {
     required this.sortedByNameDesc,
     required this.sortedByIssuerDesc,
     required this.sortedByIdDesc,
+    required this.searchBarValue,
   });
 
   HomeState.initial(User user)
@@ -37,7 +39,8 @@ class HomeState extends Equatable {
         accountDeleted = "",
         sortedByNameDesc = true,
         sortedByIssuerDesc = true,
-        sortedByIdDesc = true;
+        sortedByIdDesc = true,
+        searchBarValue = "";
 
   HomeState copyWith({
     Map<Account, String?>? accounts,
@@ -48,6 +51,7 @@ class HomeState extends Equatable {
     bool? sortedByNameDesc,
     bool? sortedByIssuerDesc,
     bool? sortedByIdDesc,
+    String? searchBarValue,
   }) {
     return HomeState(
       accounts: accounts ?? this.accounts,
@@ -60,6 +64,7 @@ class HomeState extends Equatable {
       sortedByNameDesc: sortedByNameDesc ?? this.sortedByNameDesc,
       sortedByIssuerDesc: sortedByIssuerDesc ?? this.sortedByIssuerDesc,
       sortedByIdDesc: sortedByIdDesc ?? this.sortedByIdDesc,
+      searchBarValue: searchBarValue ?? this.searchBarValue,
     );
   }
 
@@ -72,6 +77,7 @@ class HomeState extends Equatable {
         accountDeleted,
         sortedByNameDesc,
         sortedByIssuerDesc,
-        sortedByIdDesc
+        sortedByIdDesc,
+        searchBarValue
       ];
 }

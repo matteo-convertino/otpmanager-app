@@ -37,7 +37,6 @@ class Home extends HookWidget {
     final searchBarAnimationEnd = useState(true);
 
     useEffect(() {
-      context.read<HomeBloc>().add(const GetAccounts());
       context.read<HomeBloc>().add(NextcloudSync());
       return null;
     }, []);
@@ -87,37 +86,40 @@ class Home extends HookWidget {
               },
               duration: const Duration(milliseconds: 150),
               width: showSearchBar.value
-                  ? MediaQuery.of(context).size.width - 90
+                  ? MediaQuery.of(context).size.width - 140
                   : 0,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: TextField(
-                  focusNode: _searchBarNode,
-                  enabled: showSearchBar.value,
-                  controller: textFieldSearchBarController,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  cursorColor: Colors.white,
-                  decoration: const InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: TextStyle(
-                      //Style of hintText
-                      color: Colors.white60,
+                    focusNode: _searchBarNode,
+                    enabled: showSearchBar.value,
+                    controller: textFieldSearchBarController,
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1),
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      hintText: 'Search',
+                      hintStyle: TextStyle(
+                        //Style of hintText
+                        color: Colors.white60,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      disabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
                     ),
-                    disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1),
-                    ),
-                  ),
-                  onChanged: (value) =>
-                      context.read<HomeBloc>().add(GetAccounts(filter: value)),
-                ),
+                    onChanged: (value) {
+                      context
+                          .read<HomeBloc>()
+                          .add(SearchBarValueChanged(value: value));
+                      context.read<HomeBloc>().add(GetAccounts());
+                    }),
               ),
             ),
             BlocBuilder<HomeBloc, HomeState>(
@@ -153,7 +155,10 @@ class Home extends HookWidget {
                     searchBarAnimationEnd.value = false;
                     showSearchBar.value = !showSearchBar.value;
                     if (!showSearchBar.value) {
-                      context.read<HomeBloc>().add(const GetAccounts());
+                      context
+                          .read<HomeBloc>()
+                          .add(const SearchBarValueChanged(value: ""));
+                      context.read<HomeBloc>().add(GetAccounts());
                       textFieldSearchBarController.clear();
                     }
                   }
@@ -242,7 +247,7 @@ class Home extends HookWidget {
               countDownAnimationController
                   .forward(from: 1.0 - (duration / state.refreshTime))
                   .whenComplete(() {
-                context.read<HomeBloc>().add(const GetAccounts());
+                context.read<HomeBloc>().add(GetAccounts());
                 countDownAnimationController.repeat();
               });
             }

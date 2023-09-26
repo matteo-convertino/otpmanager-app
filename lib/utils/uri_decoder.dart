@@ -51,8 +51,8 @@ class UriDecoder {
       return "SHA256";
     } else if (algorithm == Algorithm.SHA512) {
       return "SHA512";
-    } 
-    
+    }
+
     return "SHA1";
   }
 
@@ -66,7 +66,7 @@ class UriDecoder {
 
     int? lastPosition =
         (objectBox.store.box<Account>().query(Account_.deleted.equals(false))
-          ..order(Account_.position, flags: Order.descending))
+              ..order(Account_.position, flags: Order.descending))
             .build()
             .findFirst()
             ?.position;
@@ -88,7 +88,7 @@ class UriDecoder {
             .toUpperCase(),
         name:
             tmp["name"].contains(':') ? tmp["name"].split(':')[1] : tmp["name"],
-        issuer: Uri.decodeFull(tmp["issuer"]),
+        issuer: Uri.decodeFull(tmp["issuer"] ?? ""),
         dbAlgorithm: getAlgorithmFromString(tmp["algorithm"]),
         digits: 6,
         type: tmp["type"],
