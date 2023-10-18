@@ -8,9 +8,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:otp_manager/bloc/auth/auth_bloc.dart';
 import 'package:otp_manager/bloc/auth/auth_event.dart';
 import 'package:otp_manager/bloc/auth/auth_state.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 
-import "../utils/pin.dart";
+import "../utils/auth_input.dart";
 import '../utils/show_snackbar.dart';
 
 class Auth extends HookWidget {
@@ -46,16 +45,7 @@ class Auth extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pinTextFieldController = useTextEditingController();
-    final errorController = useStreamController<ErrorAnimationType>();
-
-    useEffect(() {
-      _authenticate().then((auth) {
-        if (auth) context.read<AuthBloc>().add(Authenticated());
-      });
-
-      return null;
-    }, []);
+    final enabled = useState(true);
 
     return Scaffold(
       appBar: AppBar(
@@ -63,23 +53,34 @@ class Auth extends HookWidget {
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state.message != "") {
-            showSnackBar(context: context, msg: state.message);
-          } else if (state.isError) {
-            pinTextFieldController.clear();
-            errorController.add(ErrorAnimationType.shake);
+          if (state.attempts == 0) {
+            showSnackBar(
+              context: context,
+              msg: "Too many attempts. Wait 5 seconds to try again.",
+            );
+            enabled.value = false;
+
+            Timer(const Duration(seconds: 5), () {
+              enabled.value = true;
+            });
+          }
+          if (state.canShowFingerAuth) {
+            _authenticate().then((auth) {
+              if (auth) context.read<AuthBloc>().add(Authenticated());
+            });
           }
         },
         builder: (context, state) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: pin(
-                context: context,
-                onCompleted: (value) =>
-                    context.read<AuthBloc>().add(PinSubmit(pin: value)),
-                textFieldController: pinTextFieldController,
-                errorController: errorController,
+              child: AuthInput(
+                onChanged: (value) => context
+                    .read<AuthBloc>()
+                    .add(PasswordChanged(password: value)),
+                onSubmit: () => context.read<AuthBloc>().add(PasswordSubmit()),
+                enabled: enabled.value,
+                errorMsg: state.message,
               ),
             ),
           );

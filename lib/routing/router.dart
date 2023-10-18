@@ -5,12 +5,10 @@ import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
 import 'package:otp_manager/bloc/auth/auth_bloc.dart';
 import 'package:otp_manager/bloc/login/login_bloc.dart';
 import 'package:otp_manager/bloc/manual/manual_bloc.dart';
-import 'package:otp_manager/bloc/pin/pin_bloc.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_bloc.dart';
 import 'package:otp_manager/bloc/settings/settings_bloc.dart';
 import 'package:otp_manager/domain/nextcloud_service.dart';
 import 'package:otp_manager/repository/local_repository.dart';
-import 'package:otp_manager/screens/pin.dart';
 
 import '../bloc/home/home_bloc.dart';
 import '../bloc/web_viewer/web_viewer_bloc.dart';
@@ -47,7 +45,7 @@ class Router {
             create: (context) => SettingsBloc(
               localRepositoryImpl: context.read<LocalRepositoryImpl>(),
             ),
-            child: const Settings(),
+            child: Settings(),
           ),
         );
       case qrCodeScannerRoute:
@@ -91,54 +89,29 @@ class Router {
       case manualRoute:
         Map arguments = settings.arguments as Map;
         Account? account = arguments["account"];
-        bool? isAuthenticated = arguments["auth"];
-
-        if (account == null) {
-          return CupertinoPageRoute(
-            builder: (_) => BlocProvider<ManualBloc>.value(
-              value: ManualBloc(),
-              child: const Manual(),
-            ),
-          );
-        } else {
-          if (isAuthenticated == true) {
-            return CupertinoPageRoute(
-              builder: (_) => BlocProvider<ManualBloc>.value(
-                value: ManualBloc(account: account),
-                child: const Manual(),
-              ),
-            );
-          } else {
-            return CupertinoPageRoute(
-              builder: (_) => BlocProvider<AuthBloc>(
-                create: (context) => AuthBloc(
-                  localRepositoryImpl: context.read<LocalRepositoryImpl>(),
-                  account: account,
-                ),
-                child: Auth(),
-              ),
-            );
-          }
-        }
-      case pinRoute:
-        Map arguments = settings.arguments as Map;
-        bool toEdit = arguments["toEdit"] ?? false;
-        String newPassword = arguments["newPassword"] ?? "";
-        String title = newPassword != ""
-            ? "Confirm new pin"
-            : toEdit
-                ? "Old pin"
-                : "New pin";
 
         return CupertinoPageRoute(
-          builder: (_) => BlocProvider<PinBloc>(
-            create: (context) => PinBloc(
-              title: title,
-              toEdit: toEdit,
-              newPassword: newPassword,
+          builder: (_) => BlocProvider<ManualBloc>(
+            create: (context) => ManualBloc(
+                localRepositoryImpl: context.read<LocalRepositoryImpl>(),
+                account: account),
+            child: const Manual(),
+          ),
+        );
+      case authRoute:
+        Map arguments = settings.arguments as Map;
+        Account? account = arguments["account"];
+
+        return CupertinoPageRoute(
+          builder: (_) => BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(
               localRepositoryImpl: context.read<LocalRepositoryImpl>(),
+              nextcloudService: context.read<NextcloudService>(),
+              account: account,
+              accountsToAdd: arguments["toAdd"] ?? [],
+              accountsToEdit: arguments["toEdit"] ?? [],
             ),
-            child: const Pin(),
+            child: Auth(),
           ),
         );
       default:

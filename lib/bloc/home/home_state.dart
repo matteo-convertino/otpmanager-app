@@ -7,7 +7,7 @@ class HomeState extends Equatable {
   final int refreshTime;
   final int syncStatus; // 1 = SYNCING, 0 = OK, -1 = ERROR
   final String syncError;
-  final String pin;
+  final String password;
   final bool isGuest;
   final String accountDeleted;
   final bool sortedByNameDesc;
@@ -20,7 +20,7 @@ class HomeState extends Equatable {
     required this.refreshTime,
     required this.syncStatus,
     required this.syncError,
-    required this.pin,
+    required this.password,
     required this.isGuest,
     required this.accountDeleted,
     required this.sortedByNameDesc,
@@ -34,7 +34,7 @@ class HomeState extends Equatable {
         refreshTime = 30,
         syncStatus = 1,
         syncError = "",
-        pin = user.pin ?? "",
+        password = user.password ?? "",
         isGuest = user.isGuest,
         accountDeleted = "",
         sortedByNameDesc = true,
@@ -58,7 +58,7 @@ class HomeState extends Equatable {
       refreshTime: refreshTime ?? this.refreshTime,
       syncStatus: syncStatus ?? this.syncStatus,
       syncError: syncError ?? this.syncError,
-      pin: pin,
+      password: password,
       isGuest: isGuest,
       accountDeleted: accountDeleted ?? this.accountDeleted,
       sortedByNameDesc: sortedByNameDesc ?? this.sortedByNameDesc,
@@ -78,6 +78,6 @@ class HomeState extends Equatable {
         sortedByNameDesc,
         sortedByIssuerDesc,
         sortedByIdDesc,
-        searchBarValue
+        searchBarValue,
       ];
 }

@@ -257,6 +257,11 @@ class Home extends HookWidget {
             if (state.accountDeleted != "") {
               showSnackBar(context: context, msg: state.accountDeleted);
             }
+            /*if(state.passwordNeeded) {
+              _navigationService.navigateTo(passwordRoute, arguments: {
+                "toEdit": false,
+              });
+            }*/
           },
           builder: (context, state) {
             return Stack(
@@ -289,30 +294,22 @@ class Home extends HookWidget {
                           ],
                         )),
                   ),
-                ] else if (state.pin == "") ...[
-                  GestureDetector(
-                    onTap: () {
-                      _navigationService.navigateTo(
-                        pinRoute,
-                        arguments: {"toEdit": false},
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 35,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? const Color.fromRGBO(0, 185, 255, 1)
-                          : Theme.of(context).secondaryHeaderColor,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Please set a pin to protect your OTP codes",
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.white
-                                    : Colors.white70,
-                          ),
+                ] else if (state.password == "") ...[
+                  Container(
+                    width: double.infinity,
+                    height: 35,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? const Color.fromRGBO(0, 185, 255, 1)
+                        : Theme.of(context).secondaryHeaderColor,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Please set the password to protect your OTP codes",
+                        style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.white
+                                  : Colors.white70,
                         ),
                       ),
                     ),
@@ -320,7 +317,7 @@ class Home extends HookWidget {
                 ],
                 Padding(
                   padding: EdgeInsets.fromLTRB(
-                      0, state.pin == "" || state.isGuest ? 35 : 0, 0, 0),
+                      0, state.password == "" || state.isGuest ? 35 : 0, 0, 0),
                   child: RefreshIndicator(
                     onRefresh: () async =>
                         context.read<HomeBloc>().add(NextcloudSync()),
@@ -355,7 +352,7 @@ class Home extends HookWidget {
                                   ),
                                   SlidableAction(
                                     onPressed: (_) {
-                                      if (state.pin == "") {
+                                      if (state.password == "") {
                                         showSnackBar(
                                           context: context,
                                           msg:
@@ -363,7 +360,7 @@ class Home extends HookWidget {
                                         );
                                       } else {
                                         _navigationService.navigateTo(
-                                          manualRoute,
+                                          authRoute,
                                           arguments: {"account": account},
                                         );
                                       }

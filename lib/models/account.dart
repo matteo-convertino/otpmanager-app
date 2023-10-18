@@ -9,6 +9,8 @@ class Account {
 
   @Unique()
   String secret;
+  @Unique()
+  String? encryptedSecret;
 
   String name;
   String? issuer;
@@ -26,6 +28,7 @@ class Account {
 
   int? position;
 
+  @Transient()
   late Algorithm algorithm;
 
   int? get dbAlgorithm {
@@ -46,6 +49,7 @@ class Account {
 
   Account({
     required this.secret,
+    this.encryptedSecret,
     required this.name,
     this.issuer,
     this.digits,
@@ -79,7 +83,7 @@ class Account {
   @override
   toString() => '{'
       '"id": "$id", '
-      '"secret": "$secret", '
+      '"secret": "$encryptedSecret", '
       '"name": "$name", '
       '"issuer": "$issuer", '
       '"algorithm": "$dbAlgorithm", '

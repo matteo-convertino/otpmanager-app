@@ -6,23 +6,23 @@ import '../../models/account.dart';
 class AccountDetailsState extends Equatable {
   final Account account;
   final String accountDeleted;
-  final String pin;
+  final String password;
 
   const AccountDetailsState({
     required this.account,
     required this.accountDeleted,
-    required this.pin,
+    required this.password,
   });
 
   AccountDetailsState.initial(this.account, User user)
       : accountDeleted = "",
-        pin = user.pin ?? "";
+        password = user.password ?? "";
 
   AccountDetailsState copyWith({String? accountDeleted}) {
     return AccountDetailsState(
       account: account,
       accountDeleted: accountDeleted ?? this.accountDeleted,
-      pin: pin,
+      password: password,
     );
   }
 

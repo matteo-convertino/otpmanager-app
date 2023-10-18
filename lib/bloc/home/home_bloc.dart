@@ -66,16 +66,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onNextcloudSync(NextcloudSync event, Emitter<HomeState> emit) async {
+    add(GetAccounts());
+
     if (!state.isGuest) {
       emit(state.copyWith(syncStatus: 1));
 
-      final error = await nextcloudService.sync();
+      final Map<String, dynamic> result = await nextcloudService.sync();
 
-      if (error == null) {
-        emit(state.copyWith(syncStatus: 0));
-      } else {
-        emit(state.copyWith(syncStatus: -1, syncError: error));
+      if (result["error"] != null) {
+        emit(state.copyWith(syncStatus: -1, syncError: result["error"]));
         emit(state.copyWith(syncError: ""));
+      } else if (result["toAdd"].length > 0 || result["toEdit"].length > 0) {
+        emit(state.copyWith(syncStatus: 0));
+        _navigationService.navigateTo(authRoute, arguments: {
+          "toAdd": result["toAdd"],
+          "toEdit": result["toEdit"],
+        });
+      } else {
+        emit(state.copyWith(syncStatus: 0));
       }
     } else {
       emit(state.copyWith(syncStatus: -1));

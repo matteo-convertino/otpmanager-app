@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/bloc/settings/settings_event.dart';
 import 'package:otp_manager/bloc/settings/settings_state.dart';
+import 'package:otp_manager/models/user.dart';
 import 'package:otp_manager/repository/local_repository.dart';
 import 'package:otp_manager/logger/save_log.dart';
 import 'package:otp_manager/utils/launch_url.dart';
@@ -20,6 +21,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<PinClicked>(_onPinClicked);
     on<OpenLink>(_onOpenLink);
     on<CopyToClipboard>(_onCopyToClipboard);
+    on<AskTimeChanged>(_onAskTimeChanged);
   }
 
   void _onSaveLog(SaveLog event, Emitter<SettingsState> emit) => saveLog();
@@ -39,5 +41,15 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Clipboard.setData(ClipboardData(text: event.text));
     emit(state.copyWith(copiedToClipboard: false));
     emit(state.copyWith(copiedToClipboard: true));
+  }
+
+  void _onAskTimeChanged(AskTimeChanged event, Emitter<SettingsState> emit) {
+    emit(state.copyWith(selectedAskTimeIndex: event.index));
+
+    User user = localRepositoryImpl.getUser()!;
+
+    user.dbPasswordAskTime = event.index;
+
+    localRepositoryImpl.updateUser(user);
   }
 }

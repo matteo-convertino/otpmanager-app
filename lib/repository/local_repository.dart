@@ -24,10 +24,12 @@ abstract class LocalRepository {
   void removeAccount(int id);
   void updateAccount(Account account);
   Account? getAccount(int id);
+  Account? getAccountBySecret(String secret);
   void scaleAccountsPositionAfter(int position);
   List<Account> getAccountBetweenPositions(int min, int max);
   Account? getAccountByPosition(int position);
   bool setAccountAsDeleted(int id);
+  int? getAccountLastPosition();
 }
 
 class LocalRepositoryImpl extends LocalRepository {
@@ -59,7 +61,7 @@ class LocalRepositoryImpl extends LocalRepository {
   @override
   bool accountAlreadyExists(String secret) {
     return _accountBox
-        .query(Account_.secret.contains(secret))
+        .query(Account_.secret.equals(secret))
         .build()
         .find()
         .isNotEmpty;
@@ -151,7 +153,7 @@ class LocalRepositoryImpl extends LocalRepository {
 
       return repairedError;
     }
-    
+
     return false;
   }
 
@@ -180,6 +182,7 @@ class LocalRepositoryImpl extends LocalRepository {
           name: account["name"],
           issuer: account["issuer"],
           secret: account["secret"],
+          encryptedSecret: account["encryptedSecret"],
           type: account["type"],
           dbAlgorithm: account["algorithm"],
           digits: account["digits"],
@@ -237,6 +240,14 @@ class LocalRepositoryImpl extends LocalRepository {
   }
 
   @override
+  Account? getAccountBySecret(String secret) {
+    return _accountBox
+        .query(Account_.secret.equals(secret))
+        .build()
+        .findFirst();
+  }
+
+  @override
   void scaleAccountsPositionAfter(int position) {
     _accountBox
         .query(Account_.deleted.equals(false) &
@@ -283,5 +294,14 @@ class LocalRepositoryImpl extends LocalRepository {
     }
 
     return false;
+  }
+
+  @override
+  int? getAccountLastPosition() {
+    return (_accountBox.query(Account_.deleted.equals(false))
+          ..order(Account_.position, flags: Order.descending))
+        .build()
+        .findFirst()
+        ?.position;
   }
 }

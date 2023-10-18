@@ -30,3 +30,12 @@ class CopyToClipboard extends SettingsEvent {
   @override
   List<Object> get props => [text];
 }
+
+class AskTimeChanged extends SettingsEvent {
+  const AskTimeChanged({required this.index});
+
+  final int index;
+
+  @override
+  List<Object> get props => [index];
+}

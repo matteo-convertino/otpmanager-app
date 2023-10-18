@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:4285661817482440357",
-      "lastPropertyId": "13:4227822487933505977",
+      "lastPropertyId": "15:4148299309095428910",
       "name": "Account",
       "properties": [
         {
@@ -75,13 +75,20 @@
           "id": "13:4227822487933505977",
           "name": "dbAlgorithm",
           "type": 6
+        },
+        {
+          "id": "15:4148299309095428910",
+          "name": "encryptedSecret",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "3:8995856266510989675"
         }
       ],
       "relations": []
     },
     {
       "id": "2:7664507538808873390",
-      "lastPropertyId": "7:1799353112031269157",
+      "lastPropertyId": "10:1615550960879192014",
       "name": "User",
       "properties": [
         {
@@ -112,27 +119,46 @@
         },
         {
           "id": "6:6627109253779031772",
-          "name": "pin",
+          "name": "password",
           "type": 9
         },
         {
           "id": "7:1799353112031269157",
           "name": "isGuest",
           "type": 1
+        },
+        {
+          "id": "8:3931286562875030069",
+          "name": "iv",
+          "type": 9
+        },
+        {
+          "id": "9:2981116505199087943",
+          "name": "dbPasswordAskTime",
+          "type": 6
+        },
+        {
+          "id": "10:1615550960879192014",
+          "name": "passwordExpirationDate",
+          "type": 10
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "2:7664507538808873390",
-  "lastIndexId": "1:6872732689934629113",
+  "lastIndexId": "3:8995856266510989675",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
-  "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredIndexUids": [
+    2541609273737449069
+  ],
+  "retiredPropertyUids": [
+    6227200453650360822
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:otp_manager/main.dart';
 import 'package:otp_manager/repository/local_repository.dart';
+import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
+import 'package:otp_manager/utils/encryption.dart';
 
 import '../repository/nextcloud_repository.dart';
-
-import 'package:http/http.dart' as http;
 
 class NextcloudService {
   final NextcloudRepositoryImpl _nextcloudRepositoryImpl;
@@ -13,37 +15,91 @@ class NextcloudService {
 
   NextcloudService(this._nextcloudRepositoryImpl, this._localRepositoryImpl);
 
-  Future<String?> sync() async {
-    logger.d("NextcloudService.sync start");
+  Future<Map<String, String?>> checkPassword(String password) async {
+    logger.d("NextcloudService.checkPassword start");
 
-    final accounts = _localRepositoryImpl.getAllAccounts();
-
-    var data = {"accounts": jsonDecode(accounts.toString())};
+    Map<String, String?> result = {"error": null, "iv": null};
 
     try {
       final user = _localRepositoryImpl.getUser();
       http.Response response = await _nextcloudRepositoryImpl.sendHttpRequest(
-          user, "accounts/sync", data);
+        user,
+        "password/check",
+        jsonEncode({"password": password}),
+      );
+
+      if (response.statusCode == 400) {
+        var body = jsonDecode(response.body);
+        logger.e("statusCode: ${response.statusCode}\nbody: ${response.body}");
+        result["error"] = body["error"];
+      } else if (response.statusCode == 404) {
+        result["error"] =
+            "Please update the extension on the server to version 1.0.0 or higher";
+      } else {
+        var body = jsonDecode(response.body);
+        result["iv"] = body["iv"];
+      }
+    } catch (e) {
+      logger.e(e);
+      result["error"] =
+          "An error encountered while checking password. Try to reload after a while!";
+    }
+
+    return result;
+  }
+
+  Future<Map<String, dynamic>> sync() async {
+    logger.d("NextcloudService.sync start");
+
+    Map<String, dynamic> syncResult = {
+      "error": null,
+      "toAdd": [],
+      "toEdit": []
+    };
+
+    final accounts = _localRepositoryImpl.getAllAccounts();
+    final user = _localRepositoryImpl.getUser()!;
+
+    if (user.password == null || user.iv == null) {
+      await NavigationService().navigateTo(authRoute, arguments: {});
+    }
+
+    for (var e in accounts) {
+      e.encryptedSecret ??=
+          Encryption.encrypt(e.secret, user.password!, user.iv!);
+    }
+
+    var data = jsonEncode({"accounts": jsonDecode(accounts.toString())});
+
+    try {
+      final user = _localRepositoryImpl.getUser();
+      http.Response response = await _nextcloudRepositoryImpl.sendHttpRequest(
+        user,
+        "accounts/sync",
+        data,
+      );
 
       if (response.statusCode == 200) {
         _localRepositoryImpl.updateNeverSync();
         var body = jsonDecode(response.body);
         if (body.isNotEmpty) {
-          _localRepositoryImpl.addNewAccounts(body["toAdd"]);
           _localRepositoryImpl.deleteOldAccounts(body["toDelete"]);
-          _localRepositoryImpl.updateEditedAccounts(body["toEdit"]);
+          syncResult["toAdd"] = body["toAdd"];
+          syncResult["toEdit"] = body["toEdit"];
         }
 
         if (_localRepositoryImpl.repairPositionError()) sync();
       } else {
         logger.e("statusCode: ${response.statusCode}\nbody: ${response.body}");
-        return "The nextcloud server returns an error. Try to reload after a while!";
+        syncResult["error"] =
+            "The nextcloud server returns an error. Try to reload after a while!";
       }
     } catch (e) {
       logger.e(e);
-      return "An error encountered while synchronising. Try to reload after a while!";
+      syncResult["error"] =
+          "An error encountered while synchronising. Try to reload after a while!";
     }
 
-    return null;
+    return syncResult;
   }
 }

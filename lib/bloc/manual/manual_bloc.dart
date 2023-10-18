@@ -1,17 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_manager/utils/base32.dart';
 
-import '../../main.dart' show objectBox;
 import '../../models/account.dart';
-import '../../object_box/objectbox.g.dart';
+import '../../repository/local_repository.dart';
 import '../../utils/uri_decoder.dart';
 import 'manual_event.dart';
 import 'manual_state.dart';
 
 class ManualBloc extends Bloc<ManualEvent, ManualState> {
   final Account? account;
-  final Box<Account> _accountBox = objectBox.store.box<Account>();
+  //final Box<Account> _accountBox = objectBox.store.box<Account>();
+  final LocalRepositoryImpl localRepositoryImpl;
 
-  ManualBloc({this.account}) : super(ManualState.initial(account)) {
+  ManualBloc({this.account, required this.localRepositoryImpl})
+      : super(ManualState.initial(account)) {
     on<AddOrEditAccount>(_onAddOrEditAccount);
     on<NameChanged>(_onNameChanged);
     on<IssuerChanged>(_onIssuerChanged);
@@ -23,7 +25,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   }
 
   void _storeAccount(Emitter<ManualState> emit, Account account, String msg) {
-    _accountBox.put(account);
+    localRepositoryImpl.updateAccount(account);
     emit(state.copyWith(message: msg));
   }
 
@@ -54,17 +56,16 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       emit(state.copyWith(
           secretKeyError:
               "The secret key cannot be longer than 256 characters"));
+    } else if (!Base32.isValid(secretKey)) {
+      emit(state.copyWith(
+          secretKeyError: "The secret key is not base 32 encoded"));
     }
 
     if (state.nameError == null &&
         state.issuerError == null &&
         state.secretKeyError == null) {
       Account newAccount;
-      int? lastPosition = (_accountBox.query(Account_.deleted.equals(false))
-            ..order(Account_.position, flags: Order.descending))
-          .build()
-          .findFirst()
-          ?.position;
+      int? lastPosition = localRepositoryImpl.getAccountLastPosition();
       int position;
 
       if (lastPosition != null) {
@@ -85,10 +86,8 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
           position: position,
         );
 
-        Account? sameAccount = _accountBox
-            .query(Account_.secret.equals(secretKey))
-            .build()
-            .findFirst();
+        Account? sameAccount =
+            localRepositoryImpl.getAccountBySecret(secretKey);
 
         if (sameAccount == null) {
           _storeAccount(emit, newAccount, "New account has been added");

@@ -9,4 +9,4 @@ const String loginRoute = "login";
 const String webViewerRoute = "web_viewer";
 const String manualRoute = "manual";
 const String authRoute = "auth";
-const String pinRoute = "pin";
+const String passwordRoute = "password";

@@ -34,13 +34,17 @@ class AccountDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              if (context.read<AccountDetailsBloc>().state.pin == "") {
+              if (context.read<AccountDetailsBloc>().state.password == "") {
                 showSnackBar(
                     context: context,
                     msg: "To edit an account you have to set a pin before");
               } else {
-                NavigationService()
-                    .navigateTo(manualRoute, arguments: {"account": context.read<AccountDetailsBloc>().state.account});
+                NavigationService().navigateTo(
+                  authRoute,
+                  arguments: {
+                    "account": context.read<AccountDetailsBloc>().state.account
+                  },
+                );
               }
             },
           ),
@@ -50,9 +54,7 @@ class AccountDetails extends StatelessWidget {
               showDeleteModal(
                 context,
                 context.read<AccountDetailsBloc>().state.account,
-                () => context
-                    .read<AccountDetailsBloc>()
-                    .add(DeleteAccount()),
+                () => context.read<AccountDetailsBloc>().add(DeleteAccount()),
               );
             },
           )
@@ -74,8 +76,8 @@ class AccountDetails extends StatelessWidget {
                   newItem("Issuer", state.account.issuer ?? ""),
                   newItem("Period", "${state.account.period}s"),
                   newItem("Digits", state.account.digits.toString()),
-                  newItem(
-                      "Algorithm", state.account.algorithm.toString().split(".")[1]),
+                  newItem("Algorithm",
+                      state.account.algorithm.toString().split(".")[1]),
                   newItem("Type", state.account.type.toUpperCase()),
                   if (state.account.type == "hotp")
                     newItem(

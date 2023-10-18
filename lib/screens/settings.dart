@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,13 +10,20 @@ import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/bloc/settings/settings_bloc.dart';
 import 'package:otp_manager/bloc/settings/settings_event.dart';
 import 'package:otp_manager/bloc/settings/settings_state.dart';
-import 'package:otp_manager/routing/navigation_service.dart';
+import 'package:otp_manager/utils/show_snackbar.dart';
 
-import "../routing/constants.dart";
 import '../utils/toast.dart';
 
 class Settings extends HookWidget {
-  const Settings({Key? key}) : super(key: key);
+  Settings({Key? key}) : super(key: key);
+
+  final List<String> askTimeOptions = [
+    'Every Sync',
+    'After 1 minute',
+    'After 3 minutes',
+    'After 5 minutes',
+    'Never',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -142,22 +150,33 @@ class Settings extends HookWidget {
                     },
                   ),
                   ListTile(
-                    title: state.pin != null && state.pin != ""
-                        ? const Text("Change pin")
-                        : const Text("Set pin"),
-                    trailing: const Text(
-                      "⬤⬤⬤⬤⬤⬤",
-                      style: TextStyle(
-                        fontSize: 11,
-                        letterSpacing: 2,
-                        color: Colors.grey,
+                    title: const Text("Password ask time"),
+                    trailing: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        dropdownWidth: 150.0,
+                        //isExpanded: true,
+                        items: askTimeOptions
+                            .map((String item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        value: askTimeOptions[state.selectedAskTimeIndex],
+                        onChanged: (String? value) {
+                          showSnackBar(
+                              context: context,
+                              msg:
+                                  "The change will be applied to the next sync ");
+                          context.read<SettingsBloc>().add(AskTimeChanged(
+                              index: askTimeOptions.indexOf(value!)));
+                        },
                       ),
                     ),
-                    onTap: () {
-                      NavigationService().navigateTo(pinRoute, arguments: {
-                        "toEdit": state.pin != null && state.pin != "",
-                      });
-                    },
                   ),
                   ListTile(
                     title: const Text("Version number"),

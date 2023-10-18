@@ -9,11 +9,17 @@ class AuthEvent extends Equatable {
 
 class Authenticated extends AuthEvent {}
 
-class PinSubmit extends AuthEvent {
-  const PinSubmit({required this.pin});
+class PasswordChanged extends AuthEvent {
+  const PasswordChanged({required this.password});
 
-  final String pin;
+  final String password;
 
   @override
-  List<Object> get props => [pin];
+  List<Object> get props => [password];
 }
+
+class PasswordSubmit extends AuthEvent {}
+
+class ResetAttempts extends AuthEvent {}
+
+class ShowFingerAuth extends AuthEvent {}
