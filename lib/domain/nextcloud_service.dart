@@ -34,7 +34,7 @@ class NextcloudService {
         result["error"] = body["error"];
       } else if (response.statusCode == 404) {
         result["error"] =
-            "Please update the extension on the server to version 1.0.0 or higher";
+            "You need to set a password before. Please update the OTP Manager extension on your Nextcloud server to version 0.3.0 or higher.";
       } else {
         var body = jsonDecode(response.body);
         result["iv"] = body["iv"];
