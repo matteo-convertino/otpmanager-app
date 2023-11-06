@@ -54,7 +54,13 @@ class Home extends HookWidget {
           title: Row(
             children: [
               if (!showSearchBar.value && searchBarAnimationEnd.value) ...[
-                const Text("OTP Manager"),
+                // const Text("OTP Manager"),
+                Text(
+                  "OTP Manager",
+                  style: TextStyle(
+                    color: Colors.white, // Set the text color to white
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: BlocBuilder<HomeBloc, HomeState>(
@@ -228,6 +234,7 @@ class Home extends HookWidget {
                 icon: const Icon(
                   Icons.sort,
                   size: 25.0,
+                  color: Colors.white, // Set the icon color to white
                 ),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(3.0)),
