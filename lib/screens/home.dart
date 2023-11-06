@@ -50,6 +50,7 @@ class Home extends HookWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.blue,
           title: Row(
             children: [
               if (!showSearchBar.value && searchBarAnimationEnd.value) ...[
