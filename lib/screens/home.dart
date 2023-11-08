@@ -50,7 +50,10 @@ class Home extends HookWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          // backgroundColor: Colors.blue,
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? Colors.blue // Use blue for light mode
+          : null, // Use the default color for dark mode
           title: Row(
             children: [
               if (!showSearchBar.value && searchBarAnimationEnd.value) ...[
