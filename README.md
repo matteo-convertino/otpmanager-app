@@ -8,13 +8,16 @@
 
 # Screenshots
 
-<img src="resources/img/1.png" height="350">&emsp;<img src="resources/img/2.png" height="350">&emsp;<img src="resources/img/3.png" height="350">&emsp;<img src="resources/img/4.png" height="350">&emsp;<img src="resources/img/5.png" height="350">&emsp;<img src="resources/img/6.png" height="350">
+Android:<br>
+<img src="resources/img/1.png" height="350">&emsp;<img src="resources/img/2.png" height="350">&emsp;<img src="resources/img/3.png" height="350"><br>
+iOS:<br>
+<img src="resources/img/4.PNG" height="350">&emsp;<img src="resources/img/5.PNG" height="350">&emsp;<img src="resources/img/6.PNG" height="350">
 
 <br>
 
 # Description
 
-OTP Manager is a useful Android application for those who use two-factor authentication (2FA) and want to manage their OTP codes securely and easily. This application allows you to synchronise your OTP codes with your personal Nextcloud server so that you can access them from multiple devices.
+OTP Manager is a useful application for both Android as well as iOS for those who use two-factor authentication (2FA) and want to manage their OTP codes securely and easily. This application allows you to synchronise your OTP codes with your personal Nextcloud server so that you can access them from multiple devices.
 
 With OTP Manager, you no longer have to worry about losing your OTP codes or not having access to them when you need them. All you have to do is synchronise the app with your Nextcloud server and you will always have your OTP codes at hand, wherever you are.
 
