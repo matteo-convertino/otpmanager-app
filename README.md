@@ -40,3 +40,16 @@ This way, the transition from Google Authenticator to OTP Manager will be quick 
 - [ ] Give the possibility to organize the accounts in folders or, assigning a tag to the accounts, filter them during the search
 - [ ] [[Feature Request] Show QR Code](https://github.com/matteo-convertino/otpmanager-app/issues/17)
 - [ ] [[Feature Request] Allow setting icon](https://github.com/matteo-convertino/otpmanager-app/issues/18)
+
+## Contributors ✨
+
+Special thanks go to these wonderful people:
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/davideserio"><img src="https://avatars.githubusercontent.com/u/90445202?v=4" width="100px;" alt="Davide Serio"/><br /><sub><b>Davide Serio</b></sub></a><br /></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/srijansaxena11"><img src="https://avatars.githubusercontent.com/u/34964694?v=4" width="100px;" alt="Srijan Saxena"/><br /><sub><b>Srijan Saxena</b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
+
