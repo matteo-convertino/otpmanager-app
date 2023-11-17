@@ -54,7 +54,7 @@ class Manual extends HookWidget {
                       border: const OutlineInputBorder(),
                       labelText: "Account name",
                       errorText: state.nameError,
-                      hintText: "e.g. Username/Handle",
+                      hintText: "e.g. Username",
                       suffixIcon: state.nameError == null
                           ? const Icon(Icons.drive_file_rename_outline)
                           : const Icon(Icons.error, color: Colors.red),
