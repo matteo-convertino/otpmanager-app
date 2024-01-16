@@ -11,14 +11,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final LocalRepositoryImpl localRepositoryImpl;
 
-  SettingsBloc({
-    required this.localRepositoryImpl,
-  }) : super(
-          SettingsState.initial(localRepositoryImpl.getUser()!),
-        ) {
+  SettingsBloc({required this.localRepositoryImpl})
+      : super(SettingsState.initial(localRepositoryImpl.getUser()!)) {
     on<SaveLog>(_onSaveLog);
     on<InitPackageInfo>(_onInitPackageInfo);
-    on<PinClicked>(_onPinClicked);
     on<OpenLink>(_onOpenLink);
     on<CopyToClipboard>(_onCopyToClipboard);
     on<AskTimeChanged>(_onAskTimeChanged);
@@ -31,8 +27,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final info = await PackageInfo.fromPlatform();
     emit(state.copyWith(packageInfo: info));
   }
-
-  void _onPinClicked(PinClicked event, Emitter<SettingsState> emit) {}
 
   void _onOpenLink(OpenLink event, Emitter<SettingsState> emit) =>
       customLaunchUrl(event.url);
@@ -50,6 +44,25 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     user.dbPasswordAskTime = event.index;
 
+    _updatePasswordExpirationDate(user);
+
     localRepositoryImpl.updateUser(user);
+  }
+
+  void _updatePasswordExpirationDate(User user) {
+    if (user.passwordAskTime == PasswordAskTime.never) {
+      user.passwordExpirationDate = null;
+    } else if (user.passwordAskTime == PasswordAskTime.everyOpening) {
+      user.passwordExpirationDate = DateTime.now();
+    } else if (user.passwordAskTime == PasswordAskTime.oneMinutes) {
+      user.passwordExpirationDate =
+          DateTime.now().add(const Duration(minutes: 1));
+    } else if (user.passwordAskTime == PasswordAskTime.threeMinutes) {
+      user.passwordExpirationDate =
+          DateTime.now().add(const Duration(minutes: 3));
+    } else if (user.passwordAskTime == PasswordAskTime.fiveMinutes) {
+      user.passwordExpirationDate =
+          DateTime.now().add(const Duration(minutes: 5));
+    }
   }
 }

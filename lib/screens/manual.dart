@@ -8,9 +8,12 @@ import 'package:otp_manager/bloc/manual/manual_event.dart';
 import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/utils/show_snackbar.dart';
+import 'package:otp_manager/utils/simple_icons.dart';
 
-import '../utils/toast.dart';
+import '../bloc/icon_picker/icon_picker_bloc.dart';
 import '../bloc/manual/manual_state.dart';
+import '../repository/local_repository.dart';
+import 'icon_picker.dart';
 
 class Manual extends HookWidget {
   const Manual({Key? key}) : super(key: key);
@@ -45,32 +48,107 @@ class Manual extends HookWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-                  child: TextFormField(
-                    initialValue: state.name,
-                    //controller: _nameTextFieldController,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: "Account name",
-                      errorText: state.nameError,
-                      suffixIcon: state.nameError == null
-                          ? const Icon(Icons.drive_file_rename_outline)
-                          : const Icon(Icons.error, color: Colors.red),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0, top: 15),
+                          child: Column(
+                            children: [
+                              InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () => showModalBottomSheet<String?>(
+                                        context: context,
+                                        showDragHandle: true,
+                                        isScrollControlled: true,
+                                        builder: (BuildContext context) {
+                                          return BlocProvider<IconPickerBloc>(
+                                            create: (context) => IconPickerBloc(
+                                              localRepositoryImpl: context
+                                                  .read<LocalRepositoryImpl>(),
+                                            ),
+                                            child: const IconPicker(),
+                                          );
+                                        })
+                                    .then((value) => {
+                                          if (value != null)
+                                            context
+                                                .read<ManualBloc>()
+                                                .add(IconKeyChanged(key: value))
+                                        }),
+                                child: Ink(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Theme.of(context)
+                                            .scaffoldBackgroundColor
+                                        : const Color(0xFF313131),
+                                    boxShadow: [
+                                      if (Theme.of(context).brightness ==
+                                          Brightness.light)
+                                        BoxShadow(
+                                          color: Colors.grey[300]!,
+                                          blurRadius: 10.0,
+                                          spreadRadius: 1.0,
+                                        )
+                                    ],
+                                  ),
+                                  child: simpleIcons[state.iconKey] ??
+                                      simpleIcons['default']!,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(top: 3.0),
+                                child: Text(
+                                  "Change icon",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
                     ),
-                    onChanged: (value) {
-                      context.read<ManualBloc>().add(NameChanged(name: value));
-                    },
-                  ),
+                    Expanded(
+                      flex: 10,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+                        child: TextFormField(
+                          initialValue: state.name,
+                          maxLength: 64,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: "Account name",
+                            counterText: "${state.name.length}/64",
+                            errorText: state.nameError,
+                            suffixIcon: state.nameError == null
+                                ? const Icon(Icons.drive_file_rename_outline)
+                                : const Icon(Icons.error, color: Colors.red),
+                          ),
+                          onChanged: (value) {
+                            context
+                                .read<ManualBloc>()
+                                .add(NameChanged(name: value));
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: TextFormField(
                     initialValue: state.issuer,
-                    //controller: _issuerTextFieldController,
+                    maxLength: 64,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: "Account issuer",
+                      counterText: "${state.issuer.length}/64",
                       errorText: state.issuerError,
                       hintText: "e.g. Google/Facebook/Github",
                       suffixIcon: state.issuerError == null
@@ -89,10 +167,11 @@ class Manual extends HookWidget {
                   child: TextFormField(
                     initialValue: state.secretKey,
                     readOnly: state.isEdit,
-                    //controller: _secretKeyTextFieldController,
+                    maxLength: 256,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: "Secret key",
+                      counterText: "${state.secretKey.length}/256",
                       errorText: state.secretKeyError,
                       suffixIcon: state.secretKeyError == null
                           ? const Icon(Icons.vpn_key)
@@ -106,7 +185,8 @@ class Manual extends HookWidget {
                     onTap: () {
                       if (state.isEdit) {
                         Clipboard.setData(ClipboardData(text: state.secretKey));
-                        showToast("Secrey key copied");
+                        showSnackBar(
+                            context: context, msg: "Secrey key copied");
                       }
                     },
                   ),
@@ -245,7 +325,7 @@ class Manual extends HookWidget {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           );

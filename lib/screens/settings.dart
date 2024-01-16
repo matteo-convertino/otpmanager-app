@@ -12,13 +12,11 @@ import 'package:otp_manager/bloc/settings/settings_event.dart';
 import 'package:otp_manager/bloc/settings/settings_state.dart';
 import 'package:otp_manager/utils/show_snackbar.dart';
 
-import '../utils/toast.dart';
-
 class Settings extends HookWidget {
   Settings({Key? key}) : super(key: key);
 
   final List<String> askTimeOptions = [
-    'Every Sync',
+    'Every Opening',
     'After 1 minute',
     'After 3 minutes',
     'After 5 minutes',
@@ -44,7 +42,7 @@ class Settings extends HookWidget {
                   title: const Text("Bug Report"),
                   content: RichText(
                     text: TextSpan(
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.normal),
                       text: "If you have found a bug and want to report "
                           "it to the developer, contact him via email on ",
                       children: [
@@ -103,16 +101,20 @@ class Settings extends HookWidget {
                 tiles: [
                   ListTile(
                     title: const Text("Nextcloud server"),
-                    trailing: Text(
-                      state.url,
-                      style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: Colors.grey,
+                    trailing: SizedBox(
+                      width: 200,
+                      child: Text(
+                        state.url,
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: state.url));
-                      showToast("URL copied");
+                      showSnackBar(context: context, msg: "URL copied");
                     },
                   ),
                   BlocBuilder<OtpManagerBloc, OtpManagerState>(
@@ -154,7 +156,6 @@ class Settings extends HookWidget {
                     trailing: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         dropdownWidth: 150.0,
-                        //isExpanded: true,
                         items: askTimeOptions
                             .map((String item) => DropdownMenuItem<String>(
                                   value: item,
@@ -168,10 +169,6 @@ class Settings extends HookWidget {
                             .toList(),
                         value: askTimeOptions[state.selectedAskTimeIndex],
                         onChanged: (String? value) {
-                          showSnackBar(
-                              context: context,
-                              msg:
-                                  "The change will be applied to the next sync ");
                           context.read<SettingsBloc>().add(AskTimeChanged(
                               index: askTimeOptions.indexOf(value!)));
                         },

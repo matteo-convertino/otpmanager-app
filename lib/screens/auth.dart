@@ -71,18 +71,35 @@ class Auth extends HookWidget {
           }
         },
         builder: (context, state) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: AuthInput(
-                onChanged: (value) => context
-                    .read<AuthBloc>()
-                    .add(PasswordChanged(password: value)),
-                onSubmit: () => context.read<AuthBloc>().add(PasswordSubmit()),
-                enabled: enabled.value,
-                errorMsg: state.message,
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 250),
+                child: Icon(
+                  Icons.lock,
+                  size: 100,
+                  color: Colors.blue,
+                ),
               ),
-            ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    child: AuthInput(
+                      onChanged: (value) => context
+                          .read<AuthBloc>()
+                          .add(PasswordChanged(password: value)),
+                      onSubmit: () =>
+                          context.read<AuthBloc>().add(PasswordSubmit()),
+                      enabled: enabled.value,
+                      errorMsg: state.message,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       ),

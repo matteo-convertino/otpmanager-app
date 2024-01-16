@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:4285661817482440357",
-      "lastPropertyId": "15:4148299309095428910",
+      "lastPropertyId": "16:8717556734128686126",
       "name": "Account",
       "properties": [
         {
@@ -82,13 +82,18 @@
           "type": 9,
           "flags": 2080,
           "indexId": "3:8995856266510989675"
+        },
+        {
+          "id": "16:8717556734128686126",
+          "name": "iconKey",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "2:7664507538808873390",
-      "lastPropertyId": "10:1615550960879192014",
+      "lastPropertyId": "14:6803514055320618522",
       "name": "User",
       "properties": [
         {
@@ -141,6 +146,21 @@
           "id": "10:1615550960879192014",
           "name": "passwordExpirationDate",
           "type": 10
+        },
+        {
+          "id": "12:4342457815063604129",
+          "name": "sortedByNameDesc",
+          "type": 1
+        },
+        {
+          "id": "13:7062927719479673821",
+          "name": "sortedByIssuerDesc",
+          "type": 1
+        },
+        {
+          "id": "14:6803514055320618522",
+          "name": "sortedByIdDesc",
+          "type": 1
         }
       ],
       "relations": []
@@ -157,7 +177,8 @@
     2541609273737449069
   ],
   "retiredPropertyUids": [
-    6227200453650360822
+    6227200453650360822,
+    6298052200764982397
   ],
   "retiredRelationUids": [],
   "version": 1

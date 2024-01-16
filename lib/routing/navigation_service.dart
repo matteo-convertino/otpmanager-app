@@ -5,7 +5,7 @@ class NavigationService {
   NavigationService._internal();
 
   // With this factory setup, any time NavigationService() is called
-  // within the appication _instance will be returned and not a new instance
+  // within the application _instance will be returned and not a new instance
   factory NavigationService() => _instance;
 
   // This would allow the app to monitor the current screen state during navigation.
@@ -38,6 +38,4 @@ class NavigationService {
   void goBack() {
     navigatorKey.currentState?.pop();
   }
-
-  //void goToHome() => navigatorKey.currentState?.popUntil((route) => route.isFirst);
 }

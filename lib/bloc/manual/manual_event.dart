@@ -9,6 +9,15 @@ class ManualEvent extends Equatable {
 
 class AddOrEditAccount extends ManualEvent {}
 
+class IconKeyChanged extends ManualEvent {
+  const IconKeyChanged({required this.key});
+
+  final String key;
+
+  @override
+  List<Object> get props => [key];
+}
+
 class NameChanged extends ManualEvent {
   const NameChanged({required this.name});
 

@@ -2,20 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_event.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/repository/local_repository.dart';
-import 'package:otp_manager/routing/constants.dart';
 
 class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
   final LocalRepositoryImpl localRepositoryImpl;
 
-  OtpManagerBloc({
-    required this.localRepositoryImpl,
-  }) : super(
-          OtpManagerState.initial(
-            localRepositoryImpl.getUser()?.darkTheme ?? false,
-            localRepositoryImpl.getUser()?.copyWithTap ?? false,
-            localRepositoryImpl.isLogged() ? homeRoute : loginRoute,
-          ),
-        ) {
+  OtpManagerBloc({required this.localRepositoryImpl})
+      : super(OtpManagerState.initial(
+          localRepositoryImpl.getUser(),
+          localRepositoryImpl.isLogged(),
+        )) {
     on<CopyWithTapToggled>(_onCopyWithTapToggled);
     on<DarkThemeToggled>(_onDarkThemeToggled);
   }

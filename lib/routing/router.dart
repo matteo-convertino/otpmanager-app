@@ -15,7 +15,7 @@ import '../bloc/web_viewer/web_viewer_bloc.dart';
 import '../models/account.dart';
 import '../screens/account_details.dart';
 import '../screens/auth.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 import '../screens/import.dart';
 import '../screens/login.dart';
 import '../screens/manual.dart';
@@ -34,7 +34,7 @@ class Router {
               localRepositoryImpl: context.read<LocalRepositoryImpl>(),
               nextcloudService: context.read<NextcloudService>(),
             ),
-            child: Home(),
+            child: const Home(),
           ),
         );
       case importRoute:
@@ -93,23 +93,18 @@ class Router {
         return CupertinoPageRoute(
           builder: (_) => BlocProvider<ManualBloc>(
             create: (context) => ManualBloc(
-                localRepositoryImpl: context.read<LocalRepositoryImpl>(),
-                account: account),
+              localRepositoryImpl: context.read<LocalRepositoryImpl>(),
+              account: account,
+            ),
             child: const Manual(),
           ),
         );
       case authRoute:
-        Map arguments = settings.arguments as Map;
-        Account? account = arguments["account"];
-
         return CupertinoPageRoute(
           builder: (_) => BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(
               localRepositoryImpl: context.read<LocalRepositoryImpl>(),
               nextcloudService: context.read<NextcloudService>(),
-              account: account,
-              accountsToAdd: arguments["toAdd"] ?? [],
-              accountsToEdit: arguments["toEdit"] ?? [],
             ),
             child: Auth(),
           ),

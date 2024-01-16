@@ -1,6 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 
-enum PasswordAskTime { everySync, oneMinutes, threeMinutes, fiveMinutes, never }
+enum PasswordAskTime { everyOpening, oneMinutes, threeMinutes, fiveMinutes, never }
 
 @Entity()
 class User {
@@ -11,6 +11,11 @@ class User {
 
   bool copyWithTap = false;
   bool darkTheme = false;
+
+  // null = not selected, true = ascending, false = descending
+  bool? sortedByNameDesc;
+  bool? sortedByIssuerDesc;
+  bool? sortedByIdDesc;
 
   @Property(uid: 6627109253779031772)
   String? password;
@@ -31,7 +36,7 @@ class User {
   set dbPasswordAskTime(int? value) {
     _ensureStableEnumValues();
     if (value == 0) {
-      passwordAskTime = PasswordAskTime.everySync;
+      passwordAskTime = PasswordAskTime.everyOpening;
     } else if (value == 1) {
       passwordAskTime = PasswordAskTime.oneMinutes;
     } else if (value == 2) {
@@ -52,7 +57,7 @@ class User {
   }
 
   void _ensureStableEnumValues() {
-    assert(PasswordAskTime.everySync.index == 0);
+    assert(PasswordAskTime.everyOpening.index == 0);
     assert(PasswordAskTime.oneMinutes.index == 1);
     assert(PasswordAskTime.threeMinutes.index == 2);
     assert(PasswordAskTime.fiveMinutes.index == 3);

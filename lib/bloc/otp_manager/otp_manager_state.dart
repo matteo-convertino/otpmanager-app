@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/user.dart';
+import '../../routing/constants.dart';
+
 class OtpManagerState extends Equatable {
   final bool darkTheme;
   final bool copyWithTap;
@@ -11,11 +14,22 @@ class OtpManagerState extends Equatable {
     required this.initialRoute,
   });
 
-  const OtpManagerState.initial(
-    this.darkTheme,
-    this.copyWithTap,
-    this.initialRoute,
-  );
+  OtpManagerState.initial(
+    User? user,
+    bool isLogged,
+  ) : this(
+          darkTheme: user?.darkTheme ?? false,
+          copyWithTap: user?.copyWithTap ?? false,
+          initialRoute: isLogged
+              ? (user?.password != null &&
+                      user?.iv != null &&
+                      (user?.passwordExpirationDate == null ||
+                          DateTime.now()
+                              .isBefore(user!.passwordExpirationDate!))
+                  ? homeRoute
+                  : authRoute)
+              : loginRoute,
+        );
 
   OtpManagerState copyWith({bool? darkTheme, bool? copyWithTap}) {
     return OtpManagerState(
@@ -26,5 +40,5 @@ class OtpManagerState extends Equatable {
   }
 
   @override
-  List<Object> get props => [darkTheme, copyWithTap, initialRoute];
+  List<Object> get props => [darkTheme, copyWithTap];
 }

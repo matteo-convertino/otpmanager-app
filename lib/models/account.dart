@@ -28,6 +28,8 @@ class Account {
 
   int? position;
 
+  String iconKey = 'default';
+
   @Transient()
   late Algorithm algorithm;
 
@@ -48,18 +50,19 @@ class Account {
   }
 
   Account({
+    this.iconKey = 'default',
     required this.secret,
     this.encryptedSecret,
     required this.name,
     this.issuer,
-    this.digits,
+    this.digits = 6,
     required this.type,
     this.period,
     this.position,
+    this.toUpdate = false,
+    this.isNew = true,
     int? counter,
     int? dbAlgorithm,
-    bool? toUpdate,
-    bool? isNew
   }) {
     if (type == "hotp") {
       this.counter = counter ?? 0;
@@ -68,10 +71,7 @@ class Account {
     this.dbAlgorithm = dbAlgorithm;
 
     // set default value
-    digits = digits ?? 6;
     period = period ?? 30;
-    this.toUpdate = toUpdate ?? false;
-    this.isNew = isNew ?? true;
   }
 
   void _ensureStableEnumValues() {

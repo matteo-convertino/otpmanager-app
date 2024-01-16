@@ -15,11 +15,15 @@ class AccountDetails extends StatelessWidget {
   ListTile newItem(String title, String trailingText) {
     return ListTile(
       title: Text(title),
-      trailing: Text(
-        trailingText,
-        style: const TextStyle(
-          fontStyle: FontStyle.italic,
-          color: Colors.grey,
+      trailing: SizedBox(
+        width: 200,
+        child: Text(
+          trailingText,
+          textAlign: TextAlign.right,
+          style: const TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.grey,
+          ),
         ),
       ),
     );
@@ -40,7 +44,7 @@ class AccountDetails extends StatelessWidget {
                     msg: "To edit an account you have to set a pin before");
               } else {
                 NavigationService().navigateTo(
-                  authRoute,
+                  manualRoute,
                   arguments: {
                     "account": context.read<AccountDetailsBloc>().state.account
                   },
@@ -74,7 +78,8 @@ class AccountDetails extends StatelessWidget {
                 tiles: [
                   newItem("Name", state.account.name),
                   newItem("Issuer", state.account.issuer ?? ""),
-                  newItem("Period", "${state.account.period}s"),
+                  if (state.account.type == "totp")
+                    newItem("Period", "${state.account.period}s"),
                   newItem("Digits", state.account.digits.toString()),
                   newItem("Algorithm",
                       state.account.algorithm.toString().split(".")[1]),

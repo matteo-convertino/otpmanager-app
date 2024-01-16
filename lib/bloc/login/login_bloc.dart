@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/bloc/login/login_event.dart';
 import 'package:otp_manager/bloc/login/login_state.dart';
 
+import '../../main.dart' show logger;
 import '../../models/user.dart';
 import '../../repository/local_repository.dart';
 import '../../routing/constants.dart';
@@ -35,6 +36,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         _navigationService.navigateTo(webViewerRoute,
             arguments: url.toString());
       } catch (e) {
+        logger.e(e);
+
         emit(
           state.copyWith(
             url: url.toString(),

@@ -11,7 +11,7 @@ class InitPackageInfo extends SettingsEvent {}
 
 class SaveLog extends SettingsEvent {}
 
-class PinClicked extends SettingsEvent {}
+class PasswordWhenOpeningToggled extends SettingsEvent {}
 
 class OpenLink extends SettingsEvent {
   const OpenLink({required this.url});

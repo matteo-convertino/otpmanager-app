@@ -7,14 +7,12 @@ class SettingsState extends Equatable {
   final bool copiedToClipboard;
   final PackageInfo packageInfo;
   final String url;
-  final String? pin;
   final int selectedAskTimeIndex;
 
   const SettingsState({
     required this.copiedToClipboard,
     required this.packageInfo,
     required this.url,
-    required this.pin,
     required this.selectedAskTimeIndex,
   });
 
@@ -27,7 +25,6 @@ class SettingsState extends Equatable {
           buildNumber: "Unknown",
         ),
         url = user.url,
-        pin = user.password,
         selectedAskTimeIndex = user.passwordAskTime.index;
 
   SettingsState copyWith({
@@ -39,11 +36,14 @@ class SettingsState extends Equatable {
       copiedToClipboard: copiedToClipboard ?? this.copiedToClipboard,
       packageInfo: packageInfo ?? this.packageInfo,
       url: url,
-      pin: pin,
       selectedAskTimeIndex: selectedAskTimeIndex ?? this.selectedAskTimeIndex,
     );
   }
 
   @override
-  List<Object> get props => [copiedToClipboard, packageInfo, selectedAskTimeIndex];
+  List<Object> get props => [
+        copiedToClipboard,
+        packageInfo,
+        selectedAskTimeIndex,
+      ];
 }

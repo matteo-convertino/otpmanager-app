@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otp/otp.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/bloc/home/home_state.dart';
 import 'package:otp_manager/domain/nextcloud_service.dart';
@@ -31,38 +30,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SortByIssuer>(_onSortByIssuer);
     on<SortById>(_onSortById);
     on<SearchBarValueChanged>(_onSearchBarValueChanged);
-  }
 
-  String? _getOtp(Account account) {
-    if (account.type == "totp") {
-      return OTP.generateTOTPCodeString(
-        account.secret,
-        DateTime.now().millisecondsSinceEpoch,
-        algorithm: account.algorithm,
-        interval: account.period as int,
-        length: account.digits as int,
-        isGoogle: true,
-      );
-    } else if (account.counter! > 0) {
-      return OTP.generateHOTPCodeString(
-        account.secret,
-        account.counter!,
-        algorithm: account.algorithm,
-        length: account.digits as int,
-        isGoogle: true,
-      );
-    }
-    return null;
-  }
-
-  void _emitAccountsWithCode(List<Account> accounts, Emitter<HomeState> emit) {
-    final Map<Account, String?> accountsWithCode = {};
-
-    for (var account in accounts) {
-      accountsWithCode[account] = _getOtp(account);
-    }
-
-    emit(state.copyWith(accounts: accountsWithCode));
+    add(NextcloudSync());
   }
 
   void _onNextcloudSync(NextcloudSync event, Emitter<HomeState> emit) async {
@@ -77,11 +46,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(syncStatus: -1, syncError: result["error"]));
         emit(state.copyWith(syncError: ""));
       } else if (result["toAdd"].length > 0 || result["toEdit"].length > 0) {
-        emit(state.copyWith(syncStatus: 0));
-        _navigationService.navigateTo(authRoute, arguments: {
-          "toAdd": result["toAdd"],
-          "toEdit": result["toEdit"],
-        });
+        if (nextcloudService.syncAccountsToAddToEdit(
+            result["toAdd"], result["toEdit"])) {
+          emit(state.copyWith(syncStatus: 0));
+        } else {
+          emit(state.copyWith(
+            syncStatus: -1,
+            syncError: "Password has changed. Insert the new one",
+          ));
+          emit(state.copyWith(syncError: ""));
+          _navigationService.replaceScreen(authRoute);
+        }
       } else {
         emit(state.copyWith(syncStatus: 0));
       }
@@ -89,23 +64,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(state.copyWith(syncStatus: -1));
     }
 
-    _emitAccountsWithCode(
-        state.searchBarValue == ""
-            ? localRepositoryImpl.getVisibleAccounts()
-            : localRepositoryImpl
-                .getVisibleFilteredAccounts(state.searchBarValue),
-        emit);
-
     add(GetAccounts());
   }
 
   void _onGetAccounts(GetAccounts event, Emitter<HomeState> emit) {
     if (state.searchBarValue == "") {
-      _emitAccountsWithCode(localRepositoryImpl.getVisibleAccounts(), emit);
+      emit(state.copyWith(
+        accounts: localRepositoryImpl.getVisibleAccounts(),
+      ));
     } else {
-      _emitAccountsWithCode(
-          localRepositoryImpl.getVisibleFilteredAccounts(state.searchBarValue),
-          emit);
+      emit(state.copyWith(
+        accounts: localRepositoryImpl
+            .getVisibleFilteredAccounts(state.searchBarValue),
+      ));
     }
   }
 
@@ -116,6 +87,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {
+    emit(state.copyWith(
+      sortedByIdDesc: "null",
+      sortedByNameDesc: "null",
+      sortedByIssuerDesc: "null",
+    ));
+
+    final user = localRepositoryImpl.getUser()!;
+    user.sortedByNameDesc = state.sortedByNameDesc;
+    user.sortedByIssuerDesc = state.sortedByIssuerDesc;
+    user.sortedByIdDesc = state.sortedByIdDesc;
+    localRepositoryImpl.updateUser(user);
+
     List<Account> accountsBetween;
 
     int difference;
@@ -155,7 +138,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(state.copyWith(
           accountDeleted:
-              "${accountDeleted?.type == "totp" ? "TOTP" : "HOTP"} has been removed"));
+              "${accountDeleted?.type.toUpperCase()} has been removed"));
     } else {
       emit(state.copyWith(
           accountDeleted: "There was an error while deleting the account"));
@@ -175,65 +158,67 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _onSortById(SortById event, Emitter<HomeState> emit) {
     List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
 
-    if (state.sortedByIdDesc) {
+    if (state.sortedByIdDesc == null || state.sortedByIdDesc == true) {
       accounts.sort((b, a) => a.id.compareTo(b.id));
     } else {
       accounts.sort((a, b) => a.id.compareTo(b.id));
     }
 
     emit(state.copyWith(
-      sortedByIdDesc: !state.sortedByIdDesc,
-      sortedByNameDesc: true,
-      sortedByIssuerDesc: true,
+      sortedByIdDesc:
+          state.sortedByIdDesc == null ? false : !(state.sortedByIdDesc!),
+      sortedByNameDesc: "null",
+      sortedByIssuerDesc: "null",
     ));
 
-    for (int i = 0; i < accounts.length; i++) {
-      accounts[i].position = i;
-      accounts[i].toUpdate = true;
-      localRepositoryImpl.updateAccount(accounts[i]);
-    }
-
-    add(NextcloudSync());
+    _updateSorting(accounts);
   }
 
   void _onSortByName(SortByName event, Emitter<HomeState> emit) {
     List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
 
-    if (state.sortedByNameDesc) {
+    if (state.sortedByNameDesc == null || state.sortedByNameDesc == true) {
       accounts.sort((a, b) => a.name.compareTo(b.name));
     } else {
       accounts.sort((b, a) => a.name.compareTo(b.name));
     }
 
     emit(state.copyWith(
-      sortedByNameDesc: !state.sortedByNameDesc,
-      sortedByIdDesc: true,
-      sortedByIssuerDesc: true,
+      sortedByNameDesc:
+          state.sortedByNameDesc == null ? false : !(state.sortedByNameDesc!),
+      sortedByIdDesc: "null",
+      sortedByIssuerDesc: "null",
     ));
 
-    for (int i = 0; i < accounts.length; i++) {
-      accounts[i].position = i;
-      accounts[i].toUpdate = true;
-      localRepositoryImpl.updateAccount(accounts[i]);
-    }
-
-    add(NextcloudSync());
+    _updateSorting(accounts);
   }
 
   void _onSortByIssuer(SortByIssuer event, Emitter<HomeState> emit) {
     List<Account> accounts = localRepositoryImpl.getVisibleAccounts();
 
-    if (state.sortedByIssuerDesc) {
+    if (state.sortedByIssuerDesc == null || state.sortedByIssuerDesc == true) {
       accounts.sort((a, b) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
     } else {
       accounts.sort((b, a) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
     }
 
     emit(state.copyWith(
-      sortedByIssuerDesc: !state.sortedByIssuerDesc,
-      sortedByIdDesc: true,
-      sortedByNameDesc: true,
+      sortedByIssuerDesc: state.sortedByIssuerDesc == null
+          ? false
+          : !(state.sortedByIssuerDesc!),
+      sortedByIdDesc: "null",
+      sortedByNameDesc: "null",
     ));
+
+    _updateSorting(accounts);
+  }
+
+  void _updateSorting(List<Account> accounts) {
+    final user = localRepositoryImpl.getUser()!;
+    user.sortedByNameDesc = state.sortedByNameDesc;
+    user.sortedByIssuerDesc = state.sortedByIssuerDesc;
+    user.sortedByIdDesc = state.sortedByIdDesc;
+    localRepositoryImpl.updateUser(user);
 
     for (int i = 0; i < accounts.length; i++) {
       accounts[i].position = i;

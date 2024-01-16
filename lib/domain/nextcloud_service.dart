@@ -8,6 +8,7 @@ import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/utils/encryption.dart';
 
 import '../repository/nextcloud_repository.dart';
+import '../utils/base32.dart';
 
 class NextcloudService {
   final NextcloudRepositoryImpl _nextcloudRepositoryImpl;
@@ -21,9 +22,8 @@ class NextcloudService {
     Map<String, String?> result = {"error": null, "iv": null};
 
     try {
-      final user = _localRepositoryImpl.getUser();
       http.Response response = await _nextcloudRepositoryImpl.sendHttpRequest(
-        user,
+        _localRepositoryImpl.getUser()!,
         "password/check",
         jsonEncode({"password": password}),
       );
@@ -61,7 +61,7 @@ class NextcloudService {
     final user = _localRepositoryImpl.getUser()!;
 
     if (user.password == null || user.iv == null) {
-      await NavigationService().navigateTo(authRoute, arguments: {});
+      NavigationService().replaceScreen(authRoute);
     }
 
     for (var e in accounts) {
@@ -101,5 +101,40 @@ class NextcloudService {
     }
 
     return syncResult;
+  }
+
+  bool _decryptSecretAccounts(List accounts) {
+    final user = _localRepositoryImpl.getUser()!;
+
+    for (var account in accounts) {
+      account["encryptedSecret"] = account["secret"];
+
+      try {
+        var decrypted =
+            Encryption.decrypt(account["secret"], user.password!, user.iv!);
+
+        if (!Base32.isValid(decrypted)) throw FormatException;
+
+        account["secret"] = decrypted;
+      } catch (_) {
+        user.password = null;
+        user.iv = null;
+        _localRepositoryImpl.updateUser(user);
+        return false;
+      }
+    }
+
+    return true;
+  }
+  
+  bool syncAccountsToAddToEdit(List accountsToAdd, List accountsToEdit) {
+    if (_decryptSecretAccounts(accountsToAdd) &&
+        _decryptSecretAccounts(accountsToEdit)) {
+      _localRepositoryImpl.addNewAccounts(accountsToAdd);
+      _localRepositoryImpl.updateEditedAccounts(accountsToEdit);
+      return true;
+    } else {
+      return false;
+    }
   }
 }

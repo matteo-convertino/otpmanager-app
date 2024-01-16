@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Tooltip tooltip(String text, Icon icon) {
+Tooltip tooltip(String text, Widget widget) {
   return Tooltip(
     message: text,
     triggerMode: TooltipTriggerMode.tap,
@@ -11,6 +11,6 @@ Tooltip tooltip(String text, Icon icon) {
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     textStyle: const TextStyle(color: Colors.white),
-    child: icon,
+    child: widget,
   );
 }

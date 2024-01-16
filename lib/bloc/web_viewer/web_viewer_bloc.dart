@@ -94,13 +94,13 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
     await _nextcloudLoginSetup()
         .timeout(const Duration(seconds: 10))
         .catchError((error, stackTrace) {
+      logger.e(error);
+
       if (error is TimeoutException) {
-        logger.e(error);
         emit(
             state.copyWith(error: "The server is taking too time to respond!"));
         _navigationService.goBack();
       } else {
-        logger.e(error);
         emit(state.copyWith(
             error: "The url is not of a valid nextcloud server!"));
         _navigationService.goBack();

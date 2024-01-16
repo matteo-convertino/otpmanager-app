@@ -4,6 +4,7 @@ import 'package:otp_manager/utils/uri_decoder.dart';
 import '../../models/account.dart';
 
 class ManualState extends Equatable {
+  final String iconKey;
   final String name;
   final String issuer;
   final String secretKey;
@@ -18,6 +19,7 @@ class ManualState extends Equatable {
   final String message;
 
   const ManualState({
+    required this.iconKey,
     required this.name,
     required this.issuer,
     required this.secretKey,
@@ -33,7 +35,8 @@ class ManualState extends Equatable {
   });
 
   ManualState.initial(Account? account)
-      : name = account?.name ?? "",
+      : iconKey = account?.iconKey ?? 'default',
+        name = account?.name ?? "",
         issuer = account?.issuer ?? "",
         secretKey = account?.secret ?? "",
         secretKeyError = null,
@@ -47,6 +50,7 @@ class ManualState extends Equatable {
         message = "";
 
   ManualState copyWith({
+    String? iconKey,
     String? name,
     String? issuer,
     String? secretKey,
@@ -60,6 +64,7 @@ class ManualState extends Equatable {
     String? message,
   }) {
     return ManualState(
+      iconKey: iconKey ?? this.iconKey,
       name: name ?? this.name,
       issuer: issuer ?? this.issuer,
       secretKey: secretKey ?? this.secretKey,
@@ -80,6 +85,7 @@ class ManualState extends Equatable {
 
   @override
   List<Object?> get props => [
+        iconKey,
         name,
         issuer,
         secretKey,

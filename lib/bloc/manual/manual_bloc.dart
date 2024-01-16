@@ -15,6 +15,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   ManualBloc({this.account, required this.localRepositoryImpl})
       : super(ManualState.initial(account)) {
     on<AddOrEditAccount>(_onAddOrEditAccount);
+    on<IconKeyChanged>(_onIconKeyChanged);
     on<NameChanged>(_onNameChanged);
     on<IssuerChanged>(_onIssuerChanged);
     on<SecretKeyChanged>(_onSecretKeyChanged);
@@ -76,6 +77,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
       if (account == null) {
         newAccount = Account(
+          iconKey: state.iconKey,
           secret: secretKey,
           name: name,
           issuer: issuer,
@@ -92,13 +94,14 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
         if (sameAccount == null) {
           _storeAccount(emit, newAccount, "New account has been added");
         } else if (sameAccount.deleted) {
-          newAccount.id = newAccount.id;
+          newAccount.id = sameAccount.id;
           _storeAccount(emit, newAccount, "New account has been added");
         } else {
           emit(
               state.copyWith(secretKeyError: "This secret key already exists"));
         }
       } else {
+        account?.iconKey = state.iconKey;
         account?.name = name;
         account?.issuer = issuer;
         account?.dbAlgorithm =
@@ -113,6 +116,10 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
         _storeAccount(emit, newAccount, "Account has been edited");
       }
     }
+  }
+
+  void _onIconKeyChanged(IconKeyChanged event, Emitter<ManualState> emit) {
+    emit(state.copyWith(iconKey: event.key));
   }
 
   void _onNameChanged(NameChanged event, Emitter<ManualState> emit) {

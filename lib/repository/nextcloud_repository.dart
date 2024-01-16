@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:otp_manager/repository/local_repository.dart';
-
 import 'package:http/http.dart' as http;
 
 import '../main.dart' show logger;
 
 abstract class NextcloudRepository {
   Future<http.Response> sendHttpRequest(user, resource, data);
-  //Future<String?> sync();
 }
 
 class NextcloudRepositoryImpl extends NextcloudRepository {
