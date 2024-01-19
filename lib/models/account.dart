@@ -55,7 +55,7 @@ class Account {
     this.encryptedSecret,
     required this.name,
     this.issuer,
-    this.digits = 6,
+    this.digits,
     required this.type,
     this.period,
     this.position,
@@ -71,6 +71,7 @@ class Account {
     this.dbAlgorithm = dbAlgorithm;
 
     // set default value
+    digits = digits ?? 6;
     period = period ?? 30;
   }
 
