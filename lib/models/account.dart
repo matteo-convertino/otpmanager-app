@@ -81,6 +81,18 @@ class Account {
     assert(AlgorithmTypes.sha512.index == 2);
   }
 
+  String toUri() {
+    return Uri.encodeFull("otpauth://"
+        "$type/"
+        "$name?"
+        "secret=$secret&"
+        "issuer=$issuer&"
+        "period=$period&"
+        "digits=$digits&"
+        "algorithm=${algorithm.name.toUpperCase()}"
+        "${type == "hotp" ? '&counter=$counter' : ''}");
+  }
+
   @override
   toString() => '{'
       '"id": "$id", '

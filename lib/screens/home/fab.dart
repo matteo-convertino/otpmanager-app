@@ -16,8 +16,7 @@ class HomeFab extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       animatedIcon: AnimatedIcons.menu_close,
       foregroundColor: Colors.white,
-      overlayColor: Colors.grey,
-      overlayOpacity: 0.2,
+      overlayOpacity: 0.5,
       children: [
         SpeedDialChild(
           child: const Icon(Icons.keyboard),

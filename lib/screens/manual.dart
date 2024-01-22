@@ -62,6 +62,7 @@ class Manual extends HookWidget {
                                         context: context,
                                         showDragHandle: true,
                                         isScrollControlled: true,
+                                        useSafeArea: true,
                                         builder: (BuildContext context) {
                                           return BlocProvider<IconPickerBloc>(
                                             create: (context) => IconPickerBloc(
@@ -120,11 +121,10 @@ class Manual extends HookWidget {
                         padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
                         child: TextFormField(
                           initialValue: state.name,
-                          maxLength: 64,
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
                             labelText: "Account name",
-                            counterText: "${state.name.length}/64",
+                            hintText: "e.g. Username/Email",
                             errorText: state.nameError,
                             suffixIcon: state.nameError == null
                                 ? const Icon(Icons.drive_file_rename_outline)
@@ -144,11 +144,9 @@ class Manual extends HookWidget {
                   padding: const EdgeInsets.all(15.0),
                   child: TextFormField(
                     initialValue: state.issuer,
-                    maxLength: 64,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: "Account issuer",
-                      counterText: "${state.issuer.length}/64",
                       errorText: state.issuerError,
                       hintText: "e.g. Google/Facebook/Github",
                       suffixIcon: state.issuerError == null
@@ -167,11 +165,9 @@ class Manual extends HookWidget {
                   child: TextFormField(
                     initialValue: state.secretKey,
                     readOnly: state.isEdit,
-                    maxLength: 256,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: "Secret key",
-                      counterText: "${state.secretKey.length}/256",
                       errorText: state.secretKeyError,
                       suffixIcon: state.secretKeyError == null
                           ? const Icon(Icons.vpn_key)

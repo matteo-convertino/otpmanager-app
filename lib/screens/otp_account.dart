@@ -19,6 +19,7 @@ import '../bloc/otp_manager/otp_manager_bloc.dart';
 import '../routing/constants.dart';
 import '../routing/navigation_service.dart';
 import '../utils/delete_modal.dart';
+import '../utils/qr_code_modal.dart';
 import '../utils/show_snackbar.dart';
 import '../utils/tooltip.dart';
 
@@ -40,58 +41,68 @@ class OtpAccount extends HookWidget {
       builder: (context, state) {
         return BlocBuilder<OtpManagerBloc, OtpManagerState>(
           builder: (context, otpManagerState) {
-            return Slidable(
-              endActionPane: ActionPane(
-                motion: const DrawerMotion(),
-                children: [
-                  CustomSlidableAction(
-                    label: "Edit",
-                    icon: Icons.edit,
-                    padding: const EdgeInsets.fromLTRB(0, 20, 7, 20),
-                    backgroundColor: Colors.blue,
-                    border: BorderRadius.circular(10.0),
-                    onPressed: () => _navigationService.navigateTo(
-                      manualRoute,
-                      arguments: {"account": account},
+            return InkWell(
+              onTap: () {
+                if (state.otpCode == null) {
+                  context
+                      .read<OtpAccountBloc>()
+                      .add(IncrementCounter(account: account));
+                } else if (otpManagerState.copyWithTap) {
+                  Clipboard.setData(ClipboardData(text: state.otpCode!));
+                  showSnackBar(
+                      context: context,
+                      msg: "${account.type.toUpperCase()} code copied");
+                } else {
+                  _navigationService.navigateTo(
+                    accountDetailsRoute,
+                    arguments: account,
+                  );
+                }
+              },
+              child: Slidable(
+                closeOnScroll: true,
+                endActionPane: ActionPane(
+                  extentRatio: 0.75,
+                  motion: const ScrollMotion(),
+                  children: [
+                    CustomSlidableAction(
+                      label: "Edit",
+                      icon: Icons.edit,
+                      padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
+                      backgroundColor: Colors.blue,
+                      border: BorderRadius.circular(10.0),
+                      onPressed: () => _navigationService.navigateTo(
+                        manualRoute,
+                        arguments: {"account": account},
+                      ),
                     ),
-                  ),
-                  CustomSlidableAction(
-                    label: "Delete",
-                    icon: Icons.delete,
-                    padding: const EdgeInsets.fromLTRB(0, 20, 7, 20),
-                    backgroundColor: Colors.red,
-                    border: BorderRadius.circular(10.0),
-                    onPressed: () => showDeleteModal(
-                        context,
-                        account,
-                        () => context
-                            .read<HomeBloc>()
-                            .add(DeleteAccount(id: account.id))),
-                  ),
-                ],
-              ),
-              child: InkWell(
-                onTap: () {
-                  if (state.otpCode == null) {
-                    context
-                        .read<OtpAccountBloc>()
-                        .add(IncrementCounter(account: account));
-                  } else if (otpManagerState.copyWithTap) {
-                    Clipboard.setData(ClipboardData(text: state.otpCode!));
-                    showSnackBar(
-                        context: context,
-                        msg: "${account.type.toUpperCase()} code copied");
-                  } else {
-                    _navigationService.navigateTo(
-                      accountDetailsRoute,
-                      arguments: account,
-                    );
-                  }
-                },
+                    CustomSlidableAction(
+                      label: "QR",
+                      icon: Icons.qr_code,
+                      padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
+                      backgroundColor: Colors.grey,
+                      border: BorderRadius.circular(10.0),
+                      onPressed: () => showQrCodeModal(context, account),
+                    ),
+                    CustomSlidableAction(
+                      label: "Delete",
+                      icon: Icons.delete,
+                      padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
+                      backgroundColor: Colors.red,
+                      border: BorderRadius.circular(10.0),
+                      onPressed: () => showDeleteModal(
+                          context,
+                          account,
+                          () => context
+                              .read<HomeBloc>()
+                              .add(DeleteAccount(id: account.id))),
+                    ),
+                  ],
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8.0,
-                    vertical: 10.0,
+                    //vertical: 0.0,
                   ),
                   child: ListTile(
                     isThreeLine: true,

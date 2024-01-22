@@ -37,14 +37,14 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
     if (name.isEmpty) {
       emit(state.copyWith(nameError: "The account name is required"));
-    } else if (name.length > 64) {
+    } else if (name.length > 256) {
       emit(state.copyWith(
-          nameError: "The account name cannot be longer than 64 characters"));
+          nameError: "The account name cannot be longer than 256 characters"));
     }
 
-    if (issuer.length > 64) {
+    if (issuer.length > 256) {
       emit(state.copyWith(
-          issuer: "The account issuer cannot be longer than 64 characters"));
+          issuer: "The account issuer cannot be longer than 256 characters"));
     }
 
     if (secretKey.isEmpty) {
@@ -53,10 +53,10 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       emit(state.copyWith(
           secretKeyError:
               "The secret key cannot be shorter than 16 characters"));
-    } else if (secretKey.length > 256) {
+    } else if (secretKey.length > 512) {
       emit(state.copyWith(
           secretKeyError:
-              "The secret key cannot be longer than 256 characters"));
+              "The secret key cannot be longer than 512 characters"));
     } else if (!Base32.isValid(secretKey)) {
       emit(state.copyWith(
           secretKeyError: "The secret key is not base 32 encoded"));
