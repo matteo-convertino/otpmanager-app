@@ -99,7 +99,7 @@ class Manual extends HookWidget {
                                     ],
                                   ),
                                   child: simpleIcons[state.iconKey] ??
-                                      simpleIcons['default']!,
+                                      simpleIcons['default'],
                                 ),
                               ),
                               const Padding(

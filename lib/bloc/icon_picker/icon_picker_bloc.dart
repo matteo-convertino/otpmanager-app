@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_event.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_state.dart';

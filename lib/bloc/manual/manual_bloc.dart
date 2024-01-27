@@ -3,6 +3,7 @@ import 'package:otp_manager/utils/base32.dart';
 
 import '../../models/account.dart';
 import '../../repository/local_repository.dart';
+import '../../utils/simple_icons.dart';
 import '../../utils/uri_decoder.dart';
 import 'manual_event.dart';
 import 'manual_state.dart';
@@ -77,7 +78,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
       if (account == null) {
         newAccount = Account(
-          iconKey: state.iconKey,
+          icon: state.iconKey,
           secret: secretKey,
           name: name,
           issuer: issuer,
@@ -128,6 +129,15 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
   void _onIssuerChanged(IssuerChanged event, Emitter<ManualState> emit) {
     emit(state.copyWith(issuer: event.issuer, issuerError: "null"));
+
+    emit(
+      state.copyWith(
+        iconKey: event.issuer.isEmpty
+            ? "default"
+            : simpleIcons.keys.firstWhere((v) => v.contains(event.issuer),
+                orElse: () => "default"),
+      ),
+    );
   }
 
   void _onSecretKeyChanged(SecretKeyChanged event, Emitter<ManualState> emit) {

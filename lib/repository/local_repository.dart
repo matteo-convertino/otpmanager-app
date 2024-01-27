@@ -93,6 +93,7 @@ class LocalRepositoryImpl extends LocalRepository {
       accountToUpdate?.dbAlgorithm = account["algorithm"];
       accountToUpdate?.period = account["period"];
       accountToUpdate?.counter = account["counter"];
+      accountToUpdate?.iconKey = account["icon"] ?? accountToUpdate.iconKey;
       accountToUpdate?.position = account["position"];
       _accountBox.put(accountToUpdate!);
     }
@@ -188,6 +189,7 @@ class LocalRepositoryImpl extends LocalRepository {
           digits: account["digits"],
           period: account["period"],
           counter: account["counter"],
+          icon: account["icon"],
           position: account["position"],
           toUpdate: false,
           isNew: false,

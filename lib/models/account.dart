@@ -1,6 +1,8 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:otp/otp.dart';
 
+import '../utils/simple_icons.dart';
+
 enum AlgorithmTypes { sha1, sha256, sha512 }
 
 @Entity()
@@ -50,7 +52,6 @@ class Account {
   }
 
   Account({
-    this.iconKey = 'default',
     required this.secret,
     this.encryptedSecret,
     required this.name,
@@ -63,6 +64,7 @@ class Account {
     this.isNew = true,
     int? counter,
     int? dbAlgorithm,
+    String? icon,
   }) {
     if (type == "hotp") {
       this.counter = counter ?? 0;
@@ -73,6 +75,15 @@ class Account {
     // set default value
     digits = digits ?? 6;
     period = period ?? 30;
+
+    if(icon != null && icon != "default") {
+      iconKey = icon;
+    } else if(issuer != null) {
+      String toFind = issuer!.replaceAll(" ", "").toLowerCase();
+      iconKey = simpleIcons.keys.firstWhere((v) => v.contains(toFind), orElse: () => "default");
+    } else {
+      iconKey = "default";
+    }
   }
 
   void _ensureStableEnumValues() {
@@ -105,6 +116,7 @@ class Account {
       '"period": $period, '
       '"counter": $counter, '
       '"position": $position, '
+      '"icon": "$iconKey", '
       '"deleted": $deleted, '
       '"toUpdate": $toUpdate, '
       '"isNew": $isNew'
