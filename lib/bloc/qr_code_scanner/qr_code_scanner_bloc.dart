@@ -39,9 +39,8 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
 
     if (!atLeastOneAdded) {
       emit(state.copyWith(
-          error: newAccounts.length > 1
-              ? "These accounts are already registered"
-              : "This account is already registered"));
+          error:
+              "${newAccounts.length > 1 ? "These accounts are already registered" : "This account is already registered"}.\nMake sure you are in sync and try again."));
     } else {
       emit(state.copyWith(
           addWithSuccess: newAccounts.length > 1

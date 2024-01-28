@@ -78,7 +78,7 @@ class Account {
 
     if(icon != null && icon != "default") {
       iconKey = icon;
-    } else if(issuer != null) {
+    } else if(issuer != null && issuer != "") {
       String toFind = issuer!.replaceAll(" ", "").toLowerCase();
       iconKey = simpleIcons.keys.firstWhere((v) => v.contains(toFind), orElse: () => "default");
     } else {

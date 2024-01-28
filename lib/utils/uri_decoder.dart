@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:base32/base32.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:otp/otp.dart';
 
 import '../../generated_protoc/google_auth.pb.dart';
@@ -80,7 +81,7 @@ class UriDecoder {
 
     payload.otpParameters.asMap().forEach((index, params) {
       var tmp = params.toProto3Json() as Map;
-      tmp["name"] = Uri.decodeFull(tmp["name"].toString());
+      tmp["name"] = Uri.decodeFull(removeDiacritics(tmp["name"].toString()));
 
       var newAccount = Account(
         secret: base32
@@ -88,7 +89,7 @@ class UriDecoder {
             .toUpperCase(),
         name:
             tmp["name"].contains(':') ? tmp["name"].split(':')[1] : tmp["name"],
-        issuer: Uri.decodeFull(tmp["issuer"] ?? ""),
+        issuer: Uri.decodeFull(removeDiacritics(tmp["issuer"] ?? "")),
         dbAlgorithm: getAlgorithmFromString(tmp["algorithm"]),
         digits: 6,
         type: tmp["type"],
@@ -129,8 +130,8 @@ class UriDecoder {
 
       var newAccount = Account(
         secret: tmp["secret"].toString().toUpperCase(),
-        name: Uri.decodeFull(nameAndIssuer["name"]),
-        issuer: Uri.decodeFull(nameAndIssuer["issuer"]),
+        name: removeDiacritics(Uri.decodeFull(nameAndIssuer["name"])),
+        issuer: removeDiacritics(Uri.decodeFull(nameAndIssuer["issuer"] ?? "")),
         dbAlgorithm: getAlgorithmFromString(tmp["algorithm"].toString()),
         digits: int.tryParse(tmp["digits"].toString()),
         type: uriDecoded.host,

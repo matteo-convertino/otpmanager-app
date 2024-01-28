@@ -54,16 +54,17 @@ class QrCodeScanner extends HookWidget {
             alignment: Alignment.center,
             children: [
               MobileScanner(
-                  controller: _cameraController,
-                  onDetect: (Barcode barcode, MobileScannerArguments? args) {
-                    if (UriDecoder.isValid(barcode.rawValue!)) {
-                      context.read<QrCodeScannerBloc>().add(
-                          DecodeAndStoreAccounts(accounts: barcode.rawValue!));
-                    } else {
-                      context.read<QrCodeScannerBloc>().add(const ErrorChanged(
-                          error: "The QR code is not correct"));
-                    }
-                  }),
+                controller: _cameraController,
+                onDetect: (Barcode barcode, MobileScannerArguments? args) {
+                  if (UriDecoder.isValid(barcode.rawValue!)) {
+                    context.read<QrCodeScannerBloc>().add(
+                        DecodeAndStoreAccounts(accounts: barcode.rawValue!));
+                  } else {
+                    context.read<QrCodeScannerBloc>().add(const ErrorChanged(
+                        error: "The QR code is not correct"));
+                  }
+                },
+              ),
               Container(
                 decoration: ShapeDecoration(
                   shape: QrScannerOverlayShape(
@@ -80,6 +81,7 @@ class QrCodeScanner extends HookWidget {
                 child: Text(
                   state.error,
                   style: const TextStyle(fontSize: 18, color: Colors.white),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],

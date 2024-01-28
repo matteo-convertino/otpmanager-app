@@ -1,3 +1,4 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/utils/base32.dart';
 
@@ -10,7 +11,6 @@ import 'manual_state.dart';
 
 class ManualBloc extends Bloc<ManualEvent, ManualState> {
   final Account? account;
-  //final Box<Account> _accountBox = objectBox.store.box<Account>();
   final LocalRepositoryImpl localRepositoryImpl;
 
   ManualBloc({this.account, required this.localRepositoryImpl})
@@ -32,8 +32,8 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   }
 
   void _onAddOrEditAccount(AddOrEditAccount event, Emitter<ManualState> emit) {
-    String name = Uri.decodeFull(state.name.trim());
-    String issuer = Uri.decodeFull(state.issuer.trim());
+    String name = Uri.decodeFull(removeDiacritics(state.name.trim()));
+    String issuer = Uri.decodeFull(removeDiacritics(state.issuer.trim()));
     String secretKey = state.secretKey.trim().toUpperCase();
 
     if (name.isEmpty) {
