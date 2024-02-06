@@ -6,3 +6,5 @@ flutter_icons:
   ios: true
   image_path: "assets/images/app_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_background: "assets/images/adaptive_background.png"
+  adaptive_icon_foreground: "assets/images/adaptive_foreground.png"
