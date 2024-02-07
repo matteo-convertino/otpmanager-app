@@ -10,6 +10,15 @@ class HomeEvent extends Equatable {
 
 class NextcloudSync extends HomeEvent {}
 
+class IsAppUpdatedChanged extends HomeEvent {
+  const IsAppUpdatedChanged({required this.value});
+
+  final bool value;
+
+  @override
+  List<Object> get props => [value];
+}
+
 class Logout extends HomeEvent {}
 
 class SortById extends HomeEvent {}

@@ -68,6 +68,7 @@ class Manual extends HookWidget {
                                             create: (context) => IconPickerBloc(
                                               localRepositoryImpl: context
                                                   .read<LocalRepositoryImpl>(),
+                                              issuer: state.issuer,
                                             ),
                                             child: const IconPicker(),
                                           );

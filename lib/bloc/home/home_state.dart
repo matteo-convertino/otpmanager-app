@@ -14,6 +14,7 @@ class HomeState extends Equatable {
   final bool? sortedByIssuerDesc;
   final bool? sortedByIdDesc;
   final String searchBarValue;
+  final bool isAppUpdated;
 
   const HomeState({
     required this.accounts,
@@ -27,6 +28,7 @@ class HomeState extends Equatable {
     required this.sortedByIssuerDesc,
     required this.sortedByIdDesc,
     required this.searchBarValue,
+    required this.isAppUpdated,
   });
 
   HomeState.initial(User user)
@@ -40,7 +42,8 @@ class HomeState extends Equatable {
         sortedByNameDesc = user.sortedByNameDesc,
         sortedByIssuerDesc = user.sortedByIssuerDesc,
         sortedByIdDesc = user.sortedByIdDesc,
-        searchBarValue = "";
+        searchBarValue = "",
+        isAppUpdated = false;
 
   HomeState copyWith({
     List<Account>? accounts,
@@ -52,6 +55,7 @@ class HomeState extends Equatable {
     dynamic sortedByIssuerDesc,
     dynamic sortedByIdDesc,
     String? searchBarValue,
+    bool? isAppUpdated,
   }) {
     return HomeState(
       accounts: accounts ?? this.accounts,
@@ -61,10 +65,17 @@ class HomeState extends Equatable {
       password: password,
       isGuest: isGuest,
       accountDeleted: accountDeleted ?? this.accountDeleted,
-      sortedByNameDesc: sortedByNameDesc == "null" ? null : sortedByNameDesc ?? this.sortedByNameDesc,
-      sortedByIssuerDesc: sortedByIssuerDesc == "null" ? null : sortedByIssuerDesc ?? this.sortedByIssuerDesc,
-      sortedByIdDesc: sortedByIdDesc == "null" ? null : sortedByIdDesc ?? this.sortedByIdDesc,
+      sortedByNameDesc: sortedByNameDesc == "null"
+          ? null
+          : sortedByNameDesc ?? this.sortedByNameDesc,
+      sortedByIssuerDesc: sortedByIssuerDesc == "null"
+          ? null
+          : sortedByIssuerDesc ?? this.sortedByIssuerDesc,
+      sortedByIdDesc: sortedByIdDesc == "null"
+          ? null
+          : sortedByIdDesc ?? this.sortedByIdDesc,
       searchBarValue: searchBarValue ?? this.searchBarValue,
+      isAppUpdated: isAppUpdated ?? this.isAppUpdated,
     );
   }
 
@@ -79,5 +90,6 @@ class HomeState extends Equatable {
         sortedByIssuerDesc,
         sortedByIdDesc,
         searchBarValue,
-  ];
+        isAppUpdated,
+      ];
 }

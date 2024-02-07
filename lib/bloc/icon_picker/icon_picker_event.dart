@@ -7,6 +7,8 @@ class IconPickerEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitIcons extends IconPickerEvent {}
+
 class SearchBarValueChanged extends IconPickerEvent {
   const SearchBarValueChanged({required this.value});
 

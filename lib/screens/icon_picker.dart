@@ -43,6 +43,60 @@ class IconPicker extends HookWidget {
                   },
                 ),
               ),
+              if (state.searchBarValue == "" && state.iconsBestMatch.isNotEmpty) ...[
+                const Text(
+                  'Best match based on issuer',
+                  style: TextStyle(fontSize: 18),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: GridView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                    shrinkWrap: true,
+                    itemCount: state.iconsBestMatch.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = state.iconsBestMatch.keys.elementAt(index);
+                      Icon icon = state.iconsBestMatch[key]!;
+
+                      return InkWell(
+                        onTap: () => Navigator.pop(context, key),
+                        child: Tooltip(
+                          triggerMode: TooltipTriggerMode.longPress,
+                          message: key,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              icon,
+                              Positioned(
+                                bottom: 5,
+                                width: 70,
+                                child: Text(
+                                  key.substring(0, 1).toUpperCase() +
+                                      key.substring(1),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const Text(
+                  "All icons",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
               Expanded(
                 child: GridView.builder(
                   scrollDirection: Axis.vertical,
@@ -61,7 +115,27 @@ class IconPicker extends HookWidget {
                       child: Tooltip(
                         triggerMode: TooltipTriggerMode.longPress,
                         message: key,
-                        child: icon,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            icon,
+                            Positioned(
+                              bottom: 5,
+                              width: 70,
+                              child: Text(
+                                key.substring(0, 1).toUpperCase() +
+                                    key.substring(1),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 12,
+
+                                  //fontStyle: FontStyle.italic
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

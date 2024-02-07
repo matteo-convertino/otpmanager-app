@@ -138,7 +138,7 @@ class OtpAccount extends HookWidget {
                                 child: Text(
                                   state.otpCode ?? "- " * account.digits!,
                                   style: const TextStyle(
-                                    fontSize: 26,
+                                    fontSize: 28,
                                     color: Colors.blue,
                                   ),
                                 ),

@@ -30,14 +30,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SortByIssuer>(_onSortByIssuer);
     on<SortById>(_onSortById);
     on<SearchBarValueChanged>(_onSearchBarValueChanged);
+    on<IsAppUpdatedChanged>(_onIsAppUpdatedChanged);
 
-    add(NextcloudSync());
+    add(GetAccounts());
+  }
+
+  void _onIsAppUpdatedChanged(
+      IsAppUpdatedChanged event, Emitter<HomeState> emit) async {
+    emit(state.copyWith(isAppUpdated: event.value));
   }
 
   void _onNextcloudSync(NextcloudSync event, Emitter<HomeState> emit) async {
     add(GetAccounts());
 
-    if (!state.isGuest) {
+    if (!state.isAppUpdated) {
+      emit(state.copyWith(
+          syncStatus: -1,
+          syncError:
+              "Update the app to the latest version to be able to synchronize"));
+      emit(state.copyWith(syncError: ""));
+    } else if (!state.isGuest) {
       emit(state.copyWith(syncStatus: 1));
 
       final Map<String, dynamic> result = await nextcloudService.sync();
