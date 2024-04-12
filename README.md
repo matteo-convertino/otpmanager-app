@@ -27,14 +27,15 @@ This way, the transition from Google Authenticator to OTP Manager will be quick 
 
 # Build instructions for iOS
 
+Make sure you are on stable build of flutter. You can check it `flutter --version`. You can change your flutter channel to stable with `flutter channel stable` command.
+
 1. Install Xcode and flutter
 2. Download the project and open in Terminal
-3. Run `flutter pub add device_info_plus`
-4. Run `flutter pub get`
-5. Run `flutter pub run build_runner build`
-6. Run `flutter build ios`
-7. This will give you Runner.app file, create a folder with name Payload and move Runner.app to it.
-8. Compress the folder and change the .zip extension to .ipa
+3. Run `flutter pub get`
+4. Run `flutter pub run build_runner build`
+5. Run `flutter build ios`
+6. This will give you Runner.app file, create a folder with name Payload and move Runner.app to it.
+7. Compress the folder and change the .zip extension to .ipa
    
 # Planned Features
 - [ ] Give the possibility to organize the accounts in folders or, assigning a tag to the accounts, filter them during the search
