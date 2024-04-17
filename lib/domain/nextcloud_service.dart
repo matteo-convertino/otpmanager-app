@@ -41,9 +41,15 @@ class NextcloudService {
       resource: PasswordAPI.check,
       data: {"password": password},
       onComplete: (response) => result["iv"] = jsonDecode(response.body)["iv"],
-      onFailed: (response) => result["error"] = jsonDecode(
-              response.body)["error"] ??
-          "You need to set a password before. Please update the OTP Manager extension on your Nextcloud server to version 0.3.0 or higher.",
+      onFailed: (response) {
+        if (response.statusCode == 404) {
+          result["error"] =
+              "You need to install the OTP Manager extension on your Nextcloud server to use this app.";
+        } else {
+          result["error"] = jsonDecode(response.body)["error"] ??
+              "You need to set a password before. Please update the OTP Manager extension on your Nextcloud server to version 0.3.0 or higher.";
+        }
+      },
       onError: () => result["error"] =
           "An error encountered while checking password. Try to reload after a while!",
     );
@@ -119,7 +125,7 @@ class NextcloudService {
     for (var account in accounts) {
       account["encryptedSecret"] = account["secret"];
 
-      if (account["unlocked"] == 0) continue;
+      if (account["unlocked"] == 0 || account["unlocked"] == false) continue;
 
       try {
         String decrypted = encryption.decrypt(dataBase64: account["secret"])!;

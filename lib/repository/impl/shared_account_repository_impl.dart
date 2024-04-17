@@ -2,7 +2,7 @@ import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/object_box/objectbox.g.dart';
 import 'package:otp_manager/utils/icon_picker_helper.dart';
 
-import '../../main.dart' show objectBox, logger;
+import '../../main.dart' show logger;
 import '../interface/shared_account_repository.dart';
 
 class SharedAccountRepositoryImpl extends SharedAccountRepository {
@@ -40,7 +40,8 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
               type: sharedAccount["type"],
               counter: sharedAccount["counter"],
               dbAlgorithm: sharedAccount["algorithm"],
-              unlocked: sharedAccount["unlocked"] == 1,
+              unlocked: sharedAccount["unlocked"] == 1 ||
+                  sharedAccount["unlocked"] == true,
               sharerUserId: sharedAccount["user_id"],
             ),
           );
@@ -63,7 +64,8 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
       sharedAccountToUpdate?.issuer = sharedAccount["issuer"];
       sharedAccountToUpdate?.secret = sharedAccount["secret"];
       sharedAccountToUpdate?.encryptedSecret = sharedAccount["encryptedSecret"];
-      sharedAccountToUpdate?.unlocked = sharedAccount["unlocked"] == 1;
+      sharedAccountToUpdate?.unlocked =
+          sharedAccount["unlocked"] == 1 || sharedAccount["unlocked"] == true;
       sharedAccountToUpdate?.counter = sharedAccount["counter"];
       sharedAccountToUpdate?.expiredAt = sharedAccount["expired_at"] != null
           ? DateTime.parse(sharedAccount["expired_at"])

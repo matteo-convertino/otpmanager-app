@@ -92,7 +92,7 @@ class Router {
               userRepository: context.read<UserRepository>(),
               nextcloudUrl: settings.arguments as String,
             ),
-            child: const WebViewer(),
+            child: WebViewer(),
           ),
         );
       case manualRoute:

@@ -7,7 +7,6 @@ import 'package:otp_manager/bloc/web_viewer/web_viewer_event.dart';
 import 'package:otp_manager/bloc/web_viewer/web_viewer_state.dart';
 import 'package:otp_manager/models/user.dart';
 import 'package:otp_manager/repository/interface/user_repository.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../main.dart' show logger;
 import '../../routing/constants.dart';
@@ -20,77 +19,63 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
 
   final String nextcloudUrl;
 
+  NextcloudClient? _client;
+  DynamiteResponse<LoginFlowV2, void>? _init;
+
   WebViewerBloc({required this.nextcloudUrl, required this.userRepository})
-      : super(WebViewerState.initial()) {
+      : super(const WebViewerState.initial()) {
     on<InitNextcloudLogin>(_onInitNextcloudLogin);
     on<UpdateLoadingScreen>(_onUpdateLoadingScreen);
+    on<OnLoadStop>(_onLoadStop);
   }
 
-  Future<void> _nextcloudLoginFlowV2() async {
-    final client = NextcloudClient(
+  Future<void> _nextcloudLoginFlowV2(Emitter<WebViewerState> emit) async {
+    _client = NextcloudClient(
       Uri.parse(nextcloudUrl),
       userAgentOverride: 'OTP Manager App',
     );
 
-    final init = await client.core.clientFlowLoginV2.init();
+    _init = await _client?.core.clientFlowLoginV2.init();
 
-    state.webViewController
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) {
-            add(
-              const UpdateLoadingScreen(
-                percentage: 1,
-                isLogin: false,
-              ),
-            );
-
-            if (url.endsWith("grant") || url.endsWith("apptoken")) {
-              client.core.clientFlowLoginV2
-                  .poll(token: init.body.poll.token)
-                  .then((result) {
-                userRepository.update(
-                  User(
-                    url: nextcloudUrl,
-                    appPassword: result.body.appPassword,
-                    isGuest: false,
-                  ),
-                );
-                _navigationService.resetToScreen(authRoute);
-              });
-            }
-          },
-          onPageStarted: (String? url) {
-            add(
-              UpdateLoadingScreen(
-                percentage: 0,
-                isLogin: url?.contains("flow") == true,
-              ),
-            );
-          },
-          onProgress: (int progressValue) {
-            add(
-              UpdateLoadingScreen(
-                percentage: progressValue / 100,
-                isLogin: null,
-              ),
-            );
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(init.body.login));
+    emit(state.copyWith(initUrl: _init?.body.login));
+    emit(state.copyWith(initUrl: ""));
   }
 
   void _onUpdateLoadingScreen(
       UpdateLoadingScreen event, Emitter<WebViewerState> emit) {
-    emit(state.copyWith(percentage: event.percentage, isLogin: event.isLogin));
+    emit(state.copyWith(
+        /*percentage: event.percentage,*/ isLogin: event.isLogin));
+  }
+
+  void _onLoadStop(OnLoadStop event, Emitter<WebViewerState> emit) async {
+    add(
+      const UpdateLoadingScreen(
+        //percentage: 1,
+        isLogin: false,
+      ),
+    );
+
+    if (event.url.endsWith("grant") || event.url.endsWith("apptoken")) {
+      _client!.core.clientFlowLoginV2
+          .poll(token: _init!.body.poll.token)
+          .then((result) {
+        userRepository.update(
+          User(
+            url: nextcloudUrl,
+            appPassword: result.body.appPassword,
+            isGuest: false,
+          ),
+        );
+        _navigationService.resetToScreen(authRoute);
+      });
+    }
   }
 
   void _onInitNextcloudLogin(
       InitNextcloudLogin event, Emitter<WebViewerState> emit) async {
-    state.webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
+    //state.webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
 
-    await _nextcloudLoginFlowV2()
+    await _nextcloudLoginFlowV2(emit)
         .timeout(const Duration(seconds: 10))
         .catchError((error, stackTrace) {
       logger.e(error);

@@ -154,7 +154,7 @@ class OtpAccount extends HookWidget {
                           simpleIcons['default'],
                     ),
                     title: Text(
-                      "(${account.position}) ${account.name}",
+                      account.name,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 14.5),
                     ),

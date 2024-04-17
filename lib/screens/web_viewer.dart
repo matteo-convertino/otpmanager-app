@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:otp_manager/bloc/web_viewer/web_viewer_bloc.dart';
 import 'package:otp_manager/bloc/web_viewer/web_viewer_event.dart';
 import 'package:otp_manager/bloc/web_viewer/web_viewer_state.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../utils/show_snackbar.dart';
 
 class WebViewer extends HookWidget {
-  const WebViewer({Key? key}) : super(key: key);
+  WebViewer({Key? key}) : super(key: key);
+
+  InAppWebViewController? _webViewController;
 
   Stack _loadingPage(double percentage) {
     return Stack(
@@ -40,6 +42,8 @@ class WebViewer extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = useState(0.0);
+
     useEffect(() {
       context.read<WebViewerBloc>().add(InitNextcloudLogin());
       return null;
@@ -48,19 +52,59 @@ class WebViewer extends HookWidget {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: BlocConsumer<WebViewerBloc, WebViewerState>(
-        listener: (context, state) {
-          if (state.error != "") {
-            showSnackBar(context: context, msg: state.error);
-          }
-        },
-        builder: (context, state) {
-          if (state.isLoading || (state.percentage != 1.0 && state.isLogin)) {
-            return _loadingPage(state.percentage);
-          } else {
-            return WebViewWidget(controller: state.webViewController);
-          }
-        },
-      ),
+          listener: (context, state) {
+        if (state.error != "") {
+          showSnackBar(context: context, msg: state.error);
+        } else if (state.initUrl != "") {
+          _webViewController?.loadUrl(
+              urlRequest: URLRequest(url: WebUri(state.initUrl)));
+        }
+      }, builder: (context, state) {
+        return Stack(
+          children: [
+            InAppWebView(
+              initialSettings: InAppWebViewSettings(),
+              onWebViewCreated: (InAppWebViewController controller) {
+                _webViewController = controller;
+                //_webViewController?.loadUrl(urlRequest: initUrl.value!);
+              },
+              onLoadStart: (InAppWebViewController controller, WebUri? webUri) {
+                context.read<WebViewerBloc>().add(
+                      UpdateLoadingScreen(
+                        //percentage: 0,
+                        isLogin: webUri?.toString().contains("flow") == true,
+                      ),
+                    );
+              },
+              onLoadStop:
+                  (InAppWebViewController controller, WebUri? webUri) async {
+                if (webUri != null) {
+                  progress.value = 1;
+                  context
+                      .read<WebViewerBloc>()
+                      .add(OnLoadStop(url: webUri.toString()));
+                }
+              },
+              onProgressChanged:
+                  (InAppWebViewController controller, int webViewProgress) {
+                context.read<WebViewerBloc>().add(
+                      const UpdateLoadingScreen(
+                        isLogin: null,
+                      ),
+                    );
+                progress.value = webViewProgress / 100;
+              },
+              onReceivedServerTrustAuthRequest: (controller, challenge) async =>
+                  ServerTrustAuthResponse(
+                      action: ServerTrustAuthResponseAction.PROCEED),
+            ),
+            if (state.isLoading || (progress.value != 1.0 && state.isLogin))
+              _loadingPage(progress.value),
+          ],
+        );
+      }
+          //},
+          ),
     );
   }
 }
