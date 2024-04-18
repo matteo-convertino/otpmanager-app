@@ -1,6 +1,8 @@
 # OTP Manager
 
-[<img src="resources/img/google-play-badge.png" height="80">](https://play.google.com/store/apps/details?id=com.convertino.otp_manager)&nbsp;[<img src="resources/img/app-store-badge.png" height="80">](https://apps.apple.com/us/app/nextcloud-otp-manager/id6471510170)
+[<img src="resources/img/google-play-badge.png" height="80">](https://play.google.com/store/apps/details?id=com.convertino.otp_manager)&nbsp;
+[<img src="resources/img/app-store-badge.png" height="80">](https://apps.apple.com/us/app/nextcloud-otp-manager/id6471510170)&nbsp;
+[<img src="resources/img/bmc-button.png" height="80">](https://www.paypal.me/matteoconvertino0)
 
 *Read this in other languages: [Italian](README.it.md)*
 
