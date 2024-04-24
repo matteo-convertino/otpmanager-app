@@ -38,11 +38,6 @@ Make sure you are on stable build of flutter. You can check it `flutter --versio
 5. Run `flutter build ios`
 6. This will give you Runner.app file, create a folder with name Payload and move Runner.app to it.
 7. Compress the folder and change the .zip extension to .ipa
-   
-# Planned Features
-- [ ] Give the possibility to organize the accounts in folders or, assigning a tag to the accounts, filter them during the search
-- [ ] [[Feature Request] Show QR Code](https://github.com/matteo-convertino/otpmanager-app/issues/17)
-- [ ] [[Feature Request] Allow setting icon](https://github.com/matteo-convertino/otpmanager-app/issues/18)
 
 ## Contributors ✨
 
