@@ -57,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onShowFingerAuth(ShowFingerAuth event, Emitter<AuthState> emit) {
-    emit(state.copyWith(canShowFingerAuth: true));
+    emit(state.copyWith(canShowFingerAuth: true, isUserPasswordEmpty: false));
 
     // only make it appear once
     emit(state.copyWith(canShowFingerAuth: false));

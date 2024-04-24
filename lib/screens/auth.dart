@@ -95,7 +95,7 @@ class Auth extends HookWidget {
                       errorMsg: state.message,
                     ),
                   ),
-                  if (state.canShowFingerAuth)
+                  if (!state.isUserPasswordEmpty)
                     IconButton(
                       onPressed: () =>
                           context.read<AuthBloc>().add(ShowFingerAuth()),

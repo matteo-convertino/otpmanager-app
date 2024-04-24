@@ -12,12 +12,14 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
 
     for (var sharedAccount in nextcloudAccounts) {
       String iconKey = "default";
+      bool toUpdate = false;
 
       if (sharedAccount["icon"] != null && sharedAccount["icon"] != "default") {
         iconKey = sharedAccount["icon"];
       } else if (sharedAccount["issuer"] != null &&
           sharedAccount["issuer"] != "") {
         iconKey = IconPickerHelper.findFirst(sharedAccount["issuer"]);
+        toUpdate = iconKey != "default";
       }
 
       super.box.put(
@@ -28,7 +30,7 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
               encryptedSecret: sharedAccount["encryptedSecret"],
               iconKey: iconKey,
               position: sharedAccount["position"],
-              toUpdate: iconKey != "default",
+              toUpdate: toUpdate,
               password: sharedAccount["password"],
               iv: sharedAccount["iv"],
               nextcloudAccountId: sharedAccount["account_id"],

@@ -11,11 +11,13 @@ class AccountRepositoryImpl extends AccountRepository {
 
     for (var account in nextcloudAccounts) {
       String iconKey = "default";
+      bool toUpdate = false;
 
       if (account["icon"] != null && account["icon"] != "default") {
         iconKey = account["icon"];
       } else if (account["issuer"] != null && account["issuer"] != "") {
         iconKey = IconPickerHelper.findFirst(account["issuer"]);
+        toUpdate = iconKey != "default";
       }
 
       super.box.put(
@@ -31,7 +33,7 @@ class AccountRepositoryImpl extends AccountRepository {
               counter: account["counter"],
               iconKey: iconKey,
               position: account["position"],
-              toUpdate: iconKey != "default",
+              toUpdate: toUpdate,
               isNew: false,
             ),
           );
