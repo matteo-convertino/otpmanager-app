@@ -62,7 +62,7 @@ android {
     defaultConfig {
         applicationId "com.convertino.otp_manager"
         minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 34 // flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 

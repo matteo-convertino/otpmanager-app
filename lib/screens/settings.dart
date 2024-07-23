@@ -158,7 +158,6 @@ class Settings extends HookWidget {
                     title: const Text("Password ask time"),
                     trailing: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
-                        dropdownWidth: 150.0,
                         items: askTimeOptions
                             .map((String item) => DropdownMenuItem<String>(
                                   value: item,

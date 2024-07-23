@@ -22,7 +22,7 @@ class Manual extends HookWidget {
     final animationController =
         useAnimationController(duration: const Duration(milliseconds: 150));
     final animation =
-        useAnimation(IntTween(begin: 30, end: 0).animate(animationController));
+        useAnimation(IntTween(begin: 3, end: 0).animate(animationController));
 
     useEffect(() {
       if (context.read<ManualBloc>().state.codeTypeValue == "hotp") {
@@ -190,7 +190,7 @@ class Manual extends HookWidget {
                   Row(
                     children: [
                       Expanded(
-                        flex: 80,
+                        flex: 7,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: DropdownButtonFormField2(
@@ -198,18 +198,20 @@ class Manual extends HookWidget {
                               border: OutlineInputBorder(),
                               labelText: "Type of code",
                             ),
-                            dropdownDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.0),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
                             ),
                             value: state.codeTypeValue,
                             items: const [
                               DropdownMenuItem(
                                 value: "totp",
-                                child: Text("Based on time (TOTP)"),
+                                child: Text("Time based (TOTP)"),
                               ),
                               DropdownMenuItem(
                                 value: "hotp",
-                                child: Text("Based on counter (HOTP)"),
+                                child: Text("Counter based (HOTP)"),
                               ),
                             ],
                             onChanged: (String? value) {
@@ -233,8 +235,10 @@ class Manual extends HookWidget {
                                 border: OutlineInputBorder(),
                                 labelText: "Interval",
                               ),
-                              dropdownDecoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4.0),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
                               ),
                               value: state.intervalValue,
                               items: const [
@@ -264,8 +268,10 @@ class Manual extends HookWidget {
                               border: OutlineInputBorder(),
                               labelText: "Algorithm",
                             ),
-                            dropdownDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.0),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
                             ),
                             value: state.algorithmValue,
                             items: const [
@@ -299,8 +305,10 @@ class Manual extends HookWidget {
                               border: OutlineInputBorder(),
                               labelText: "Digits",
                             ),
-                            dropdownDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.0),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
                             ),
                             value: state.digitsValue,
                             items: const [
