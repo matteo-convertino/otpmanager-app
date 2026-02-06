@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
+import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/theme/color_schema.g.dart';
 
 import 'routing/router.dart';
 
 class OtpManager extends HookWidget {
-  const OtpManager({Key? key}) : super(key: key);
+  const OtpManager({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,7 @@ class OtpManager extends HookWidget {
           onGenerateRoute: Router.generateRoute,
           initialRoute: state.initialRoute,
           navigatorKey: NavigationService().navigatorKey,
+          scaffoldMessengerKey: getIt<GlobalKey<ScaffoldMessengerState>>(),
         );
       },
     );

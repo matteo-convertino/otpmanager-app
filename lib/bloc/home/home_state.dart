@@ -1,13 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:otp_manager/models/user.dart';
 
+import '../../utils/sync_status.dart';
+
 class HomeState extends Equatable {
   final List<dynamic> accounts; // Account | SharedAccount
   final int refreshTime;
-  final int syncStatus; // 1 = SYNCING, 0 = OK, -1 = ERROR
+  final SyncStatus syncStatus;
   final String password;
   final bool isGuest;
-  final String message;
   final bool? sortedByNameDesc;
   final bool? sortedByIssuerDesc;
   final bool? sortedByIdDesc;
@@ -20,7 +21,6 @@ class HomeState extends Equatable {
     required this.syncStatus,
     required this.password,
     required this.isGuest,
-    required this.message,
     required this.sortedByNameDesc,
     required this.sortedByIssuerDesc,
     required this.sortedByIdDesc,
@@ -29,23 +29,21 @@ class HomeState extends Equatable {
   });
 
   HomeState.initial(User user)
-      : accounts = [],
-        refreshTime = 30,
-        syncStatus = 1,
-        password = user.password ?? "",
-        isGuest = user.isGuest,
-        message = "",
-        sortedByNameDesc = user.sortedByNameDesc,
-        sortedByIssuerDesc = user.sortedByIssuerDesc,
-        sortedByIdDesc = user.sortedByIdDesc,
-        searchBarValue = "",
-        isAppUpdated = false;
+    : accounts = [],
+      refreshTime = 30,
+      syncStatus = SyncStatus.loading,
+      password = user.password ?? "",
+      isGuest = user.isGuest,
+      sortedByNameDesc = user.sortedByNameDesc,
+      sortedByIssuerDesc = user.sortedByIssuerDesc,
+      sortedByIdDesc = user.sortedByIdDesc,
+      searchBarValue = "",
+      isAppUpdated = false;
 
   HomeState copyWith({
     List<dynamic>? accounts,
     int? refreshTime,
-    int? syncStatus,
-    String? message,
+    SyncStatus? syncStatus,
     dynamic sortedByNameDesc,
     dynamic sortedByIssuerDesc,
     dynamic sortedByIdDesc,
@@ -58,7 +56,6 @@ class HomeState extends Equatable {
       syncStatus: syncStatus ?? this.syncStatus,
       password: password,
       isGuest: isGuest,
-      message: message ?? this.message,
       sortedByNameDesc: sortedByNameDesc == "null"
           ? null
           : sortedByNameDesc ?? this.sortedByNameDesc,
@@ -75,14 +72,13 @@ class HomeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        accounts,
-        refreshTime,
-        syncStatus,
-        message,
-        sortedByNameDesc,
-        sortedByIssuerDesc,
-        sortedByIdDesc,
-        searchBarValue,
-        isAppUpdated,
-      ];
+    accounts,
+    refreshTime,
+    syncStatus,
+    sortedByNameDesc,
+    sortedByIssuerDesc,
+    sortedByIdDesc,
+    searchBarValue,
+    isAppUpdated,
+  ];
 }

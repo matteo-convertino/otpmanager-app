@@ -40,11 +40,9 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"*/
 
 android {
-    compileSdkVersion 34
+    namespace 'com.convertino.otp_manager'
 
-    lintOptions {
-        checkReleaseBuilds false
-    }
+    compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -61,8 +59,8 @@ android {
 
     defaultConfig {
         applicationId "com.convertino.otp_manager"
-        minSdkVersion 21
-        targetSdkVersion 34 // flutter.targetSdkVersion
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
@@ -96,6 +94,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    lint {
+        checkReleaseBuilds false
+    }
 }
 
 flutter {
@@ -103,5 +104,5 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.20"
 }

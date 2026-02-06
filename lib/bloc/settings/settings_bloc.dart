@@ -1,18 +1,20 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:otp_manager/bloc/settings/settings_event.dart';
 import 'package:otp_manager/bloc/settings/settings_state.dart';
 import 'package:otp_manager/logger/save_log.dart';
 import 'package:otp_manager/models/user.dart';
-import 'package:otp_manager/repository/interface/user_repository.dart';
+import 'package:otp_manager/repository/local/interface/user_repository.dart';
 import 'package:otp_manager/utils/launch_url.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+@injectable
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final UserRepository userRepository;
 
   SettingsBloc({required this.userRepository})
-      : super(SettingsState.initial(userRepository.get()!)) {
+    : super(SettingsState.initial(userRepository.get()!)) {
     on<SaveLog>(_onSaveLog);
     on<InitPackageInfo>(_onInitPackageInfo);
     on<OpenLink>(_onOpenLink);
@@ -23,7 +25,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   void _onSaveLog(SaveLog event, Emitter<SettingsState> emit) => saveLog();
 
   void _onInitPackageInfo(
-      InitPackageInfo event, Emitter<SettingsState> emit) async {
+    InitPackageInfo event,
+    Emitter<SettingsState> emit,
+  ) async {
     final info = await PackageInfo.fromPlatform();
     emit(state.copyWith(packageInfo: info));
   }
@@ -55,14 +59,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     } else if (user.passwordAskTime == PasswordAskTime.everyOpening) {
       user.passwordExpirationDate = DateTime.now();
     } else if (user.passwordAskTime == PasswordAskTime.oneMinutes) {
-      user.passwordExpirationDate =
-          DateTime.now().add(const Duration(minutes: 1));
+      user.passwordExpirationDate = DateTime.now().add(
+        const Duration(minutes: 1),
+      );
     } else if (user.passwordAskTime == PasswordAskTime.threeMinutes) {
-      user.passwordExpirationDate =
-          DateTime.now().add(const Duration(minutes: 3));
+      user.passwordExpirationDate = DateTime.now().add(
+        const Duration(minutes: 3),
+      );
     } else if (user.passwordAskTime == PasswordAskTime.fiveMinutes) {
-      user.passwordExpirationDate =
-          DateTime.now().add(const Duration(minutes: 5));
+      user.passwordExpirationDate = DateTime.now().add(
+        const Duration(minutes: 5),
+      );
     }
   }
 }

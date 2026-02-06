@@ -5,10 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/manual/manual_bloc.dart';
 import 'package:otp_manager/bloc/manual/manual_event.dart';
-import 'package:otp_manager/routing/constants.dart';
-import 'package:otp_manager/routing/navigation_service.dart';
-import 'package:otp_manager/utils/show_snackbar.dart';
-import 'package:otp_manager/utils/simple_icons.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 
 import '../bloc/icon_picker/icon_picker_bloc.dart';
 import '../bloc/manual/manual_state.dart';
@@ -19,10 +18,12 @@ class Manual extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animationController =
-        useAnimationController(duration: const Duration(milliseconds: 150));
-    final animation =
-        useAnimation(IntTween(begin: 3, end: 0).animate(animationController));
+    final animationController = useAnimationController(
+      duration: const Duration(milliseconds: 150),
+    );
+    final animation = useAnimation(
+      IntTween(begin: 3, end: 0).animate(animationController),
+    );
 
     useEffect(() {
       if (context.read<ManualBloc>().state.codeTypeValue == "hotp") {
@@ -34,15 +35,10 @@ class Manual extends HookWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "${context.read<ManualBloc>().state.isEdit ? "Edit" : "Add"} account manually"),
+          "${context.read<ManualBloc>().state.isEdit ? "Edit" : "Add"} account manually",
+        ),
       ),
-      body: BlocConsumer<ManualBloc, ManualState>(
-        listener: (context, state) {
-          if (state.message != "") {
-            showSnackBar(context: context, msg: state.message);
-            NavigationService().resetToScreen(homeRoute);
-          }
-        },
+      body: BlocBuilder<ManualBloc, ManualState>(
         builder: (context, state) {
           return SingleChildScrollView(
             child: Column(
@@ -52,66 +48,73 @@ class Manual extends HookWidget {
                     Expanded(
                       flex: 3,
                       child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0, top: 15),
-                          child: Column(
-                            children: [
-                              InkWell(
-                                customBorder: const CircleBorder(),
-                                onTap: () => showModalBottomSheet<String?>(
-                                        context: context,
-                                        showDragHandle: true,
-                                        isScrollControlled: true,
-                                        useSafeArea: true,
-                                        builder: (BuildContext context) {
-                                          return BlocProvider<IconPickerBloc>(
-                                            create: (context) => IconPickerBloc(
-                                              issuer: state.issuer,
-                                            ),
-                                            child: const IconPicker(),
-                                          );
-                                        })
-                                    .then((value) => {
-                                          if (value != null)
-                                            context
-                                                .read<ManualBloc>()
-                                                .add(IconKeyChanged(key: value))
-                                        }),
-                                child: Ink(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.light
-                                        ? Theme.of(context)
-                                            .scaffoldBackgroundColor
-                                        : const Color(0xFF313131),
-                                    boxShadow: [
-                                      if (Theme.of(context).brightness ==
-                                          Brightness.light)
-                                        BoxShadow(
-                                          color: Colors.grey[300]!,
-                                          blurRadius: 10.0,
-                                          spreadRadius: 1.0,
-                                        )
-                                    ],
+                        padding: const EdgeInsets.only(left: 10.0, top: 15),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () =>
+                                  showModalBottomSheet<String?>(
+                                    context: context,
+                                    showDragHandle: true,
+                                    isScrollControlled: true,
+                                    useSafeArea: true,
+                                    builder: (BuildContext context) {
+                                      return BlocProvider<IconPickerBloc>(
+                                        create: (context) => IconPickerBloc(
+                                          issuer: state.issuer,
+                                        ),
+                                        child: const IconPicker(),
+                                      );
+                                    },
+                                  ).then(
+                                    (value) => {
+                                      if (value != null)
+                                        context.read<ManualBloc>().add(
+                                          IconKeyChanged(key: value),
+                                        ),
+                                    },
                                   ),
-                                  child: simpleIcons[state.iconKey] ??
-                                      simpleIcons['default'],
+                              child: Ink(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Theme.of(
+                                          context,
+                                        ).scaffoldBackgroundColor
+                                      : const Color(0xFF313131),
+                                  boxShadow: [
+                                    if (Theme.of(context).brightness ==
+                                        Brightness.light)
+                                      BoxShadow(
+                                        color: Colors.grey[300]!,
+                                        blurRadius: 10.0,
+                                        spreadRadius: 1.0,
+                                      ),
+                                  ],
+                                ),
+                                child:
+                                    OtpIconsHelper.simpleIcons[state.iconKey] ??
+                                    OtpIconsHelper.simpleIcons['default'],
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 3.0),
+                              child: Text(
+                                "Change icon",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(top: 3.0),
-                                child: Text(
-                                  "Change icon",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              )
-                            ],
-                          )),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 10,
@@ -129,9 +132,9 @@ class Manual extends HookWidget {
                                 : const Icon(Icons.error, color: Colors.red),
                           ),
                           onChanged: (value) {
-                            context
-                                .read<ManualBloc>()
-                                .add(NameChanged(name: value));
+                            context.read<ManualBloc>().add(
+                              NameChanged(name: value),
+                            );
                           },
                         ),
                       ),
@@ -152,9 +155,9 @@ class Manual extends HookWidget {
                           : const Icon(Icons.error, color: Colors.red),
                     ),
                     onChanged: (value) {
-                      context
-                          .read<ManualBloc>()
-                          .add(IssuerChanged(issuer: value));
+                      context.read<ManualBloc>().add(
+                        IssuerChanged(issuer: value),
+                      );
                     },
                   ),
                 ),
@@ -173,16 +176,18 @@ class Manual extends HookWidget {
                             : const Icon(Icons.error, color: Colors.red),
                       ),
                       onChanged: (value) {
-                        context
-                            .read<ManualBloc>()
-                            .add(SecretKeyChanged(secretKey: value));
+                        context.read<ManualBloc>().add(
+                          SecretKeyChanged(secretKey: value),
+                        );
                       },
                       onTap: () {
                         if (state.isEdit) {
                           Clipboard.setData(
-                              ClipboardData(text: state.secretKey));
-                          showSnackBar(
-                              context: context, msg: "Secrey key copied");
+                            ClipboardData(text: state.secretKey),
+                          );
+                          getIt<SnackbarService>().showMessage(
+                            "Secrey key copied",
+                          );
                         }
                       },
                     ),
@@ -219,7 +224,8 @@ class Manual extends HookWidget {
                                   ? animationController.forward()
                                   : animationController.reverse();
                               context.read<ManualBloc>().add(
-                                  CodeTypeValueChanged(codeTypeValue: value!));
+                                CodeTypeValueChanged(codeTypeValue: value!),
+                              );
                             },
                           ),
                         ),
@@ -228,8 +234,12 @@ class Manual extends HookWidget {
                         Expanded(
                           flex: animation,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(0, 15.0, 15.0, 15.0),
+                            padding: const EdgeInsets.fromLTRB(
+                              0,
+                              15.0,
+                              15.0,
+                              15.0,
+                            ),
                             child: DropdownButtonFormField2(
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
@@ -249,7 +259,8 @@ class Manual extends HookWidget {
                               onChanged: (int? value) {
                                 if (value == null) return;
                                 context.read<ManualBloc>().add(
-                                    IntervalValueChanged(intervalValue: value));
+                                  IntervalValueChanged(intervalValue: value),
+                                );
                               },
                             ),
                           ),
@@ -261,8 +272,12 @@ class Manual extends HookWidget {
                       Expanded(
                         flex: 5,
                         child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(15.0, 15.0, 0, 15.0),
+                          padding: const EdgeInsets.fromLTRB(
+                            15.0,
+                            15.0,
+                            0,
+                            15.0,
+                          ),
                           child: DropdownButtonFormField2(
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
@@ -290,8 +305,8 @@ class Manual extends HookWidget {
                             ],
                             onChanged: (String? value) {
                               context.read<ManualBloc>().add(
-                                  AlgorithmValueChanged(
-                                      algorithmValue: value!));
+                                AlgorithmValueChanged(algorithmValue: value!),
+                              );
                             },
                           ),
                         ),
@@ -312,27 +327,21 @@ class Manual extends HookWidget {
                             ),
                             value: state.digitsValue,
                             items: const [
-                              DropdownMenuItem(
-                                value: 4,
-                                child: Text("4"),
-                              ),
-                              DropdownMenuItem(
-                                value: 6,
-                                child: Text("6"),
-                              ),
+                              DropdownMenuItem(value: 4, child: Text("4")),
+                              DropdownMenuItem(value: 6, child: Text("6")),
                             ],
                             onChanged: (int? value) {
                               if (value == null) return;
-                              context
-                                  .read<ManualBloc>()
-                                  .add(DigitsValueChanged(digitsValue: value));
+                              context.read<ManualBloc>().add(
+                                DigitsValueChanged(digitsValue: value),
+                              );
                             },
                           ),
                         ),
                       ),
                     ],
                   ),
-                ]
+                ],
               ],
             ),
           );

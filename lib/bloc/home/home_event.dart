@@ -55,12 +55,3 @@ class SearchBarValueChanged extends HomeEvent {
   @override
   List<Object> get props => [value];
 }
-
-class ShowMessage extends HomeEvent {
-  const ShowMessage({required this.message});
-
-  final String message;
-
-  @override
-  List<Object> get props => [message];
-}

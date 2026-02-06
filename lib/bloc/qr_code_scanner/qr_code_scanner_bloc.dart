@@ -1,12 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_event.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_state.dart';
-import 'package:otp_manager/repository/interface/account_repository.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/repository/local/interface/account_repository.dart';
+import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
+import 'package:otp_manager/service/account_service.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
 
-import '../../domain/account_service.dart';
 import '../../models/account.dart';
-import '../../utils/uri_decoder.dart';
+import '../../utils/helper/otp_uri_decoder_helper.dart';
 
+@injectable
 class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
   final AccountRepository accountRepository;
   final AccountService accountService;
@@ -14,9 +20,7 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
   QrCodeScannerBloc({
     required this.accountRepository,
     required this.accountService,
-  }) : super(
-          const QrCodeScannerState.initial(),
-        ) {
+  }) : super(const QrCodeScannerState.initial()) {
     on<ErrorChanged>(_onErrorChanged);
     on<DecodeAndStoreAccounts>(_onDecodeAndStoreAccounts);
   }
@@ -26,10 +30,11 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
   }
 
   void _onDecodeAndStoreAccounts(
-      DecodeAndStoreAccounts event, Emitter<QrCodeScannerState> emit) async {
-    List<Account> newAccounts = UriDecoder().decodeQrCode(
+    DecodeAndStoreAccounts event,
+    Emitter<QrCodeScannerState> emit,
+  ) async {
+    List<Account> newAccounts = OtpUriDecoderHelper.decodeOtpUri(
       event.accounts,
-      isGoogle: UriDecoder.isGoogle(event.accounts),
     );
 
     var atLeastOneAdded = false;
@@ -43,14 +48,19 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
     }
 
     if (!atLeastOneAdded) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           error:
-              "${newAccounts.length > 1 ? "These accounts are already registered" : "This account is already registered"}.\nMake sure you are in sync and try again."));
+              "${newAccounts.length > 1 ? "These accounts are already registered" : "This account is already registered"}.\nMake sure you are in sync and try again.",
+        ),
+      );
     } else {
-      emit(state.copyWith(
-          addWithSuccess: newAccounts.length > 1
-              ? "New accounts have been added"
-              : "New account has been added"));
+      getIt<SnackbarService>().showMessage(
+        newAccounts.length > 1
+            ? "New accounts have been added"
+            : "New account has been added",
+      );
+      NavigationService().resetToScreen(homeRoute);
     }
   }
 }

@@ -1,22 +1,29 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/bloc/home/home_state.dart';
-import 'package:otp_manager/domain/nextcloud_service.dart';
+import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/account.dart';
-import 'package:otp_manager/repository/interface/account_repository.dart';
-import 'package:otp_manager/repository/interface/shared_account_repository.dart';
-import 'package:otp_manager/repository/interface/user_repository.dart';
+import 'package:otp_manager/repository/local/interface/account_repository.dart';
+import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
+import 'package:otp_manager/repository/local/interface/user_repository.dart';
 import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/service/account_service.dart';
+import 'package:otp_manager/service/nextcloud_service.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/sync_status.dart';
 
-import '../../domain/account_service.dart';
 import '../../models/shared_account.dart';
 import '../../routing/navigation_service.dart';
+import '../../service/encryption_service.dart';
 
+@injectable
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final UserRepository userRepository;
   final AccountRepository accountRepository;
   final AccountService accountService;
   final SharedAccountRepository sharedAccountRepository;
+  final EncryptionService encryption;
   final NextcloudService nextcloudService;
 
   final NavigationService _navigationService = NavigationService();
@@ -26,10 +33,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.accountRepository,
     required this.accountService,
     required this.sharedAccountRepository,
+    required this.encryption,
     required this.nextcloudService,
-  }) : super(
-          HomeState.initial(userRepository.get()!),
-        ) {
+  }) : super(HomeState.initial(userRepository.get()!)) {
     on<NextcloudSync>(_onNextcloudSync);
     on<GetAccounts>(_onGetAccounts);
     on<Logout>(_onLogout);
@@ -40,13 +46,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SortById>(_onSortById);
     on<SearchBarValueChanged>(_onSearchBarValueChanged);
     on<IsAppUpdatedChanged>(_onIsAppUpdatedChanged);
-    on<ShowMessage>(_onShowMessage);
 
     add(GetAccounts());
   }
 
   void _onIsAppUpdatedChanged(
-      IsAppUpdatedChanged event, Emitter<HomeState> emit) async {
+    IsAppUpdatedChanged event,
+    Emitter<HomeState> emit,
+  ) async {
     emit(state.copyWith(isAppUpdated: event.value));
   }
 
@@ -54,46 +61,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(GetAccounts());
 
     if (!state.isAppUpdated) {
-      emit(state.copyWith(
-          syncStatus: -1,
-          message:
-              "Update the app to the latest version to be able to synchronize"));
-      emit(state.copyWith(message: ""));
-    } else if (!state.isGuest) {
-      emit(state.copyWith(syncStatus: 1));
+      getIt<SnackbarService>().showMessage(
+        'Update the app to the latest version to be able to synchronize',
+      );
 
-      final Map<String, dynamic> result = await nextcloudService.sync();
-
-      if (result["error"] != null) {
-        emit(state.copyWith(syncStatus: -1, message: result["error"]));
-        emit(state.copyWith(message: ""));
-      } else {
-        if (nextcloudService.syncAccountsToAddToEdit(
-            result["accounts"], result["sharedAccounts"])) {
-          if (accountService.repairPositionError()) {
-            await nextcloudService.sync();
-          }
-          emit(state.copyWith(syncStatus: 0));
-        } else {
-          emit(state.copyWith(
-            syncStatus: -1,
-            message: "Password has changed. Insert the new one",
-          ));
-          emit(state.copyWith(message: ""));
-          _navigationService.replaceScreen(authRoute);
-        }
-
-        emit(state.copyWith(syncStatus: 0));
-      }
-    } else {
-      emit(state.copyWith(syncStatus: -1));
+      emit(state.copyWith(syncStatus: SyncStatus.error));
+      return;
     }
+
+    if (state.isGuest) {
+      emit(state.copyWith(syncStatus: SyncStatus.error));
+      return;
+    }
+
+    emit(state.copyWith(syncStatus: SyncStatus.loading));
+
+    await nextcloudService.sync(
+      onFailed: (err) => emit(state.copyWith(syncStatus: SyncStatus.error)),
+      onError: () => emit(state.copyWith(syncStatus: SyncStatus.error)),
+    );
+
+    emit(state.copyWith(syncStatus: SyncStatus.success));
 
     add(GetAccounts());
   }
 
   List mergeResults(
-      List<Account> accounts, List<SharedAccount> sharedAccounts) {
+    List<Account> accounts,
+    List<SharedAccount> sharedAccounts,
+  ) {
     List result = [...accounts, ...sharedAccounts];
 
     result.sort((a, b) => a.position.compareTo(b.position));
@@ -102,20 +98,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onGetAccounts(GetAccounts event, Emitter<HomeState> emit) {
-    if (state.searchBarValue == "") {
-      emit(state.copyWith(
-        accounts: mergeResults(
-          accountRepository.getVisible(),
-          sharedAccountRepository.getVisible(),
+    if (state.searchBarValue.isEmpty) {
+      emit(
+        state.copyWith(
+          accounts: mergeResults(
+            accountRepository.getVisible(),
+            sharedAccountRepository.getVisible(),
+          ),
         ),
-      ));
+      );
     } else {
-      emit(state.copyWith(
-        accounts: mergeResults(
-          accountRepository.getVisibleFiltered(state.searchBarValue),
-          sharedAccountRepository.getVisibleFiltered(state.searchBarValue),
+      emit(
+        state.copyWith(
+          accounts: mergeResults(
+            accountRepository.getVisibleFiltered(state.searchBarValue),
+            sharedAccountRepository.getVisibleFiltered(state.searchBarValue),
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -127,11 +127,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {
-    emit(state.copyWith(
-      sortedByIdDesc: "null",
-      sortedByNameDesc: "null",
-      sortedByIssuerDesc: "null",
-    ));
+    emit(
+      state.copyWith(
+        sortedByIdDesc: "null",
+        sortedByNameDesc: "null",
+        sortedByIssuerDesc: "null",
+      ),
+    );
 
     final user = userRepository.get()!;
     user.sortedByNameDesc = state.sortedByNameDesc;
@@ -150,14 +152,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       add(NextcloudSync());
 
-      emit(state.copyWith(
-          message: "${event.account.type.toUpperCase()} has been removed"));
+      getIt<SnackbarService>().showMessage(
+        "${event.account.type.toUpperCase()} has been removed",
+      );
     } else {
-      emit(state.copyWith(
-          message: "There was an error while deleting the account"));
+      getIt<SnackbarService>().showMessage(
+        "There was an error while deleting the account",
+      );
     }
 
-    emit(state.copyWith(message: ""));
     _navigationService.goBack();
   }
 
@@ -170,12 +173,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       accounts.sort((a, b) => a.id.compareTo(b.id));
     }
 
-    emit(state.copyWith(
-      sortedByIdDesc:
-          state.sortedByIdDesc == null ? false : !(state.sortedByIdDesc!),
-      sortedByNameDesc: "null",
-      sortedByIssuerDesc: "null",
-    ));
+    emit(
+      state.copyWith(
+        sortedByIdDesc: state.sortedByIdDesc == null
+            ? false
+            : !(state.sortedByIdDesc!),
+        sortedByNameDesc: "null",
+        sortedByIssuerDesc: "null",
+      ),
+    );
 
     _updateSorting(accounts);
   }
@@ -189,12 +195,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       accounts.sort((b, a) => a.name.compareTo(b.name));
     }
 
-    emit(state.copyWith(
-      sortedByNameDesc:
-          state.sortedByNameDesc == null ? false : !(state.sortedByNameDesc!),
-      sortedByIdDesc: "null",
-      sortedByIssuerDesc: "null",
-    ));
+    emit(
+      state.copyWith(
+        sortedByNameDesc: state.sortedByNameDesc == null
+            ? false
+            : !(state.sortedByNameDesc!),
+        sortedByIdDesc: "null",
+        sortedByIssuerDesc: "null",
+      ),
+    );
 
     _updateSorting(accounts);
   }
@@ -208,13 +217,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       accounts.sort((b, a) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
     }
 
-    emit(state.copyWith(
-      sortedByIssuerDesc: state.sortedByIssuerDesc == null
-          ? false
-          : !(state.sortedByIssuerDesc!),
-      sortedByIdDesc: "null",
-      sortedByNameDesc: "null",
-    ));
+    emit(
+      state.copyWith(
+        sortedByIssuerDesc: state.sortedByIssuerDesc == null
+            ? false
+            : !(state.sortedByIssuerDesc!),
+        sortedByIdDesc: "null",
+        sortedByNameDesc: "null",
+      ),
+    );
 
     _updateSorting(accounts);
   }
@@ -235,12 +246,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onSearchBarValueChanged(
-      SearchBarValueChanged event, Emitter<HomeState> emit) {
+    SearchBarValueChanged event,
+    Emitter<HomeState> emit,
+  ) {
     emit(state.copyWith(searchBarValue: event.value));
-  }
-
-  void _onShowMessage(ShowMessage event, Emitter<HomeState> emit) {
-    emit(state.copyWith(message: event.message));
-    emit(state.copyWith(message: ""));
   }
 }

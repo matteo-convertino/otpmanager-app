@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/simple_icons.dart';
+import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 
 class IconPickerState extends Equatable {
   final Map<String, Icon> icons;
@@ -17,9 +16,9 @@ class IconPickerState extends Equatable {
   });
 
   IconPickerState.initial(this.issuer)
-      : icons = simpleIcons,
-        iconsBestMatch = {},
-        searchBarValue = "";
+    : icons = OtpIconsHelper.simpleIcons,
+      iconsBestMatch = {},
+      searchBarValue = "";
 
   IconPickerState copyWith({
     Map<String, Icon>? icons,

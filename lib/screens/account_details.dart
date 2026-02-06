@@ -6,12 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
 import 'package:otp_manager/bloc/account_details/account_details_state.dart';
 import 'package:otp_manager/models/shared_account.dart';
-import 'package:otp_manager/utils/show_snackbar.dart';
 
 import '../bloc/account_details/account_details_event.dart';
 import "../routing/constants.dart";
 import '../routing/navigation_service.dart';
-import '../utils/delete_modal.dart';
+import '../widgets/dialogs/otp_manager_delete_dialog.dart';
 
 class AccountDetails extends StatelessWidget {
   const AccountDetails({Key? key}) : super(key: key);
@@ -45,7 +44,7 @@ class AccountDetails extends StatelessWidget {
               NavigationService().navigateTo(
                 manualRoute,
                 arguments: {
-                  "account": context.read<AccountDetailsBloc>().state.account
+                  "account": context.read<AccountDetailsBloc>().state.account,
                 },
               );
             },
@@ -53,21 +52,16 @@ class AccountDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              showDeleteModal(
+              showOtpManagerDeleteModal(
                 context,
                 context.read<AccountDetailsBloc>().state.account,
                 () => context.read<AccountDetailsBloc>().add(DeleteAccount()),
               );
             },
-          )
+          ),
         ],
       ),
-      body: BlocConsumer<AccountDetailsBloc, AccountDetailsState>(
-        listener: (context, state) {
-          if (state.message != "") {
-            showSnackBar(context: context, msg: state.message);
-          }
-        },
+      body: BlocBuilder<AccountDetailsBloc, AccountDetailsState>(
         builder: (context, state) {
           return Column(
             children: [
@@ -81,8 +75,10 @@ class AccountDetails extends StatelessWidget {
                     if (state.account.type == "totp")
                       accountDetail("Period", "${state.account.period}s"),
                     accountDetail("Digits", state.account.digits.toString()),
-                    accountDetail("Algorithm",
-                        state.account.algorithm.toString().split(".")[1]),
+                    accountDetail(
+                      "Algorithm",
+                      state.account.algorithm.toString().split(".")[1],
+                    ),
                     accountDetail("Type", state.account.type.toUpperCase()),
                     if (state.account.type == "hotp")
                       accountDetail(
@@ -96,8 +92,9 @@ class AccountDetails extends StatelessWidget {
                         "Expired At",
                         state.account.expiredAt == null
                             ? "Never expires"
-                            : DateFormat('yyyy-MM-dd')
-                                .format(state.account.expiredAt),
+                            : DateFormat(
+                                'yyyy-MM-dd',
+                              ).format(state.account.expiredAt),
                       ),
                     ],
                   ],
@@ -132,7 +129,7 @@ class AccountDetails extends StatelessWidget {
                           angle: 90 * pi / 180,
                           child: const Icon(Icons.link),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -143,7 +140,7 @@ class AccountDetails extends StatelessWidget {
                     //color: Colors.grey,
                   ),
                 ),
-              ]
+              ],
             ],
           );
         },

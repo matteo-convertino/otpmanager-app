@@ -9,34 +9,35 @@ import 'package:otp_manager/screens/home/fab.dart';
 import 'package:upgrader/upgrader.dart';
 
 class Home extends HookWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
+      showIgnore: false,
+      showLater: true,
+      onLater: () {
+        context.read<HomeBloc>().add(NextcloudSync());
+        return true;
+      },
       upgrader: Upgrader(
-          debugLogging: false,
-          debugDisplayOnce: false,
-          showIgnore: false,
-          showLater: true,
-          durationUntilAlertAgain: const Duration(hours: 2),
-          willDisplayUpgrade: ({
-            String? appStoreVersion,
-            required bool display,
-            String? installedVersion,
-            String? minAppVersion,
-          }) {
-            if (!display) {
-              context
-                  .read<HomeBloc>()
-                  .add(const IsAppUpdatedChanged(value: true));
-              context.read<HomeBloc>().add(NextcloudSync());
-            }
-          },
-          onLater: () {
-            context.read<HomeBloc>().add(NextcloudSync());
-            return true;
-          }),
+        debugLogging: false,
+        debugDisplayOnce: false,
+        durationUntilAlertAgain: const Duration(hours: 2),
+        willDisplayUpgrade:
+            ({
+              required bool display,
+              String? installedVersion,
+              UpgraderVersionInfo? versionInfo,
+            }) {
+              if (!display) {
+                context.read<HomeBloc>().add(
+                  const IsAppUpdatedChanged(value: true),
+                );
+                context.read<HomeBloc>().add(NextcloudSync());
+              }
+            },
+      ),
       child: const Scaffold(
         appBar: HomeAppBar(),
         body: HomeBody(),

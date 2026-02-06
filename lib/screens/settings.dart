@@ -10,7 +10,8 @@ import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/bloc/settings/settings_bloc.dart';
 import 'package:otp_manager/bloc/settings/settings_event.dart';
 import 'package:otp_manager/bloc/settings/settings_state.dart';
-import 'package:otp_manager/utils/show_snackbar.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
 
 class Settings extends HookWidget {
   Settings({Key? key}) : super(key: key);
@@ -42,38 +43,48 @@ class Settings extends HookWidget {
                   title: const Text("Bug Report"),
                   content: RichText(
                     text: TextSpan(
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.normal),
-                      text: "If you have found a bug and want to report "
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.normal,
+                      ),
+                      text:
+                          "If you have found a bug and want to report "
                           "it to the developer, contact him via email on ",
                       children: [
                         TextSpan(
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
                           text: "matteo@convertino.cloud",
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              context.read<SettingsBloc>().add(const OpenLink(
-                                  url: 'mailto:matteo@convertino.cloud'));
+                              context.read<SettingsBloc>().add(
+                                const OpenLink(
+                                  url: 'mailto:matteo@convertino.cloud',
+                                ),
+                              );
                             },
                         ),
                         const TextSpan(text: " or open an issue on "),
                         TextSpan(
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
                           text: "github",
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              context.read<SettingsBloc>().add(const OpenLink(
+                              context.read<SettingsBloc>().add(
+                                const OpenLink(
                                   url:
-                                      'https://github.com/matteo-convertino/otpmanager-app/issues'));
+                                      'https://github.com/matteo-convertino/otpmanager-app/issues',
+                                ),
+                              );
                             },
                         ),
                         const TextSpan(
-                            text: ", attaching the log"
-                                " file that you can download from here."),
+                          text:
+                              ", attaching the log"
+                              " file that you can download from here.",
+                        ),
                       ],
                     ),
                   ),
@@ -92,7 +103,7 @@ class Settings extends HookWidget {
               );
             },
             icon: const Icon(Icons.bug_report),
-          )
+          ),
         ],
       ),
       body: BlocBuilder<SettingsBloc, SettingsState>(
@@ -117,7 +128,7 @@ class Settings extends HookWidget {
                     ),
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: state.url));
-                      showSnackBar(context: context, msg: "URL copied");
+                      getIt<SnackbarService>().showMessage("URL copied");
                     },
                   ),
                   BlocBuilder<OtpManagerBloc, OtpManagerState>(
@@ -131,9 +142,9 @@ class Settings extends HookWidget {
                               .read<OtpManagerBloc>()
                               .add(CopyWithTapToggled()),
                         ),
-                        onTap: () => context
-                            .read<OtpManagerBloc>()
-                            .add(CopyWithTapToggled()),
+                        onTap: () => context.read<OtpManagerBloc>().add(
+                          CopyWithTapToggled(),
+                        ),
                       );
                     },
                   ),
@@ -148,9 +159,9 @@ class Settings extends HookWidget {
                               .read<OtpManagerBloc>()
                               .add(DarkThemeToggled()),
                         ),
-                        onTap: () => context
-                            .read<OtpManagerBloc>()
-                            .add(DarkThemeToggled()),
+                        onTap: () => context.read<OtpManagerBloc>().add(
+                          DarkThemeToggled(),
+                        ),
                       );
                     },
                   ),
@@ -159,20 +170,23 @@ class Settings extends HookWidget {
                     trailing: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         items: askTimeOptions
-                            .map((String item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ))
+                            .map(
+                              (String item) => DropdownMenuItem<String>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            )
                             .toList(),
                         value: askTimeOptions[state.selectedAskTimeIndex],
                         onChanged: (String? value) {
-                          context.read<SettingsBloc>().add(AskTimeChanged(
-                              index: askTimeOptions.indexOf(value!)));
+                          context.read<SettingsBloc>().add(
+                            AskTimeChanged(
+                              index: askTimeOptions.indexOf(value!),
+                            ),
+                          );
                         },
                       ),
                     ),

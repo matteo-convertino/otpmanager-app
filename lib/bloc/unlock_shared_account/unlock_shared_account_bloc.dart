@@ -1,17 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/bloc/unlock_shared_account/unlock_shared_account_event.dart';
 import 'package:otp_manager/bloc/unlock_shared_account/unlock_shared_account_state.dart';
-import 'package:otp_manager/repository/interface/shared_account_repository.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/dto/request/shared_account_unlock_request_dto.dart';
+import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
+import 'package:otp_manager/repository/local/interface/user_repository.dart';
+import 'package:otp_manager/service/nextcloud_service.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
 
-import '../../domain/nextcloud_service.dart';
 import '../../routing/navigation_service.dart';
 import '../home/home_bloc.dart';
 
+@injectable
 class UnlockSharedAccountBloc
     extends Bloc<UnlockSharedAccountEvent, UnlockSharedAccountState> {
   final NextcloudService nextcloudService;
   final SharedAccountRepository sharedAccountRepository;
+  final UserRepository userRepository;
   final int accountId;
   final HomeBloc homeBloc;
 
@@ -20,23 +27,26 @@ class UnlockSharedAccountBloc
   UnlockSharedAccountBloc({
     required this.sharedAccountRepository,
     required this.nextcloudService,
-    required this.accountId,
+    required this.userRepository,
     required this.homeBloc,
-  }) : super(
-          const UnlockSharedAccountState.initial(),
-        ) {
+    @factoryParam required this.accountId,
+  }) : super(const UnlockSharedAccountState.initial()) {
     on<PasswordSubmit>(_onPasswordSubmit);
     on<PasswordChanged>(_onPasswordChanged);
     on<ResetAttempts>(_onResetAttempts);
   }
 
   void _onResetAttempts(
-      ResetAttempts event, Emitter<UnlockSharedAccountState> emit) {
+    ResetAttempts event,
+    Emitter<UnlockSharedAccountState> emit,
+  ) {
     emit(state.copyWith(attempts: 3));
   }
 
   void _onPasswordChanged(
-      PasswordChanged event, Emitter<UnlockSharedAccountState> emit) {
+    PasswordChanged event,
+    Emitter<UnlockSharedAccountState> emit,
+  ) {
     emit(state.copyWith(password: event.password, errorMsg: ""));
   }
 
@@ -49,17 +59,30 @@ class UnlockSharedAccountBloc
   }
 
   void _onPasswordSubmit(
-      PasswordSubmit event, Emitter<UnlockSharedAccountState> emit) async {
-    String? result =
-        await nextcloudService.unlockSharedAccount(accountId, state.password);
-
-    if (result == null) {
-      homeBloc.add(
-          const ShowMessage(message: "Shared account unlocked with success"));
-      homeBloc.add(NextcloudSync());
-      _navigationService.goBack();
-    } else {
-      _error(emit, result);
-    }
+    PasswordSubmit event,
+    Emitter<UnlockSharedAccountState> emit,
+  ) async {
+    await nextcloudService.unlockSharedAccount(
+      SharedAccountUnlockRequestDto(
+        accountId: accountId,
+        currentPassword: userRepository.get()!.password!,
+        tempPassword: state.password,
+      ),
+      onComplete: (_) {
+        getIt<SnackbarService>().showMessage(
+          "Shared account unlocked with success",
+        );
+        homeBloc.add(NextcloudSync());
+        NavigationService().goBack();
+      },
+      onFailed: (err) => _error(
+        emit,
+        "An error encountered while checking password. Try to reload after a while!",
+      ),
+      onError: () => _error(
+        emit,
+        "An error encountered while checking password. Try to reload after a while!",
+      ),
+    );
   }
 }

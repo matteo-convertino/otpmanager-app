@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otp_manager/domain/nextcloud_service.dart';
-import 'package:otp_manager/repository/interface/account_repository.dart';
-import 'package:otp_manager/repository/interface/shared_account_repository.dart';
+import 'package:otp_manager/di/injection.dart';
 
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
@@ -11,7 +9,7 @@ import '../../bloc/otp_account/otp_account_bloc.dart';
 import 'otp_account.dart';
 
 class OtpAccountsList extends StatelessWidget {
-  const OtpAccountsList({Key? key}) : super(key: key);
+  const OtpAccountsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +28,13 @@ class OtpAccountsList extends StatelessWidget {
 
             return BlocProvider<OtpAccountBloc>(
               key: ValueKey(account.secret),
-              create: (context) => OtpAccountBloc(
-                homeBloc: context.read<HomeBloc>(),
-                accountRepository: context.read<AccountRepository>(),
-                nextcloudService: context.read<NextcloudService>(),
-                sharedAccountRepository:
-                    context.read<SharedAccountRepository>(),
-              ),
-              child: OtpAccount(
-                account: account,
-              ),
+              create: (context) => getIt<OtpAccountBloc>(),
+              child: OtpAccount(account: account),
             );
           },
-          onReorder: (oldIndex, newIndex) => context
-              .read<HomeBloc>()
-              .add(Reorder(oldIndex: oldIndex, newIndex: newIndex)),
+          onReorder: (oldIndex, newIndex) => context.read<HomeBloc>().add(
+            Reorder(oldIndex: oldIndex, newIndex: newIndex),
+          ),
         );
       },
     );

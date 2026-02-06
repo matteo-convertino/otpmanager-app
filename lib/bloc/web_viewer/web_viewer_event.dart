@@ -10,13 +10,12 @@ class WebViewerEvent extends Equatable {
 class InitNextcloudLogin extends WebViewerEvent {}
 
 class UpdateLoadingScreen extends WebViewerEvent {
-  const UpdateLoadingScreen({/*required this.percentage,*/ required this.isLogin});
+  const UpdateLoadingScreen({required this.isLogin});
 
-  //final double percentage;
   final bool? isLogin;
 
   @override
-  List<Object?> get props => [/*percentage,*/ isLogin];
+  List<Object?> get props => [isLogin];
 }
 
 class OnLoadStop extends WebViewerEvent {

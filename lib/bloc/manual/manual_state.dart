@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:otp/otp.dart';
 import 'package:otp_manager/models/shared_account.dart';
-import 'package:otp_manager/utils/uri_decoder.dart';
 
 class ManualState extends Equatable {
   final String iconKey;
@@ -15,7 +15,6 @@ class ManualState extends Equatable {
   final String algorithmValue;
   final int digitsValue;
   final bool isEdit;
-  final String message;
   final bool isSharedAccount;
 
   const ManualState({
@@ -31,25 +30,24 @@ class ManualState extends Equatable {
     required this.algorithmValue,
     required this.digitsValue,
     required this.isEdit,
-    required this.message,
     required this.isSharedAccount,
   });
 
   ManualState.initial(dynamic account)
-      : iconKey = account?.iconKey ?? 'default',
-        name = account?.name ?? "",
-        issuer = account?.issuer ?? "",
-        secretKey = account?.secret ?? "",
-        secretKeyError = null,
-        issuerError = null,
-        nameError = null,
-        codeTypeValue = account?.type ?? "totp",
-        intervalValue = account?.period ?? 30,
-        algorithmValue = UriDecoder.getAlgorithmFromAlgo(account?.algorithm),
-        digitsValue = account?.digits ?? 6,
-        isEdit = account != null,
-        message = "",
-        isSharedAccount = account is SharedAccount;
+    : iconKey = account?.iconKey ?? 'default',
+      name = account?.name ?? '',
+      issuer = account?.issuer ?? '',
+      secretKey = account?.secret ?? '',
+      secretKeyError = null,
+      issuerError = null,
+      nameError = null,
+      codeTypeValue = account?.type ?? 'totp',
+      intervalValue = account?.period ?? 30,
+      algorithmValue =
+          (account?.algorithm as Algorithm?)?.name ?? Algorithm.SHA1.name,
+      digitsValue = account?.digits ?? 6,
+      isEdit = account != null,
+      isSharedAccount = account is SharedAccount;
 
   ManualState copyWith({
     String? iconKey,
@@ -63,17 +61,17 @@ class ManualState extends Equatable {
     int? intervalValue,
     String? algorithmValue,
     int? digitsValue,
-    String? message,
   }) {
     return ManualState(
       iconKey: iconKey ?? this.iconKey,
       name: name ?? this.name,
       issuer: issuer ?? this.issuer,
       secretKey: secretKey ?? this.secretKey,
-      nameError: nameError == "null" ? null : nameError ?? this.nameError,
-      issuerError:
-          issuerError == "null" ? null : issuerError ?? this.issuerError,
-      secretKeyError: secretKeyError == "null"
+      nameError: nameError == 'null' ? null : nameError ?? this.nameError,
+      issuerError: issuerError == 'null'
+          ? null
+          : issuerError ?? this.issuerError,
+      secretKeyError: secretKeyError == 'null'
           ? null
           : secretKeyError ?? this.secretKeyError,
       codeTypeValue: codeTypeValue ?? this.codeTypeValue,
@@ -81,24 +79,22 @@ class ManualState extends Equatable {
       algorithmValue: algorithmValue ?? this.algorithmValue,
       digitsValue: digitsValue ?? this.digitsValue,
       isEdit: isEdit,
-      message: message ?? this.message,
       isSharedAccount: isSharedAccount,
     );
   }
 
   @override
   List<Object?> get props => [
-        iconKey,
-        name,
-        issuer,
-        secretKey,
-        nameError,
-        issuerError,
-        secretKeyError,
-        codeTypeValue,
-        intervalValue,
-        algorithmValue,
-        digitsValue,
-        message,
-      ];
+    iconKey,
+    name,
+    issuer,
+    secretKey,
+    nameError,
+    issuerError,
+    secretKeyError,
+    codeTypeValue,
+    intervalValue,
+    algorithmValue,
+    digitsValue,
+  ];
 }

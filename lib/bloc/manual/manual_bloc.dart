@@ -1,24 +1,31 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otp_manager/repository/interface/account_repository.dart';
-import 'package:otp_manager/repository/interface/shared_account_repository.dart';
-import 'package:otp_manager/utils/base32.dart';
-import 'package:otp_manager/utils/icon_picker_helper.dart';
+import 'package:injectable/injectable.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/models/shared_account.dart';
+import 'package:otp_manager/repository/local/interface/account_repository.dart';
+import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
+import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
+import 'package:otp_manager/service/account_service.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/helper/base32_helper.dart';
+import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 
-import '../../domain/account_service.dart';
 import '../../models/account.dart';
-import '../../utils/uri_decoder.dart';
+import '../../utils/helper/otp_uri_decoder_helper.dart';
 import 'manual_event.dart';
 import 'manual_state.dart';
 
+@injectable
 class ManualBloc extends Bloc<ManualEvent, ManualState> {
-  final dynamic account; // Account | SharedAccount
+  final Object? account; // Account | SharedAccount
   final AccountRepository accountRepository;
   final SharedAccountRepository sharedAccountRepository;
   final AccountService accountService;
 
   ManualBloc({
-    this.account,
+    @factoryParam this.account,
     required this.accountRepository,
     required this.sharedAccountRepository,
     required this.accountService,
@@ -34,31 +41,32 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     on<DigitsValueChanged>(_onDigitsValueChanged);
   }
 
-  void _updateAccount(Emitter<ManualState> emit, dynamic account, String msg) {
-    if (account is Account) {
-      accountRepository.update(account);
-    } else {
-      sharedAccountRepository.update(account);
-    }
-    emit(state.copyWith(message: msg));
-  }
-
   bool _isFormValid(
-      String name, String issuer, String secretKey, Emitter<ManualState> emit) {
+    String name,
+    String issuer,
+    String secretKey,
+    Emitter<ManualState> emit,
+  ) {
     bool isValid = true;
 
     if (name.isEmpty) {
       emit(state.copyWith(nameError: "The account name is required"));
       isValid = false;
     } else if (name.length > 256) {
-      emit(state.copyWith(
-          nameError: "The account name cannot be longer than 256 characters"));
+      emit(
+        state.copyWith(
+          nameError: "The account name cannot be longer than 256 characters",
+        ),
+      );
       isValid = false;
     }
 
     if (issuer.length > 256) {
-      emit(state.copyWith(
-          issuer: "The account issuer cannot be longer than 256 characters"));
+      emit(
+        state.copyWith(
+          issuer: "The account issuer cannot be longer than 256 characters",
+        ),
+      );
       isValid = false;
     }
 
@@ -68,18 +76,23 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       emit(state.copyWith(secretKeyError: "The secret key is required"));
       isValid = false;
     } else if (secretKey.length < 16) {
-      emit(state.copyWith(
-          secretKeyError:
-              "The secret key cannot be shorter than 16 characters"));
+      emit(
+        state.copyWith(
+          secretKeyError: "The secret key cannot be shorter than 16 characters",
+        ),
+      );
       isValid = false;
     } else if (secretKey.length > 512) {
-      emit(state.copyWith(
-          secretKeyError:
-              "The secret key cannot be longer than 512 characters"));
+      emit(
+        state.copyWith(
+          secretKeyError: "The secret key cannot be longer than 512 characters",
+        ),
+      );
       isValid = false;
-    } else if (!Base32.isValid(secretKey)) {
-      emit(state.copyWith(
-          secretKeyError: "The secret key is not base 32 encoded"));
+    } else if (!Base32Helper.isValid(secretKey)) {
+      emit(
+        state.copyWith(secretKeyError: "The secret key is not base 32 encoded"),
+      );
       isValid = false;
     }
 
@@ -94,13 +107,17 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     if (_isFormValid(name, issuer, secretKey, emit)) {
       int position = accountService.getLastPosition() + 1;
 
-      if (account == null) {
+      final acc = account;
+
+      if (acc == null) {
         Account newAccount = Account(
           iconKey: state.iconKey,
           secret: secretKey,
           name: name,
           issuer: issuer,
-          dbAlgorithm: UriDecoder.getAlgorithmFromString(state.algorithmValue),
+          dbAlgorithm: OtpUriDecoderHelper.getAlgorithmIndexFromString(
+            state.algorithmValue,
+          ),
           digits: state.digitsValue,
           type: state.codeTypeValue,
           period: state.codeTypeValue == "totp" ? state.intervalValue : null,
@@ -111,30 +128,43 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
         if (sameAccount == null) {
           accountRepository.add(newAccount);
-          emit(state.copyWith(message: "New account has been added"));
+          getIt<SnackbarService>().showMessage("New account has been added");
         } else if (sameAccount.deleted) {
           newAccount.id = sameAccount.id;
           accountRepository.add(newAccount);
-          emit(state.copyWith(message: "New account has been added"));
+          getIt<SnackbarService>().showMessage("New account has been added");
         } else {
           emit(
-              state.copyWith(secretKeyError: "This secret key already exists"));
+            state.copyWith(secretKeyError: "This secret key already exists"),
+          );
+          return;
         }
       } else {
-        account?.iconKey = state.iconKey;
-        account?.name = name;
-        account?.issuer = issuer;
-        if (account is Account) {
-          account?.dbAlgorithm =
-              UriDecoder.getAlgorithmFromString(state.algorithmValue);
-          account?.digits = state.digitsValue;
-          account?.type = state.codeTypeValue;
-          account?.period =
-              state.codeTypeValue == "totp" ? state.intervalValue : null;
+        (acc as dynamic).iconKey = state.iconKey;
+        (acc as dynamic).name = name;
+        (acc as dynamic).issuer = issuer;
+
+        if (acc is Account) {
+          acc.dbAlgorithm = OtpUriDecoderHelper.getAlgorithmIndexFromString(
+            state.algorithmValue,
+          );
+          acc.digits = state.digitsValue;
+          acc.type = state.codeTypeValue;
+          acc.period = state.codeTypeValue == "totp"
+              ? state.intervalValue
+              : null;
         }
 
-        _updateAccount(emit, account!, "Account has been edited");
+        if (acc is Account) {
+          accountRepository.update(acc);
+        } else if (acc is SharedAccount) {
+          sharedAccountRepository.update(acc);
+        }
+
+        getIt<SnackbarService>().showMessage("Account has been edited");
       }
+
+      NavigationService().resetToScreen(homeRoute);
     }
   }
 
@@ -153,7 +183,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       state.copyWith(
         iconKey: event.issuer.isEmpty
             ? "default"
-            : IconPickerHelper.findFirst(event.issuer),
+            : OtpIconsHelper.findFirst(event.issuer),
       ),
     );
   }
@@ -163,22 +193,30 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   }
 
   void _onCodeTypeValueChanged(
-      CodeTypeValueChanged event, Emitter<ManualState> emit) {
+    CodeTypeValueChanged event,
+    Emitter<ManualState> emit,
+  ) {
     emit(state.copyWith(codeTypeValue: event.codeTypeValue));
   }
 
   void _onIntervalValueChanged(
-      IntervalValueChanged event, Emitter<ManualState> emit) {
+    IntervalValueChanged event,
+    Emitter<ManualState> emit,
+  ) {
     emit(state.copyWith(intervalValue: event.intervalValue));
   }
 
   void _onAlgorithmValueChanged(
-      AlgorithmValueChanged event, Emitter<ManualState> emit) {
+    AlgorithmValueChanged event,
+    Emitter<ManualState> emit,
+  ) {
     emit(state.copyWith(algorithmValue: event.algorithmValue));
   }
 
   void _onDigitsValueChanged(
-      DigitsValueChanged event, Emitter<ManualState> emit) {
+    DigitsValueChanged event,
+    Emitter<ManualState> emit,
+  ) {
     emit(state.copyWith(digitsValue: event.digitsValue));
   }
 }

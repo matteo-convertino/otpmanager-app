@@ -6,49 +6,47 @@ import 'package:otp_manager/screens/home/otp_accounts_list.dart';
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
 import '../../bloc/home/home_state.dart';
-import '../../utils/arrow_painter.dart';
-import '../../utils/show_snackbar.dart';
+import '../../widgets/otp_manager_arrow_painter.dart';
 
 class HomeBody extends StatelessWidget {
-  const HomeBody({Key? key}) : super(key: key);
+  const HomeBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {
-        if (state.message != "") {
-          showSnackBar(context: context, msg: state.message);
-        }
-      },
+    return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         return Stack(
           alignment: Alignment.center,
           fit: StackFit.expand,
           children: [
             if (state.isGuest) ...[
-              Container(
-                width: double.infinity,
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
                 height: 35,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? const Color.fromRGBO(0, 185, 255, 1)
-                    : Theme.of(context).secondaryHeaderColor,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.warning_amber, color: Colors.amber),
-                      Text(
-                        "You are are using the test (offline) mode",
-                        style: TextStyle(
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.white
-                                  : Colors.white70,
+                child: Container(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? const Color.fromRGBO(0, 185, 255, 1)
+                      : Theme.of(context).secondaryHeaderColor,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.warning_amber, color: Colors.amber),
+                        Text(
+                          "You are are using the test (offline) mode",
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.white
+                                : Colors.white70,
+                          ),
                         ),
-                      ),
-                      const Icon(Icons.warning_amber, color: Colors.amber),
-                    ],
+                        const Icon(Icons.warning_amber, color: Colors.amber),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -57,31 +55,34 @@ class HomeBody extends StatelessWidget {
               Positioned(
                 right: 0,
                 bottom: 0,
-                child: CustomPaint(
-                  painter: ArrowPainter(),
-                ),
+                child: CustomPaint(painter: OtpManagerArrowPainter()),
               ),
             Padding(
               padding: EdgeInsets.fromLTRB(
-                  0, state.password == "" || state.isGuest ? 35 : 0, 0, 0),
+                0,
+                state.password == "" || state.isGuest ? 35 : 0,
+                0,
+                0,
+              ),
               child: RefreshIndicator(
                 onRefresh: () async =>
                     context.read<HomeBloc>().add(NextcloudSync()),
                 child: state.accounts.isEmpty
                     ? (state.searchBarValue == ""
-                        ? const EmptyData(
-                            imageName: "no_accounts",
-                            title: "Add your first account",
-                            description:
-                                "You currently have no account. Synchronise by dragging down or create a new one below.")
-                        : EmptyData(
-                            imageName: "no_results",
-                            title: "No accounts for: ${state.searchBarValue}",
-                            description: "",
-                          ))
+                          ? const EmptyData(
+                              imageName: "no_accounts",
+                              title: "Add your first account",
+                              description:
+                                  "You currently have no account. Synchronise by dragging down or create a new one below.",
+                            )
+                          : EmptyData(
+                              imageName: "no_results",
+                              title: "No accounts for: ${state.searchBarValue}",
+                              description: "",
+                            ))
                     : const OtpAccountsList(),
               ),
-            )
+            ),
           ],
         );
       },

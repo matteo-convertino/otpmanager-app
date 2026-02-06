@@ -1,16 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:otp/otp.dart';
-import 'package:otp_manager/domain/nextcloud_service.dart';
-import 'package:otp_manager/models/account.dart';
+import 'package:otp_manager/dto/request/account_update_counter_request_dto.dart';
 import 'package:otp_manager/models/shared_account.dart';
-import 'package:otp_manager/repository/interface/account_repository.dart';
-import 'package:otp_manager/repository/interface/shared_account_repository.dart';
+import 'package:otp_manager/repository/local/interface/account_repository.dart';
+import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
+import 'package:otp_manager/service/nextcloud_service.dart';
 
 import '../home/home_bloc.dart';
-import '../home/home_event.dart';
 import 'otp_account_event.dart';
 import 'otp_account_state.dart';
 
+@injectable
 class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
   final HomeBloc homeBloc;
   final AccountRepository accountRepository;
@@ -58,25 +59,26 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
   }
 
   void _onIncrementCounter(
-      IncrementCounter event, Emitter<OtpAccountState> emit) async {
+    IncrementCounter event,
+    Emitter<OtpAccountState> emit,
+  ) async {
     emit(state.copyWith(disableIncrement: true));
-    int? updatedCounter = await nextcloudService.updateCounter(event.account);
 
-    if (updatedCounter == null) {
-      homeBloc.add(const ShowMessage(
-          message: "There was an error while incrementing counter"));
-      homeBloc.add(const ShowMessage(message: ""));
-    } else {
-      event.account.counter = updatedCounter;
+    await nextcloudService.updateCounter(
+      AccountUpdateCounterRequestDto(id: event.account.id),
+      isShared: event.account is SharedAccount,
+      onComplete: (res) {
+        event.account.counter = res.counter;
 
-      if (event.account is Account) {
-        accountRepository.add(event.account); // update without sync
-      } else {
-        sharedAccountRepository.add(event.account); // update without sync
-      }
+        if (event.account is SharedAccount) {
+          sharedAccountRepository.add(event.account); // update without sync
+        } else {
+          accountRepository.add(event.account); // update without sync
+        }
 
-      emit(state.copyWith(otpCode: _getOtp(event.account)));
-    }
+        emit(state.copyWith(otpCode: _getOtp(event.account)));
+      },
+    );
 
     await Future.delayed(const Duration(seconds: 1));
 
@@ -84,7 +86,9 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
   }
 
   void _onGenerateOtpCode(
-      GenerateOtpCode event, Emitter<OtpAccountState> emit) async {
+    GenerateOtpCode event,
+    Emitter<OtpAccountState> emit,
+  ) async {
     emit(state.copyWith(otpCode: _getOtp(event.account)));
   }
 }

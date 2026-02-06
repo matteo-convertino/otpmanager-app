@@ -1,8 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:otp/otp.dart';
 
-import '../utils/algorithms.dart';
-
 @Entity()
 class SharedAccount {
   int id = 0;
@@ -77,9 +75,9 @@ class SharedAccount {
     this.expiredAt,
     int? dbAlgorithm,
     int? counter,
-    this.iconKey = "default",
+    this.iconKey = 'default',
   }) {
-    if (type == "hotp") {
+    if (type == 'hotp') {
       this.counter = counter ?? -1;
     }
 
@@ -87,25 +85,28 @@ class SharedAccount {
   }
 
   String toUri() {
-    return Uri.encodeFull("otpauth://"
-        "$type/"
-        "$name?"
-        "secret=$secret&"
-        "issuer=$issuer&"
-        "period=$period&"
-        "digits=$digits&"
-        "algorithm=${algorithm.name.toUpperCase()}"
-        "${type == "hotp" ? '&counter=$counter' : ''}");
+    return Uri.encodeFull(
+      'otpauth://'
+      '$type/'
+      '$name?'
+      'secret=$secret&'
+      'issuer=$issuer&'
+      'period=$period&'
+      'digits=$digits&'
+      'algorithm=${algorithm.name.toUpperCase()}'
+      "${type == "hotp" ? '&counter=$counter' : ''}",
+    );
   }
 
   void _ensureStableEnumValues() {
-    assert(Algorithms.sha1.index == 0);
-    assert(Algorithms.sha256.index == 1);
-    assert(Algorithms.sha512.index == 2);
+    assert(Algorithm.SHA1.index == 0);
+    assert(Algorithm.SHA256.index == 1);
+    assert(Algorithm.SHA512.index == 2);
   }
 
   @override
-  toString() => '{'
+  toString() =>
+      '{'
       '"id": $id, '
       '"secret": "$encryptedSecret", '
       '"name": "$name", '

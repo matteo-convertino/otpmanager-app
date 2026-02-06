@@ -8,9 +8,10 @@ import 'package:local_auth/local_auth.dart';
 import 'package:otp_manager/bloc/auth/auth_bloc.dart';
 import 'package:otp_manager/bloc/auth/auth_event.dart';
 import 'package:otp_manager/bloc/auth/auth_state.dart';
+import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/service/snackbar_service.dart';
 
-import "../utils/auth_input.dart";
-import '../utils/show_snackbar.dart';
+import "../widgets/otp_manager_auth_input.dart";
 
 class Auth extends HookWidget {
   Auth({Key? key}) : super(key: key);
@@ -32,13 +33,10 @@ class Auth extends HookWidget {
     try {
       return await _auth.authenticate(
         localizedReason: 'Scan Fingerprint to Authenticate',
-        options: const AuthenticationOptions(
-          useErrorDialogs: true,
-          biometricOnly: true,
-          stickyAuth: true,
-        ),
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
       );
-    } on PlatformException {
+    } on LocalAuthException {
       return false;
     }
   }
@@ -48,15 +46,12 @@ class Auth extends HookWidget {
     final enabled = useState(true);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Authentication"),
-      ),
+      appBar: AppBar(title: const Text("Authentication")),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.attempts == 0) {
-            showSnackBar(
-              context: context,
-              msg: "Too many attempts. Wait 5 seconds to try again.",
+            getIt<SnackbarService>().showMessage(
+              "Too many attempts. Wait 5 seconds to try again.",
             );
             enabled.value = false;
 
@@ -84,11 +79,11 @@ class Auth extends HookWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),
-                    child: AuthInput(
+                    child: OtpManagerAuthInput(
                       label: "Password",
-                      onChanged: (value) => context
-                          .read<AuthBloc>()
-                          .add(PasswordChanged(password: value)),
+                      onChanged: (value) => context.read<AuthBloc>().add(
+                        PasswordChanged(password: value),
+                      ),
                       onSubmit: () =>
                           context.read<AuthBloc>().add(PasswordSubmit()),
                       enabled: enabled.value,

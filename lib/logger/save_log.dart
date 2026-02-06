@@ -7,7 +7,7 @@ void saveLog() async {
   await FileSaver.instance.saveAs(
     name: LoggerStorage.fileName,
     file: file,
-    ext: LoggerStorage.extension,
+    fileExtension: LoggerStorage.extension,
     mimeType: MimeType.text,
   );
 }

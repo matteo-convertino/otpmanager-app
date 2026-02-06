@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      source_gen:combining_builder:
+        options:
+          build_extensions:
+            '^lib/dto/{{}}.dart': 'lib/dto/mapper/{{}}.g.dart'
+            '^lib/repository/api/{{}}.dart': 'lib/repository/api/generated/{{}}.g.dart'

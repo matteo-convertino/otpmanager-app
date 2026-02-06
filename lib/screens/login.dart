@@ -5,35 +5,22 @@ import 'package:otp_manager/bloc/login/login_bloc.dart';
 import 'package:otp_manager/bloc/login/login_event.dart';
 
 import '../bloc/login/login_state.dart';
-import '../utils/show_snackbar.dart';
 
 class Login extends HookWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue,
-      body: BlocConsumer<LoginBloc, LoginState>(
-        listener: (context, state) {
-          if (state.error != "") {
-            showSnackBar(
-              context: context,
-              msg: state.error,
-            );
-          }
-        },
+      body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           return Stack(
             alignment: Alignment.center,
             children: [
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 250),
-                child: Icon(
-                  Icons.language,
-                  size: 150,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.language, size: 150, color: Colors.white),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
