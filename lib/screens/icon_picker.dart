@@ -6,7 +6,7 @@ import 'package:otp_manager/bloc/icon_picker/icon_picker_event.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_state.dart';
 
 class IconPicker extends HookWidget {
-  const IconPicker({Key? key}) : super(key: key);
+  const IconPicker({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +34,16 @@ class IconPicker extends HookWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    labelText: "Search",
+                    labelText: 'Search',
                   ),
                   onChanged: (value) {
-                    context
-                        .read<IconPickerBloc>()
-                        .add(SearchBarValueChanged(value: value));
+                    context.read<IconPickerBloc>().add(
+                      SearchBarValueChanged(value: value),
+                    );
                   },
                 ),
               ),
-              if (state.searchBarValue == "" &&
+              if (state.searchBarValue.isEmpty &&
                   state.iconsBestMatch.isNotEmpty) ...[
                 const Text(
                   'Best match based on issuer',
@@ -56,8 +56,8 @@ class IconPicker extends HookWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                    ),
+                          crossAxisCount: 4,
+                        ),
                     shrinkWrap: true,
                     itemCount: state.iconsBestMatch.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -81,9 +81,7 @@ class IconPicker extends HookWidget {
                                       key.substring(1),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                  ),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                               ),
                             ],
@@ -93,10 +91,7 @@ class IconPicker extends HookWidget {
                     },
                   ),
                 ),
-                const Text(
-                  "All icons",
-                  style: TextStyle(fontSize: 18),
-                ),
+                const Text('All icons', style: TextStyle(fontSize: 18)),
               ],
               Expanded(
                 child: GridView.builder(

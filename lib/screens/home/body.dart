@@ -36,7 +36,7 @@ class HomeBody extends StatelessWidget {
                       children: [
                         const Icon(Icons.warning_amber, color: Colors.amber),
                         Text(
-                          "You are are using the test (offline) mode",
+                          'You are are using the test (offline) mode',
                           style: TextStyle(
                             color:
                                 Theme.of(context).brightness == Brightness.light
@@ -51,7 +51,7 @@ class HomeBody extends StatelessWidget {
                 ),
               ),
             ],
-            if (state.accounts.isEmpty && state.searchBarValue == "")
+            if (state.accounts.isEmpty && state.searchBarValue.isEmpty)
               Positioned(
                 right: 0,
                 bottom: 0,
@@ -60,7 +60,7 @@ class HomeBody extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(
                 0,
-                state.password == "" || state.isGuest ? 35 : 0,
+                state.password.isEmpty || state.isGuest ? 35 : 0,
                 0,
                 0,
               ),
@@ -68,17 +68,17 @@ class HomeBody extends StatelessWidget {
                 onRefresh: () async =>
                     context.read<HomeBloc>().add(NextcloudSync()),
                 child: state.accounts.isEmpty
-                    ? (state.searchBarValue == ""
+                    ? (state.searchBarValue.isEmpty
                           ? const EmptyData(
-                              imageName: "no_accounts",
-                              title: "Add your first account",
+                              imageName: 'no_accounts',
+                              title: 'Add your first account',
                               description:
-                                  "You currently have no account. Synchronise by dragging down or create a new one below.",
+                                  'You currently have no account. Synchronise by dragging down or create a new one below.',
                             )
                           : EmptyData(
-                              imageName: "no_results",
-                              title: "No accounts for: ${state.searchBarValue}",
-                              description: "",
+                              imageName: 'no_results',
+                              title: 'No accounts for: ${state.searchBarValue}',
+                              description: '',
                             ))
                     : const OtpAccountsList(),
               ),

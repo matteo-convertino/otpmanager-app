@@ -7,17 +7,17 @@ import 'package:otp_manager/screens/unlock_shared_account.dart';
 void showOtpManagerUnlockSharedAccountModal({
   required BuildContext context,
   required int accountId,
-}) {
-  showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (BuildContext _) {
-      return BlocProvider<UnlockSharedAccountBloc>(
-        create: (_) => getIt<UnlockSharedAccountBloc>(param1: accountId),
-        child: const UnlockSharedAccount(),
-      );
-    },
-  );
-}
+}) => showModalBottomSheet<void>(
+  context: context,
+  showDragHandle: true,
+  isScrollControlled: true,
+  useSafeArea: true,
+  // useRootNavigator: true,
+  builder: (BuildContext _) => Scaffold(
+    backgroundColor: Colors.transparent,
+    body: BlocProvider<UnlockSharedAccountBloc>(
+      create: (_) => getIt<UnlockSharedAccountBloc>(param1: accountId),
+      child: const UnlockSharedAccount(),
+    ),
+  ),
+);

@@ -68,7 +68,7 @@ class Router {
           builder: (_) => BlocProvider<WebViewerBloc>(
             create: (context) =>
                 getIt<WebViewerBloc>(param1: settings.arguments),
-            child: WebViewer(),
+            child: const WebViewer(),
           ),
         );
       case manualRoute:
@@ -85,7 +85,7 @@ class Router {
         return CupertinoPageRoute(
           builder: (_) => BlocProvider<AuthBloc>(
             create: (context) => getIt<AuthBloc>(),
-            child: Auth(),
+            child: const Auth(),
           ),
         );
       default:

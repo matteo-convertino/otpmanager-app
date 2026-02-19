@@ -8,8 +8,8 @@ part of '../../request/account_update_counter_request_dto.dart';
 
 AccountUpdateCounterRequestDto _$AccountUpdateCounterRequestDtoFromJson(
   Map<String, dynamic> json,
-) => AccountUpdateCounterRequestDto(id: (json['id'] as num).toInt());
+) => AccountUpdateCounterRequestDto(secret: json['secret'] as String);
 
 Map<String, dynamic> _$AccountUpdateCounterRequestDtoToJson(
   AccountUpdateCounterRequestDto instance,
-) => <String, dynamic>{'id': instance.id};
+) => <String, dynamic>{'secret': instance.secret};

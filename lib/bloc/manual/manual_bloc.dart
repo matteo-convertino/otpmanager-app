@@ -9,8 +9,10 @@ import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/service/account_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/utils/helper/base32_helper.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
+import 'package:otp_manager/utils/optional.dart';
 
 import '../../models/account.dart';
 import '../../utils/helper/otp_uri_decoder_helper.dart';
@@ -23,12 +25,14 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   final AccountRepository accountRepository;
   final SharedAccountRepository sharedAccountRepository;
   final AccountService accountService;
+  final NavigationService navigationService;
 
   ManualBloc({
     @factoryParam this.account,
     required this.accountRepository,
     required this.sharedAccountRepository,
     required this.accountService,
+    required this.navigationService,
   }) : super(ManualState.initial(account)) {
     on<AddOrEditAccount>(_onAddOrEditAccount);
     on<IconKeyChanged>(_onIconKeyChanged);
@@ -50,12 +54,14 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     bool isValid = true;
 
     if (name.isEmpty) {
-      emit(state.copyWith(nameError: "The account name is required"));
+      emit(state.copyWith(nameError: Optional('The account name is required')));
       isValid = false;
     } else if (name.length > 256) {
       emit(
         state.copyWith(
-          nameError: "The account name cannot be longer than 256 characters",
+          nameError: Optional(
+            'The account name cannot be longer than 256 characters',
+          ),
         ),
       );
       isValid = false;
@@ -64,7 +70,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     if (issuer.length > 256) {
       emit(
         state.copyWith(
-          issuer: "The account issuer cannot be longer than 256 characters",
+          issuer: 'The account issuer cannot be longer than 256 characters',
         ),
       );
       isValid = false;
@@ -73,25 +79,33 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     if (account != null) return isValid;
 
     if (secretKey.isEmpty) {
-      emit(state.copyWith(secretKeyError: "The secret key is required"));
+      emit(
+        state.copyWith(secretKeyError: Optional('The secret key is required')),
+      );
       isValid = false;
     } else if (secretKey.length < 16) {
       emit(
         state.copyWith(
-          secretKeyError: "The secret key cannot be shorter than 16 characters",
+          secretKeyError: Optional(
+            'The secret key cannot be shorter than 16 characters',
+          ),
         ),
       );
       isValid = false;
     } else if (secretKey.length > 512) {
       emit(
         state.copyWith(
-          secretKeyError: "The secret key cannot be longer than 512 characters",
+          secretKeyError: Optional(
+            'The secret key cannot be longer than 512 characters',
+          ),
         ),
       );
       isValid = false;
     } else if (!Base32Helper.isValid(secretKey)) {
       emit(
-        state.copyWith(secretKeyError: "The secret key is not base 32 encoded"),
+        state.copyWith(
+          secretKeyError: Optional('The secret key is not base 32 encoded'),
+        ),
       );
       isValid = false;
     }
@@ -120,7 +134,9 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
           ),
           digits: state.digitsValue,
           type: state.codeTypeValue,
-          period: state.codeTypeValue == "totp" ? state.intervalValue : null,
+          period: state.codeTypeValue == OtpType.totp.value
+              ? state.intervalValue
+              : null,
           position: position,
         );
 
@@ -128,14 +144,16 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
 
         if (sameAccount == null) {
           accountRepository.add(newAccount);
-          getIt<SnackbarService>().showMessage("New account has been added");
+          getIt<SnackbarService>().showMessage('New account has been added');
         } else if (sameAccount.deleted) {
           newAccount.id = sameAccount.id;
           accountRepository.add(newAccount);
-          getIt<SnackbarService>().showMessage("New account has been added");
+          getIt<SnackbarService>().showMessage('New account has been added');
         } else {
           emit(
-            state.copyWith(secretKeyError: "This secret key already exists"),
+            state.copyWith(
+              secretKeyError: Optional('This secret key already exists'),
+            ),
           );
           return;
         }
@@ -150,7 +168,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
           );
           acc.digits = state.digitsValue;
           acc.type = state.codeTypeValue;
-          acc.period = state.codeTypeValue == "totp"
+          acc.period = state.codeTypeValue == OtpType.totp.value
               ? state.intervalValue
               : null;
         }
@@ -161,10 +179,10 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
           sharedAccountRepository.update(acc);
         }
 
-        getIt<SnackbarService>().showMessage("Account has been edited");
+        getIt<SnackbarService>().showMessage('Account has been edited');
       }
 
-      NavigationService().resetToScreen(homeRoute);
+      navigationService.resetToScreen(homeRoute);
     }
   }
 
@@ -173,23 +191,28 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
   }
 
   void _onNameChanged(NameChanged event, Emitter<ManualState> emit) {
-    emit(state.copyWith(name: event.name, nameError: "null"));
+    emit(state.copyWith(name: event.name, nameError: Optional(null)));
   }
 
   void _onIssuerChanged(IssuerChanged event, Emitter<ManualState> emit) {
-    emit(state.copyWith(issuer: event.issuer, issuerError: "null"));
+    emit(state.copyWith(issuer: event.issuer, issuerError: Optional(null)));
 
     emit(
       state.copyWith(
         iconKey: event.issuer.isEmpty
-            ? "default"
+            ? 'default'
             : OtpIconsHelper.findFirst(event.issuer),
       ),
     );
   }
 
   void _onSecretKeyChanged(SecretKeyChanged event, Emitter<ManualState> emit) {
-    emit(state.copyWith(secretKey: event.secretKey, secretKeyError: "null"));
+    emit(
+      state.copyWith(
+        secretKey: event.secretKey,
+        secretKeyError: Optional(null),
+      ),
+    );
   }
 
   void _onCodeTypeValueChanged(

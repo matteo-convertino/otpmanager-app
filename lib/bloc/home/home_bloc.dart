@@ -11,6 +11,7 @@ import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/service/account_service.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/optional.dart';
 import 'package:otp_manager/utils/sync_status.dart';
 
 import '../../models/shared_account.dart';
@@ -25,8 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final SharedAccountRepository sharedAccountRepository;
   final EncryptionService encryption;
   final NextcloudService nextcloudService;
-
-  final NavigationService _navigationService = NavigationService();
+  final NavigationService navigationService;
 
   HomeBloc({
     required this.userRepository,
@@ -35,6 +35,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.sharedAccountRepository,
     required this.encryption,
     required this.nextcloudService,
+    required this.navigationService,
   }) : super(HomeState.initial(userRepository.get()!)) {
     on<NextcloudSync>(_onNextcloudSync);
     on<GetAccounts>(_onGetAccounts);
@@ -123,15 +124,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     userRepository.removeAll();
     accountRepository.removeAll();
     sharedAccountRepository.removeAll();
-    _navigationService.resetToScreen(loginRoute);
+    navigationService.resetToScreen(loginRoute);
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {
     emit(
       state.copyWith(
-        sortedByIdDesc: "null",
-        sortedByNameDesc: "null",
-        sortedByIssuerDesc: "null",
+        sortedByIdDesc: Optional(null),
+        sortedByNameDesc: Optional(null),
+        sortedByIssuerDesc: Optional(null),
       ),
     );
 
@@ -153,15 +154,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       add(NextcloudSync());
 
       getIt<SnackbarService>().showMessage(
-        "${event.account.type.toUpperCase()} has been removed",
+        '${event.account.type.toUpperCase()} has been removed',
       );
     } else {
       getIt<SnackbarService>().showMessage(
-        "There was an error while deleting the account",
+        'There was an error while deleting the account',
       );
     }
 
-    _navigationService.goBack();
+    navigationService.goBack();
   }
 
   void _onSortById(SortById event, Emitter<HomeState> emit) {
@@ -176,10 +177,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(
       state.copyWith(
         sortedByIdDesc: state.sortedByIdDesc == null
-            ? false
-            : !(state.sortedByIdDesc!),
-        sortedByNameDesc: "null",
-        sortedByIssuerDesc: "null",
+            ? Optional(false)
+            : Optional(!(state.sortedByIdDesc!)),
+        sortedByNameDesc: Optional(null),
+        sortedByIssuerDesc: Optional(null),
       ),
     );
 
@@ -198,10 +199,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(
       state.copyWith(
         sortedByNameDesc: state.sortedByNameDesc == null
-            ? false
-            : !(state.sortedByNameDesc!),
-        sortedByIdDesc: "null",
-        sortedByIssuerDesc: "null",
+            ? Optional(false)
+            : Optional(!(state.sortedByNameDesc!)),
+        sortedByIdDesc: Optional(null),
+        sortedByIssuerDesc: Optional(null),
       ),
     );
 
@@ -212,18 +213,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     List<Account> accounts = accountRepository.getVisible();
 
     if (state.sortedByIssuerDesc == null || state.sortedByIssuerDesc == true) {
-      accounts.sort((a, b) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
+      accounts.sort((a, b) => (a.issuer ?? '').compareTo(b.issuer ?? ''));
     } else {
-      accounts.sort((b, a) => (a.issuer ?? "").compareTo(b.issuer ?? ""));
+      accounts.sort((b, a) => (a.issuer ?? '').compareTo(b.issuer ?? ''));
     }
 
     emit(
       state.copyWith(
         sortedByIssuerDesc: state.sortedByIssuerDesc == null
-            ? false
-            : !(state.sortedByIssuerDesc!),
-        sortedByIdDesc: "null",
-        sortedByNameDesc: "null",
+            ? Optional(false)
+            : Optional(!(state.sortedByIssuerDesc!)),
+        sortedByIdDesc: Optional(null),
+        sortedByNameDesc: Optional(null),
       ),
     );
 

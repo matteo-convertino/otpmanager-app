@@ -18,7 +18,7 @@ class IconPickerBloc extends Bloc<IconPickerEvent, IconPickerState> {
   }
 
   void _onInitIcons(InitIcons event, Emitter<IconPickerState> emit) {
-    if (issuer != "") {
+    if (issuer.isNotEmpty) {
       Map<String, Icon> iconsBestMatch = OtpIconsHelper.findBestMatch(issuer);
       emit(state.copyWith(iconsBestMatch: iconsBestMatch));
     }

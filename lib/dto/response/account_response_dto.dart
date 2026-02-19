@@ -1,6 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:otp_manager/models/account.dart';
-import 'package:otp_manager/utils/helper/otp_uri_decoder_helper.dart';
+import 'package:otp_manager/utils/enum/otp_algorithm.dart';
+import 'package:otp_manager/utils/enum/otp_digits.dart';
+import 'package:otp_manager/utils/enum/otp_period.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 
 part '../mapper/response/account_response_dto.g.dart';
 
@@ -31,10 +34,10 @@ class AccountResponseDto {
   final String secret;
   final String name;
   final String issuer;
-  final int digits;
-  final String type;
-  final int period;
-  final String algorithm;
+  final OtpDigits digits;
+  final OtpType type;
+  final OtpPeriod period;
+  final OtpAlgorithm algorithm;
   final int? counter;
   final String icon;
   final int position;
@@ -49,12 +52,12 @@ class AccountResponseDto {
     secret: dto.secret,
     name: dto.name,
     issuer: dto.issuer,
-    digits: dto.digits,
-    type: dto.type,
-    period: dto.period,
+    digits: dto.digits.value,
+    type: dto.type.value,
+    period: dto.period.value,
     position: dto.position,
     counter: dto.counter,
-    dbAlgorithm: OtpUriDecoderHelper.getAlgorithmIndexFromString(dto.algorithm),
+    dbAlgorithm: dto.algorithm.index,
     iconKey: dto.icon,
   );
 }

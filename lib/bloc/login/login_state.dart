@@ -5,7 +5,7 @@ class LoginState extends Equatable {
 
   const LoginState({required this.url});
 
-  const LoginState.initial() : url = "";
+  const LoginState.initial() : url = '';
 
   LoginState copyWith({String? url}) {
     return LoginState(url: url ?? this.url);

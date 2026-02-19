@@ -4,16 +4,17 @@ import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/object_box/objectbox.g.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 
-import '../../../di/injection.dart';
 import '../interface/account_repository.dart';
 
 @LazySingleton(as: AccountRepository)
 class AccountRepositoryImpl extends AccountRepository {
-  final _logger = getIt<Logger>();
+  final Logger logger;
+
+  AccountRepositoryImpl({required this.logger});
 
   @override
   void addNew(List<Account> accounts) {
-    _logger.d('AccountRepositoryImpl._addNew start');
+    logger.d('AccountRepositoryImpl._addNew start');
 
     for (var account in accounts) {
       String iconKey = 'default';
@@ -36,7 +37,7 @@ class AccountRepositoryImpl extends AccountRepository {
 
   @override
   void updateEdited(List<Account> accounts) {
-    _logger.d('AccountRepositoryImpl._updateEdited start');
+    logger.d('AccountRepositoryImpl._updateEdited start');
 
     for (var account in accounts) {
       Account? accountToUpdate = super.box
@@ -68,7 +69,7 @@ class AccountRepositoryImpl extends AccountRepository {
 
   @override
   void deleteOld(List nextcloudAccountIds) {
-    _logger.d('AccountRepositoryImpl._deleteOld start');
+    logger.d('AccountRepositoryImpl._deleteOld start');
 
     super.box
         .query(Account_.deleted.equals(true))
@@ -83,7 +84,7 @@ class AccountRepositoryImpl extends AccountRepository {
 
   @override
   void updateNeverSync() {
-    _logger.d('AccountRepositoryImpl._updateNeverSync start');
+    logger.d('AccountRepositoryImpl._updateNeverSync start');
 
     super.box
         .query(Account_.toUpdate.equals(true) | Account_.isNew.equals(true))

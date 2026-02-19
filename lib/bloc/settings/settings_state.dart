@@ -17,15 +17,15 @@ class SettingsState extends Equatable {
   });
 
   SettingsState.initial(User user)
-      : copiedToClipboard = false,
-        packageInfo = PackageInfo(
-          appName: "Unknown",
-          packageName: "Unknown",
-          version: "Unknown",
-          buildNumber: "Unknown",
-        ),
-        url = user.url,
-        selectedAskTimeIndex = user.passwordAskTime.index;
+    : copiedToClipboard = false,
+      packageInfo = PackageInfo(
+        appName: 'Unknown',
+        packageName: 'Unknown',
+        version: 'Unknown',
+        buildNumber: 'Unknown',
+      ),
+      url = user.url,
+      selectedAskTimeIndex = user.passwordAskTime.index;
 
   SettingsState copyWith({
     bool? copiedToClipboard,
@@ -42,8 +42,8 @@ class SettingsState extends Equatable {
 
   @override
   List<Object> get props => [
-        copiedToClipboard,
-        packageInfo,
-        selectedAskTimeIndex,
-      ];
+    copiedToClipboard,
+    packageInfo,
+    selectedAskTimeIndex,
+  ];
 }

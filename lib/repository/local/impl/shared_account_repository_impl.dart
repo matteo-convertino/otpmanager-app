@@ -1,6 +1,5 @@
 import 'package:injectable/injectable.dart' hide Order;
 import 'package:logger/logger.dart';
-import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/object_box/objectbox.g.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
@@ -9,11 +8,13 @@ import '../interface/shared_account_repository.dart';
 
 @LazySingleton(as: SharedAccountRepository)
 class SharedAccountRepositoryImpl extends SharedAccountRepository {
-  final _logger = getIt<Logger>();
+  final Logger logger;
+
+  SharedAccountRepositoryImpl({required this.logger});
 
   @override
   void addNew(List<SharedAccount> sharedAccounts) {
-    _logger.d('SharedAccountRepositoryImpl._addNew start');
+    logger.d('SharedAccountRepositoryImpl._addNew start');
 
     for (var sharedAccount in sharedAccounts) {
       String iconKey = 'default';
@@ -36,7 +37,7 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
 
   @override
   void updateEdited(List<SharedAccount> sharedAccounts) {
-    _logger.d('SharedAccountRepositoryImpl._updateEdited start');
+    logger.d('SharedAccountRepositoryImpl._updateEdited start');
 
     for (var sharedAccount in sharedAccounts) {
       SharedAccount? sharedAccountToUpdate = super.box
@@ -80,7 +81,7 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
 
   @override
   void deleteOld(List<int> nextcloudAccountIds) {
-    _logger.d('SharedAccountRepositoryImpl._deleteOld start');
+    logger.d('SharedAccountRepositoryImpl._deleteOld start');
 
     super.box
         .query(SharedAccount_.deleted.equals(true))
@@ -95,7 +96,7 @@ class SharedAccountRepositoryImpl extends SharedAccountRepository {
 
   @override
   void updateNeverSync() {
-    _logger.d('SharedAccountRepositoryImpl._updateNeverSync start');
+    logger.d('SharedAccountRepositoryImpl._updateNeverSync start');
 
     super.box
         .query(SharedAccount_.toUpdate.equals(true))

@@ -1,7 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:otp_manager/dto/response/receiver_response_dto.dart';
 import 'package:otp_manager/models/shared_account.dart';
-import 'package:otp_manager/utils/helper/otp_uri_decoder_helper.dart';
+import 'package:otp_manager/utils/enum/otp_algorithm.dart';
+import 'package:otp_manager/utils/enum/otp_digits.dart';
+import 'package:otp_manager/utils/enum/otp_period.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 
 part '../mapper/response/shared_account_response_dto.g.dart';
 
@@ -42,10 +45,10 @@ class SharedAccountResponseDto {
   final String createdAt;
   final String updatedAt;
   final bool unlocked;
-  final int? digits;
-  final String? type;
-  final int? period;
-  final String? algorithm;
+  final OtpDigits? digits;
+  final OtpType? type;
+  final OtpPeriod? period;
+  final OtpAlgorithm? algorithm;
   final int? counter;
   final String? userId;
   final String? deletedAt;
@@ -61,18 +64,16 @@ class SharedAccountResponseDto {
     name: dto.name,
     issuer: dto.issuer,
     position: dto.position,
-    period: dto.period!,
-    digits: dto.digits!,
-    type: dto.type!,
+    period: dto.period!.value,
+    digits: dto.digits!.value,
+    type: dto.type!.value,
     unlocked: dto.unlocked,
     password: dto.password!,
     iv: dto.iv!,
     nextcloudAccountId: dto.id,
     sharerUserId: dto.userId!,
     expiredAt: dto.expiredAt == null ? null : DateTime.parse(dto.expiredAt!),
-    dbAlgorithm: OtpUriDecoderHelper.getAlgorithmIndexFromString(
-      dto.algorithm!,
-    ),
+    dbAlgorithm: dto.algorithm!.index,
     counter: dto.counter,
     iconKey: dto.icon,
   );

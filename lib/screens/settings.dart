@@ -14,7 +14,7 @@ import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
 
 class Settings extends HookWidget {
-  Settings({Key? key}) : super(key: key);
+  Settings({super.key});
 
   final List<String> askTimeOptions = [
     'Every Opening',
@@ -33,28 +33,28 @@ class Settings extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        title: const Text('Settings'),
         actions: [
           IconButton(
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
-                  title: const Text("Bug Report"),
+                  title: const Text('Bug Report'),
                   content: RichText(
                     text: TextSpan(
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.normal,
                       ),
                       text:
-                          "If you have found a bug and want to report "
-                          "it to the developer, contact him via email on ",
+                          'If you have found a bug and want to report '
+                          'it to the developer, contact him via email on ',
                       children: [
                         TextSpan(
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                           ),
-                          text: "matteo@convertino.cloud",
+                          text: 'matteo@convertino.cloud',
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               context.read<SettingsBloc>().add(
@@ -64,12 +64,12 @@ class Settings extends HookWidget {
                               );
                             },
                         ),
-                        const TextSpan(text: " or open an issue on "),
+                        const TextSpan(text: ' or open an issue on '),
                         TextSpan(
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                           ),
-                          text: "github",
+                          text: 'github',
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               context.read<SettingsBloc>().add(
@@ -82,19 +82,19 @@ class Settings extends HookWidget {
                         ),
                         const TextSpan(
                           text:
-                              ", attaching the log"
-                              " file that you can download from here.",
+                              ', attaching the log'
+                              ' file that you can download from here.',
                         ),
                       ],
                     ),
                   ),
                   actions: [
                     TextButton(
-                      child: const Text("Close"),
+                      child: const Text('Close'),
                       onPressed: () => Navigator.pop(context),
                     ),
                     TextButton(
-                      child: const Text("Download Log"),
+                      child: const Text('Download Log'),
                       onPressed: () =>
                           context.read<SettingsBloc>().add(SaveLog()),
                     ),
@@ -114,7 +114,7 @@ class Settings extends HookWidget {
                 context: context,
                 tiles: [
                   ListTile(
-                    title: const Text("Nextcloud server"),
+                    title: const Text('Nextcloud server'),
                     trailing: SizedBox(
                       width: 200,
                       child: Text(
@@ -128,13 +128,13 @@ class Settings extends HookWidget {
                     ),
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: state.url));
-                      getIt<SnackbarService>().showMessage("URL copied");
+                      getIt<SnackbarService>().showMessage('URL copied');
                     },
                   ),
                   BlocBuilder<OtpManagerBloc, OtpManagerState>(
                     builder: (context, state) {
                       return ListTile(
-                        title: const Text("Copy code with tap"),
+                        title: const Text('Copy code with tap'),
                         trailing: Checkbox(
                           activeColor: Theme.of(context).primaryColor,
                           value: state.copyWithTap,
@@ -151,7 +151,7 @@ class Settings extends HookWidget {
                   BlocBuilder<OtpManagerBloc, OtpManagerState>(
                     builder: (context, state) {
                       return ListTile(
-                        title: const Text("Dark theme"),
+                        title: const Text('Dark theme'),
                         trailing: Checkbox(
                           activeColor: Theme.of(context).primaryColor,
                           value: state.darkTheme,
@@ -166,7 +166,7 @@ class Settings extends HookWidget {
                     },
                   ),
                   ListTile(
-                    title: const Text("Password ask time"),
+                    title: const Text('Password ask time'),
                     trailing: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         items: askTimeOptions
@@ -192,9 +192,9 @@ class Settings extends HookWidget {
                     ),
                   ),
                   ListTile(
-                    title: const Text("Version number"),
+                    title: const Text('Version number'),
                     trailing: Text(
-                      "${state.packageInfo.version}.${state.packageInfo.buildNumber}",
+                      '${state.packageInfo.version}.${state.packageInfo.buildNumber}',
                       style: const TextStyle(
                         fontStyle: FontStyle.italic,
                         color: Colors.grey,

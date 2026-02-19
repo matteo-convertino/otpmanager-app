@@ -22,7 +22,7 @@ class UnlockSharedAccount extends HookWidget {
       listener: (context, state) {
         if (state.attempts == 0) {
           getIt<SnackbarService>().showMessage(
-            "Too many attempts. Wait 5 seconds to try again.",
+            'Too many attempts. Wait 5 seconds to try again.',
           );
           enabled.value = false;
 
@@ -45,9 +45,9 @@ class UnlockSharedAccount extends HookWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
                   child: OtpManagerAuthInput(
-                    label: "Shared Password",
+                    label: 'Shared Password',
                     helper:
-                        "Insert the password that was used to share this account",
+                        'Insert the password that was used to share this account',
                     onChanged: (value) => context
                         .read<UnlockSharedAccountBloc>()
                         .add(PasswordChanged(password: value)),

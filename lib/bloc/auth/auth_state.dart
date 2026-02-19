@@ -16,11 +16,11 @@ class AuthState extends Equatable {
   });
 
   const AuthState.initial()
-      : attempts = 3,
-        password = "",
-        message = "",
-        canShowFingerAuth = false,
-        isUserPasswordEmpty = true;
+    : attempts = 3,
+      password = '',
+      message = '',
+      canShowFingerAuth = false,
+      isUserPasswordEmpty = true;
 
   AuthState copyWith({
     int? attempts,
@@ -40,10 +40,10 @@ class AuthState extends Equatable {
 
   @override
   List<Object> get props => [
-        attempts,
-        password,
-        message,
-        canShowFingerAuth,
-        isUserPasswordEmpty,
-      ];
+    attempts,
+    password,
+    message,
+    canShowFingerAuth,
+    isUserPasswordEmpty,
+  ];
 }

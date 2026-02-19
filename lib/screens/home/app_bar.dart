@@ -56,7 +56,7 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
       title: Row(
         children: [
           if (!showSearchBar.value && searchBarAnimationEnd.value) ...[
-            const Text("OTP Manager"),
+            const Text('OTP Manager'),
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: BlocBuilder<HomeBloc, HomeState>(
@@ -92,7 +92,7 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
                 showSearchBar.value = !showSearchBar.value;
                 if (!showSearchBar.value) {
                   context.read<HomeBloc>().add(
-                    const SearchBarValueChanged(value: ""),
+                    const SearchBarValueChanged(value: ''),
                   );
                   context.read<HomeBloc>().add(GetAccounts());
                   textFieldSearchBarController.clear();
@@ -135,12 +135,12 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
                     value: () => context.read<HomeBloc>().add(SortByName()),
                     child: Row(
                       children: [
-                        const Text("By Name"),
+                        const Text('By Name'),
                         Text(
                           state.sortedByNameDesc == null ||
                                   state.sortedByNameDesc == true
-                              ? " (A -> Z)"
-                              : " (Z -> A)",
+                              ? ' (A -> Z)'
+                              : ' (Z -> A)',
                         ),
                       ],
                     ),
@@ -149,12 +149,12 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
                     value: () => context.read<HomeBloc>().add(SortByIssuer()),
                     child: Row(
                       children: [
-                        const Text("By Issuer"),
+                        const Text('By Issuer'),
                         Text(
                           state.sortedByIssuerDesc == null ||
                                   state.sortedByIssuerDesc == true
-                              ? " (A -> Z)"
-                              : " (Z -> A)",
+                              ? ' (A -> Z)'
+                              : ' (Z -> A)',
                         ),
                       ],
                     ),
@@ -163,12 +163,12 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
                     value: () => context.read<HomeBloc>().add(SortById()),
                     child: Row(
                       children: [
-                        const Text("By Date"),
+                        const Text('By Date'),
                         Text(
                           state.sortedByIdDesc == null ||
                                   state.sortedByIdDesc == true
-                              ? " (most recent)"
-                              : " (most remote)",
+                              ? ' (most recent)'
+                              : ' (most remote)',
                         ),
                       ],
                     ),

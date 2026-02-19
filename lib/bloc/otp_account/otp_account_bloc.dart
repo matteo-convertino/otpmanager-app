@@ -6,6 +6,8 @@ import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/repository/local/interface/account_repository.dart';
 import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
+import 'package:otp_manager/utils/optional.dart';
 
 import '../home/home_bloc.dart';
 import 'otp_account_event.dart';
@@ -28,34 +30,63 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
     on<GenerateOtpCode>(_onGenerateOtpCode);
   }
 
-  String _getOtp(dynamic account) {
+  void _getOtpCodeOrMessage(Emitter<OtpAccountState> emit, dynamic account) {
     if (account is SharedAccount && !account.unlocked) {
-      return "Click here to unlock your shared account";
+      return emit(
+        state.copyWith(
+          otpCode: Optional(null),
+          otpMessage: Optional('Click here to unlock your shared account'),
+        ),
+      );
     }
 
-    if (account.type == "totp") {
-      return OTP.generateTOTPCodeString(
-        account.secret,
-        DateTime.now().millisecondsSinceEpoch,
-        algorithm: account.algorithm,
-        interval: account.period as int,
-        length: account.digits as int,
-        isGoogle: true,
+    if (account.type == OtpType.totp.value) {
+      return emit(
+        state.copyWith(
+          otpCode: Optional(
+            OTP.generateTOTPCodeString(
+              account.secret,
+              DateTime.now().millisecondsSinceEpoch,
+              algorithm: account.algorithm,
+              interval: account.period as int,
+              length: account.digits as int,
+              isGoogle: true,
+            ),
+          ),
+          otpMessage: Optional(null),
+        ),
       );
-    } else if (account.type == "hotp") {
+    }
+
+    if (account.type == OtpType.hotp.value) {
       if (account.counter! >= 0) {
-        return OTP.generateHOTPCodeString(
-          account.secret,
-          account.counter!,
-          algorithm: account.algorithm,
-          length: account.digits as int,
-          isGoogle: true,
+        return emit(
+          state.copyWith(
+            otpCode: Optional(
+              OTP.generateHOTPCodeString(
+                account.secret,
+                account.counter!,
+                algorithm: account.algorithm,
+                length: account.digits as int,
+                isGoogle: true,
+              ),
+            ),
+            otpMessage: Optional(null),
+          ),
         );
       }
-      return "Click here to generate HOTP code";
+
+      return emit(
+        state.copyWith(
+          otpCode: Optional(null),
+          otpMessage: Optional('Click here to generate HOTP code'),
+        ),
+      );
     }
 
-    return "null";
+    return emit(
+      state.copyWith(otpCode: Optional(null), otpMessage: Optional(null)),
+    );
   }
 
   void _onIncrementCounter(
@@ -65,18 +96,18 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
     emit(state.copyWith(disableIncrement: true));
 
     await nextcloudService.updateCounter(
-      AccountUpdateCounterRequestDto(id: event.account.id),
+      AccountUpdateCounterRequestDto(secret: event.account.encryptedSecret),
       isShared: event.account is SharedAccount,
       onComplete: (res) {
         event.account.counter = res.counter;
 
         if (event.account is SharedAccount) {
-          sharedAccountRepository.add(event.account); // update without sync
+          sharedAccountRepository.add(event.account);
         } else {
-          accountRepository.add(event.account); // update without sync
+          accountRepository.add(event.account);
         }
 
-        emit(state.copyWith(otpCode: _getOtp(event.account)));
+        _getOtpCodeOrMessage(emit, event.account);
       },
     );
 
@@ -88,7 +119,7 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
   void _onGenerateOtpCode(
     GenerateOtpCode event,
     Emitter<OtpAccountState> emit,
-  ) async {
-    emit(state.copyWith(otpCode: _getOtp(event.account)));
+  ) {
+    _getOtpCodeOrMessage(emit, event.account);
   }
 }

@@ -8,10 +8,10 @@ import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_event.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_state.dart';
 
 import '../utils/helper/otp_uri_decoder_helper.dart';
-import "../widgets/otp_manager_qr_scanner_overlay_shape.dart";
+import '../widgets/otp_manager_qr_scanner_overlay_shape.dart';
 
 class QrCodeScanner extends HookWidget {
-  QrCodeScanner({Key? key}) : super(key: key);
+  QrCodeScanner({super.key});
 
   final MobileScannerController _cameraController = MobileScannerController();
   final picker = ImagePicker();
@@ -20,7 +20,7 @@ class QrCodeScanner extends HookWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("QR Scanner"),
+        title: const Text('QR Scanner'),
         actions: [
           IconButton(
             icon: const Icon(Icons.photo_library),
@@ -61,7 +61,7 @@ class QrCodeScanner extends HookWidget {
                     );
                   } else {
                     context.read<QrCodeScannerBloc>().add(
-                      const ErrorChanged(error: "The QR code is not correct"),
+                      const ErrorChanged(error: 'The QR code is not correct'),
                     );
                   }
                 },

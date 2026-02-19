@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:otp/otp.dart';
 import 'package:otp_manager/models/shared_account.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
+import 'package:otp_manager/utils/optional.dart';
 
 class ManualState extends Equatable {
   final String iconKey;
@@ -41,7 +43,7 @@ class ManualState extends Equatable {
       secretKeyError = null,
       issuerError = null,
       nameError = null,
-      codeTypeValue = account?.type ?? 'totp',
+      codeTypeValue = account?.type ?? OtpType.totp,
       intervalValue = account?.period ?? 30,
       algorithmValue =
           (account?.algorithm as Algorithm?)?.name ?? Algorithm.SHA1.name,
@@ -54,9 +56,9 @@ class ManualState extends Equatable {
     String? name,
     String? issuer,
     String? secretKey,
-    String? nameError,
-    String? issuerError,
-    String? secretKeyError,
+    Optional<String>? nameError,
+    Optional<String>? issuerError,
+    Optional<String>? secretKeyError,
     String? codeTypeValue,
     int? intervalValue,
     String? algorithmValue,
@@ -67,13 +69,11 @@ class ManualState extends Equatable {
       name: name ?? this.name,
       issuer: issuer ?? this.issuer,
       secretKey: secretKey ?? this.secretKey,
-      nameError: nameError == 'null' ? null : nameError ?? this.nameError,
-      issuerError: issuerError == 'null'
-          ? null
-          : issuerError ?? this.issuerError,
-      secretKeyError: secretKeyError == 'null'
-          ? null
-          : secretKeyError ?? this.secretKeyError,
+      nameError: nameError == null ? this.nameError : nameError.value,
+      issuerError: issuerError == null ? this.issuerError : issuerError.value,
+      secretKeyError: secretKeyError == null
+          ? this.secretKeyError
+          : secretKeyError.value,
       codeTypeValue: codeTypeValue ?? this.codeTypeValue,
       intervalValue: intervalValue ?? this.intervalValue,
       algorithmValue: algorithmValue ?? this.algorithmValue,

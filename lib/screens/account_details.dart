@@ -5,15 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
 import 'package:otp_manager/bloc/account_details/account_details_state.dart';
+import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
 
 import '../bloc/account_details/account_details_event.dart';
-import "../routing/constants.dart";
+import '../routing/constants.dart';
 import '../routing/navigation_service.dart';
 import '../widgets/dialogs/otp_manager_delete_dialog.dart';
 
 class AccountDetails extends StatelessWidget {
-  const AccountDetails({Key? key}) : super(key: key);
+  const AccountDetails({super.key});
 
   ListTile accountDetail(String title, String trailingText) {
     return ListTile(
@@ -36,15 +37,15 @@ class AccountDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Account details"),
+        title: const Text('Account details'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              NavigationService().navigateTo(
+              getIt<NavigationService>().navigateTo(
                 manualRoute,
                 arguments: {
-                  "account": context.read<AccountDetailsBloc>().state.account,
+                  'account': context.read<AccountDetailsBloc>().state.account,
                 },
               );
             },
@@ -70,28 +71,28 @@ class AccountDetails extends StatelessWidget {
                 children: ListTile.divideTiles(
                   context: context,
                   tiles: [
-                    accountDetail("Name", state.account.name),
-                    accountDetail("Issuer", state.account.issuer ?? ""),
-                    if (state.account.type == "totp")
-                      accountDetail("Period", "${state.account.period}s"),
-                    accountDetail("Digits", state.account.digits.toString()),
+                    accountDetail('Name', state.account.name),
+                    accountDetail('Issuer', state.account.issuer ?? ''),
+                    if (state.account.type == 'totp')
+                      accountDetail('Period', '${state.account.period}s'),
+                    accountDetail('Digits', state.account.digits.toString()),
                     accountDetail(
-                      "Algorithm",
-                      state.account.algorithm.toString().split(".")[1],
+                      'Algorithm',
+                      state.account.algorithm.toString().split('.')[1],
                     ),
-                    accountDetail("Type", state.account.type.toUpperCase()),
-                    if (state.account.type == "hotp")
+                    accountDetail('Type', state.account.type.toUpperCase()),
+                    if (state.account.type == 'hotp')
                       accountDetail(
-                        "Counter",
+                        'Counter',
                         state.account.counter != null
                             ? state.account.counter.toString()
-                            : "",
+                            : '',
                       ),
                     if (state.account is SharedAccount) ...[
                       accountDetail(
-                        "Expired At",
+                        'Expired At',
                         state.account.expiredAt == null
-                            ? "Never expires"
+                            ? 'Never expires'
                             : DateFormat(
                                 'yyyy-MM-dd',
                               ).format(state.account.expiredAt),
@@ -113,11 +114,11 @@ class AccountDetails extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(100.0),
                             child: Image.network(
-                              "${state.serverUrl}/avatar/${state.account.sharerUserId}/64",
+                              '${state.serverUrl}/avatar/${state.account.sharerUserId}/64',
                               fit: BoxFit.fill,
                               height: 50.0,
                               width: 50.0,
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (_, _, _) =>
                                   const Icon(Icons.person),
                             ),
                           ),
@@ -134,7 +135,7 @@ class AccountDetails extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Shared by ${state.account.sharerUserId}",
+                  'Shared by ${state.account.sharerUserId}',
                   style: const TextStyle(
                     fontStyle: FontStyle.italic,
                     //color: Colors.grey,

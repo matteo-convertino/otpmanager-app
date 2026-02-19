@@ -13,6 +13,7 @@ import 'package:otp_manager/dto/response/accounts_sync_response_dto.dart';
 import 'package:otp_manager/dto/response/password_check_response_dto.dart';
 import 'package:otp_manager/dto/response/shared_account_response_dto.dart';
 import 'package:otp_manager/dto/response/shared_accounts_sync_response_dto.dart';
+import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/repository/api/otp_manager_api_client.dart';
 import 'package:otp_manager/repository/local/interface/account_repository.dart';
@@ -36,8 +37,8 @@ class NextcloudService {
   final AccountService accountService;
   final SharedAccountRepository sharedAccountRepository;
   final EncryptionService encryption;
-
-  final _logger = getIt<Logger>();
+  final NavigationService navigationService;
+  final Logger logger;
 
   NextcloudService({
     required this.otpManagerApiClient,
@@ -46,6 +47,8 @@ class NextcloudService {
     required this.accountService,
     required this.sharedAccountRepository,
     required this.encryption,
+    required this.navigationService,
+    required this.logger,
   });
 
   Future<void> checkPassword(
@@ -54,7 +57,7 @@ class NextcloudService {
     void Function(ErrorDto)? onFailed,
     void Function()? onError,
   }) async {
-    _logger.d('NextcloudService.checkPassword start');
+    logger.d('NextcloudService.checkPassword start');
 
     return callApi(
       api: () => otpManagerApiClient.password.check(passwordCheckRequestDto),
@@ -68,14 +71,14 @@ class NextcloudService {
     void Function(ErrorDto)? onFailed,
     void Function()? onError,
   }) async {
-    _logger.d('NextcloudService.sync start');
+    logger.d('NextcloudService.sync start');
 
     final accounts = accountRepository.getAll();
     final sharedAccounts = sharedAccountRepository.getAll();
     final user = userRepository.get()!;
 
     if (user.password == null || user.iv == null) {
-      NavigationService().replaceScreen(authRoute);
+      navigationService.replaceScreen(authRoute);
     }
 
     for (var e in accounts) {
@@ -107,7 +110,7 @@ class NextcloudService {
           getIt<SnackbarService>().showMessage(
             'Password has changed. Insert the new one.',
           );
-          NavigationService().replaceScreen(authRoute);
+          navigationService.replaceScreen(authRoute);
         }
       },
       onFailed: onFailed,
@@ -119,12 +122,14 @@ class NextcloudService {
     final user = userRepository.get()!;
 
     for (var account in accounts) {
-      account.encryptedSecret = account.secret;
+      if (account is Account) account.encryptedSecret = account.secret;
 
       if (account is SharedAccount && !account.unlocked) continue;
 
       try {
-        String decrypted = encryption.decrypt(dataBase64: account.secret)!;
+        String decrypted = encryption.decrypt(
+          dataBase64: account.encryptedSecret,
+        )!;
 
         if (!Base32Helper.isValid(decrypted)) throw FormatException;
 

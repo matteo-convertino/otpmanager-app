@@ -18,7 +18,7 @@ class IconPickerState extends Equatable {
   IconPickerState.initial(this.issuer)
     : icons = OtpIconsHelper.simpleIcons,
       iconsBestMatch = {},
-      searchBarValue = "";
+      searchBarValue = '';
 
   IconPickerState copyWith({
     Map<String, Icon>? icons,

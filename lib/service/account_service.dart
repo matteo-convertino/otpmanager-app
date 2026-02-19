@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
-import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/repository/local/interface/account_repository.dart';
 import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
@@ -15,11 +14,12 @@ import '../models/account.dart';
 class AccountService {
   final AccountRepository accountRepository;
   final SharedAccountRepository sharedAccountRepository;
-  final _logger = getIt<Logger>();
+  final Logger logger;
 
   AccountService({
     required this.accountRepository,
     required this.sharedAccountRepository,
+    required this.logger,
   });
 
   int getLastPosition() {
@@ -43,7 +43,7 @@ class AccountService {
   }
 
   bool repairPositionError() {
-    _logger.d("AccountRepositoryImpl._checkPositions start");
+    logger.d('AccountRepositoryImpl._checkPositions start');
 
     List allAccounts = [
       ...accountRepository.getVisible(),
@@ -53,7 +53,7 @@ class AccountService {
     allAccounts.sort((a, b) => a.position.compareTo(b.position));
 
     void adjustAccountsPosition(int start, int difference) {
-      _logger.d("AccountRepositoryImpl._adjustAccountsPosition start");
+      logger.d('AccountRepositoryImpl._adjustAccountsPosition start');
 
       for (int i = start; i < allAccounts.length; i++) {
         allAccounts[i].position = allAccounts[i].position! + difference;

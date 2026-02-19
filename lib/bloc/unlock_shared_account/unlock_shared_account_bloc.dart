@@ -19,16 +19,17 @@ class UnlockSharedAccountBloc
   final NextcloudService nextcloudService;
   final SharedAccountRepository sharedAccountRepository;
   final UserRepository userRepository;
-  final int accountId;
+  final NavigationService navigationService;
   final HomeBloc homeBloc;
 
-  final NavigationService _navigationService = NavigationService();
+  final int accountId;
 
   UnlockSharedAccountBloc({
     required this.sharedAccountRepository,
     required this.nextcloudService,
     required this.userRepository,
     required this.homeBloc,
+    required this.navigationService,
     @factoryParam required this.accountId,
   }) : super(const UnlockSharedAccountState.initial()) {
     on<PasswordSubmit>(_onPasswordSubmit);
@@ -47,7 +48,7 @@ class UnlockSharedAccountBloc
     PasswordChanged event,
     Emitter<UnlockSharedAccountState> emit,
   ) {
-    emit(state.copyWith(password: event.password, errorMsg: ""));
+    emit(state.copyWith(password: event.password, errorMsg: ''));
   }
 
   void _error(Emitter<UnlockSharedAccountState> emit, String msg) {
@@ -62,6 +63,11 @@ class UnlockSharedAccountBloc
     PasswordSubmit event,
     Emitter<UnlockSharedAccountState> emit,
   ) async {
+    if (state.password.isEmpty) {
+      emit(state.copyWith(errorMsg: 'Password cannot be empty'));
+      return;
+    }
+
     await nextcloudService.unlockSharedAccount(
       SharedAccountUnlockRequestDto(
         accountId: accountId,
@@ -69,20 +75,14 @@ class UnlockSharedAccountBloc
         tempPassword: state.password,
       ),
       onComplete: (_) {
+        navigationService.goBack();
         getIt<SnackbarService>().showMessage(
-          "Shared account unlocked with success",
+          'Shared account unlocked with success',
         );
         homeBloc.add(NextcloudSync());
-        NavigationService().goBack();
       },
-      onFailed: (err) => _error(
-        emit,
-        "An error encountered while checking password. Try to reload after a while!",
-      ),
-      onError: () => _error(
-        emit,
-        "An error encountered while checking password. Try to reload after a while!",
-      ),
+      onFailed: (err) => _error(emit, ' '),
+      onError: () => _error(emit, ' '),
     );
   }
 }

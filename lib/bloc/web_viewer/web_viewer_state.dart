@@ -14,7 +14,7 @@ class WebViewerState extends Equatable {
   const WebViewerState.initial()
     : isLogin = false,
       isLoading = true,
-      initUrl = "";
+      initUrl = '';
 
   WebViewerState copyWith({
     double? percentage,

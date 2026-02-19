@@ -21,4 +21,7 @@ abstract class AppModule {
   @lazySingleton
   GlobalKey<ScaffoldMessengerState> get scaffoldMessengerKey =>
       GlobalKey<ScaffoldMessengerState>();
+
+  @lazySingleton
+  GlobalKey<NavigatorState> get navigatorKey => GlobalKey<NavigatorState>();
 }

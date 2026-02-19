@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:otp_manager/models/user.dart';
+import 'package:otp_manager/utils/optional.dart';
 
 import '../../utils/sync_status.dart';
 
@@ -32,21 +33,21 @@ class HomeState extends Equatable {
     : accounts = [],
       refreshTime = 30,
       syncStatus = SyncStatus.loading,
-      password = user.password ?? "",
+      password = user.password ?? '',
       isGuest = user.isGuest,
       sortedByNameDesc = user.sortedByNameDesc,
       sortedByIssuerDesc = user.sortedByIssuerDesc,
       sortedByIdDesc = user.sortedByIdDesc,
-      searchBarValue = "",
+      searchBarValue = '',
       isAppUpdated = false;
 
   HomeState copyWith({
     List<dynamic>? accounts,
     int? refreshTime,
     SyncStatus? syncStatus,
-    dynamic sortedByNameDesc,
-    dynamic sortedByIssuerDesc,
-    dynamic sortedByIdDesc,
+    Optional<bool>? sortedByNameDesc,
+    Optional<bool>? sortedByIssuerDesc,
+    Optional<bool>? sortedByIdDesc,
     String? searchBarValue,
     bool? isAppUpdated,
   }) {
@@ -56,15 +57,15 @@ class HomeState extends Equatable {
       syncStatus: syncStatus ?? this.syncStatus,
       password: password,
       isGuest: isGuest,
-      sortedByNameDesc: sortedByNameDesc == "null"
-          ? null
-          : sortedByNameDesc ?? this.sortedByNameDesc,
-      sortedByIssuerDesc: sortedByIssuerDesc == "null"
-          ? null
-          : sortedByIssuerDesc ?? this.sortedByIssuerDesc,
-      sortedByIdDesc: sortedByIdDesc == "null"
-          ? null
-          : sortedByIdDesc ?? this.sortedByIdDesc,
+      sortedByNameDesc: sortedByNameDesc == null
+          ? this.sortedByNameDesc
+          : sortedByNameDesc.value,
+      sortedByIssuerDesc: sortedByIssuerDesc == null
+          ? this.sortedByIssuerDesc
+          : sortedByIssuerDesc.value,
+      sortedByIdDesc: sortedByIdDesc == null
+          ? this.sortedByIdDesc
+          : sortedByIdDesc.value,
       searchBarValue: searchBarValue ?? this.searchBarValue,
       isAppUpdated: isAppUpdated ?? this.isAppUpdated,
     );

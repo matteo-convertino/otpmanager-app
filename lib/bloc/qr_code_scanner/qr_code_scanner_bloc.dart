@@ -16,10 +16,12 @@ import '../../utils/helper/otp_uri_decoder_helper.dart';
 class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
   final AccountRepository accountRepository;
   final AccountService accountService;
+  final NavigationService navigationService;
 
   QrCodeScannerBloc({
     required this.accountRepository,
     required this.accountService,
+    required this.navigationService,
   }) : super(const QrCodeScannerState.initial()) {
     on<ErrorChanged>(_onErrorChanged);
     on<DecodeAndStoreAccounts>(_onDecodeAndStoreAccounts);
@@ -57,10 +59,10 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
     } else {
       getIt<SnackbarService>().showMessage(
         newAccounts.length > 1
-            ? "New accounts have been added"
-            : "New account has been added",
+            ? 'New accounts have been added'
+            : 'New account has been added',
       );
-      NavigationService().resetToScreen(homeRoute);
+      navigationService.resetToScreen(homeRoute);
     }
   }
 }

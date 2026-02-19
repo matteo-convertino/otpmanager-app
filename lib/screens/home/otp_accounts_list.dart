@@ -19,15 +19,13 @@ class OtpAccountsList extends StatelessWidget {
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           itemCount: state.accounts.length,
-          padding: state.accounts.length <= 1
-              ? const EdgeInsets.fromLTRB(0, 0, 0, 150)
-              : null,
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 150),
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             var account = state.accounts[index];
 
             return BlocProvider<OtpAccountBloc>(
-              key: ValueKey(account.secret),
+              key: ValueKey(account.hashCode),
               create: (context) => getIt<OtpAccountBloc>(),
               child: OtpAccount(account: account),
             );

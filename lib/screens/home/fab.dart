@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:otp_manager/di/injection.dart';
 
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
@@ -8,7 +9,7 @@ import '../../routing/constants.dart';
 import '../../routing/navigation_service.dart';
 
 class HomeFab extends StatelessWidget {
-  const HomeFab({Key? key}) : super(key: key);
+  const HomeFab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,41 +21,43 @@ class HomeFab extends StatelessWidget {
       children: [
         SpeedDialChild(
           child: const Icon(Icons.keyboard),
-          label: "Type configuration manually",
+          label: 'Type configuration manually',
           onTap: () =>
-              NavigationService().navigateTo(manualRoute, arguments: {}),
+              getIt<NavigationService>().navigateTo(manualRoute, arguments: {}),
         ),
         SpeedDialChild(
           child: const Icon(Icons.qr_code_scanner),
-          label: "Scan QR code",
-          onTap: () => NavigationService().navigateTo(qrCodeScannerRoute),
+          label: 'Scan QR code',
+          onTap: () =>
+              getIt<NavigationService>().navigateTo(qrCodeScannerRoute),
         ),
         SpeedDialChild(
           child: const Icon(Icons.library_add_outlined),
-          label: "Import OTP",
-          onTap: () => NavigationService().navigateTo(importRoute),
+          label: 'Import OTP',
+          onTap: () => getIt<NavigationService>().navigateTo(importRoute),
         ),
         SpeedDialChild(
           child: const Icon(Icons.settings),
-          label: "Settings",
-          onTap: () => NavigationService().navigateTo(settingsRoute),
+          label: 'Settings',
+          onTap: () => getIt<NavigationService>().navigateTo(settingsRoute),
         ),
         SpeedDialChild(
           child: const Icon(Icons.logout),
-          label: "Logout",
+          label: 'Logout',
           onTap: () => showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              title: const Text("Logout"),
+              title: const Text('Logout'),
               content: const Text(
-                  "Are you sure that you want to logout from your Nextcloud account?"),
+                'Are you sure that you want to logout from your Nextcloud account?',
+              ),
               actions: [
                 TextButton(
-                  child: const Text("No"),
+                  child: const Text('No'),
                   onPressed: () => Navigator.pop(context),
                 ),
                 TextButton(
-                  child: const Text("Yes"),
+                  child: const Text('Yes'),
                   onPressed: () => context.read<HomeBloc>().add(Logout()),
                 ),
               ],

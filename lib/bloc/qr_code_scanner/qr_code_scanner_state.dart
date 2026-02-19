@@ -6,9 +6,7 @@ class QrCodeScannerState extends Equatable {
 
   const QrCodeScannerState({required this.error, required this.addWithSuccess});
 
-  const QrCodeScannerState.initial()
-      : error = "",
-        addWithSuccess = "";
+  const QrCodeScannerState.initial() : error = '', addWithSuccess = '';
 
   QrCodeScannerState copyWith({String? error, String? addWithSuccess}) {
     return QrCodeScannerState(

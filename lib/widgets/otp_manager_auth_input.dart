@@ -40,7 +40,7 @@ class OtpManagerAuthInput extends HookWidget {
       builder: (context, state) {
         return TextField(
           enabled: enabled,
-          onChanged: (value) => onChanged(value),
+          onChanged: onChanged,
           keyboardType: TextInputType.visiblePassword,
           obscureText: obscured.value,
           focusNode: passwordFocusNode,
@@ -56,7 +56,7 @@ class OtpManagerAuthInput extends HookWidget {
               onPressed: toggleObscured,
               icon: Icon(
                 obscured.value ? Icons.visibility : Icons.visibility_off,
-                color: errorMsg != "" ? Colors.red : Colors.blue,
+                color: errorMsg.isNotEmpty ? Colors.red : Colors.blue,
               ),
             ),
             suffixIcon: Padding(
@@ -65,11 +65,11 @@ class OtpManagerAuthInput extends HookWidget {
                 onPressed: onSubmit,
                 icon: Icon(
                   Icons.arrow_forward,
-                  color: errorMsg != "" ? Colors.red : Colors.blue,
+                  color: errorMsg.isNotEmpty ? Colors.red : Colors.blue,
                 ),
               ),
             ),
-            errorText: errorMsg != "" ? errorMsg : null,
+            errorText: errorMsg.isNotEmpty ? errorMsg : null,
             errorMaxLines: 5,
           ),
         );

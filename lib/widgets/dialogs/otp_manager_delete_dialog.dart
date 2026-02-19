@@ -13,10 +13,10 @@ void showOtpManagerDeleteModal(
     content: const Text('Are you sure that you want to remove this account?'),
     actions: [
       TextButton(
-        child: const Text("No"),
+        child: const Text('No'),
         onPressed: () => Navigator.pop(context),
       ),
-      TextButton(child: const Text("Yes"), onPressed: () => onPressed()),
+      TextButton(child: const Text('Yes'), onPressed: () => onPressed()),
     ],
   ),
 );

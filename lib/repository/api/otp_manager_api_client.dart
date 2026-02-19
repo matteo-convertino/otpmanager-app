@@ -13,15 +13,15 @@ class OtpManagerApiClient {
   set dio(Dio dio) {
     account = AccountApiRepository(
       dio,
-      baseUrl: "${dio.options.baseUrl}/accounts",
+      baseUrl: '${dio.options.baseUrl}/accounts',
     );
     sharedAccount = SharedAccountApiRepository(
       dio,
-      baseUrl: "${dio.options.baseUrl}/share",
+      baseUrl: '${dio.options.baseUrl}/share',
     );
     password = PasswordApiRepository(
       dio,
-      baseUrl: "${dio.options.baseUrl}/password",
+      baseUrl: '${dio.options.baseUrl}/password',
     );
   }
 }

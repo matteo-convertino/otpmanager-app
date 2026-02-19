@@ -19,15 +19,16 @@ class AccountDetailsBloc
   final AccountRepository accountRepository;
   final AccountService accountService;
   final SharedAccountRepository sharedAccountRepository;
-  final Object account; // Account | SharedAccount
+  final NavigationService navigationService;
 
-  final NavigationService _navigationService = NavigationService();
+  final Object account; // Account | SharedAccount
 
   AccountDetailsBloc({
     required this.userRepository,
     required this.accountRepository,
     required this.accountService,
     required this.sharedAccountRepository,
+    required this.navigationService,
     @factoryParam required this.account,
   }) : super(AccountDetailsState.initial(account, userRepository.get()!)) {
     on<DeleteAccount>(_onDeleteAccount);
@@ -40,9 +41,9 @@ class AccountDetailsBloc
     accountService.setAsDeleted(state.account);
 
     getIt<SnackbarService>().showMessage(
-      "${state.account.type.toUpperCase()} has been removed",
+      '${state.account.type.toUpperCase()} has been removed',
     );
 
-    _navigationService.resetToScreen(homeRoute);
+    navigationService.resetToScreen(homeRoute);
   }
 }

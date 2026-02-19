@@ -7,6 +7,10 @@ import 'package:otp_manager/bloc/manual/manual_bloc.dart';
 import 'package:otp_manager/bloc/manual/manual_event.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/enum/otp_algorithm.dart';
+import 'package:otp_manager/utils/enum/otp_digits.dart';
+import 'package:otp_manager/utils/enum/otp_period.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 
 import '../bloc/icon_picker/icon_picker_bloc.dart';
@@ -14,7 +18,7 @@ import '../bloc/manual/manual_state.dart';
 import 'icon_picker.dart';
 
 class Manual extends HookWidget {
-  const Manual({Key? key}) : super(key: key);
+  const Manual({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,8 @@ class Manual extends HookWidget {
     );
 
     useEffect(() {
-      if (context.read<ManualBloc>().state.codeTypeValue == "hotp") {
+      if (context.read<ManualBloc>().state.codeTypeValue ==
+          OtpType.hotp.value) {
         animationController.forward();
       }
       return null;
@@ -69,7 +74,7 @@ class Manual extends HookWidget {
                                     },
                                   ).then(
                                     (value) => {
-                                      if (value != null)
+                                      if (value != null && context.mounted)
                                         context.read<ManualBloc>().add(
                                           IconKeyChanged(key: value),
                                         ),
@@ -105,7 +110,7 @@ class Manual extends HookWidget {
                             const Padding(
                               padding: EdgeInsets.only(top: 3.0),
                               child: Text(
-                                "Change icon",
+                                'Change icon',
                                 style: TextStyle(
                                   fontSize: 11,
                                   decoration: TextDecoration.underline,
@@ -124,8 +129,8 @@ class Manual extends HookWidget {
                           initialValue: state.name,
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
-                            labelText: "Account name",
-                            hintText: "e.g. Username/Email",
+                            labelText: 'Account name',
+                            hintText: 'e.g. Username/Email',
                             errorText: state.nameError,
                             suffixIcon: state.nameError == null
                                 ? const Icon(Icons.drive_file_rename_outline)
@@ -147,9 +152,9 @@ class Manual extends HookWidget {
                     initialValue: state.issuer,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: "Account issuer",
+                      labelText: 'Account issuer',
                       errorText: state.issuerError,
-                      hintText: "e.g. Google/Facebook/Github",
+                      hintText: 'e.g. Google/Facebook/Github',
                       suffixIcon: state.issuerError == null
                           ? const Icon(Icons.account_box)
                           : const Icon(Icons.error, color: Colors.red),
@@ -169,7 +174,7 @@ class Manual extends HookWidget {
                       readOnly: state.isEdit,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: "Secret key",
+                        labelText: 'Secret key',
                         errorText: state.secretKeyError,
                         suffixIcon: state.secretKeyError == null
                             ? const Icon(Icons.vpn_key)
@@ -186,7 +191,7 @@ class Manual extends HookWidget {
                             ClipboardData(text: state.secretKey),
                           );
                           getIt<SnackbarService>().showMessage(
-                            "Secrey key copied",
+                            'Secrey key copied',
                           );
                         }
                       },
@@ -201,7 +206,7 @@ class Manual extends HookWidget {
                           child: DropdownButtonFormField2(
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Type of code",
+                              labelText: 'Type of code',
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -209,18 +214,18 @@ class Manual extends HookWidget {
                               ),
                             ),
                             value: state.codeTypeValue,
-                            items: const [
+                            items: [
                               DropdownMenuItem(
-                                value: "totp",
-                                child: Text("Time based (TOTP)"),
+                                value: OtpType.totp.value,
+                                child: const Text('Time based (TOTP)'),
                               ),
                               DropdownMenuItem(
-                                value: "hotp",
-                                child: Text("Counter based (HOTP)"),
+                                value: OtpType.hotp.value,
+                                child: const Text('Counter based (HOTP)'),
                               ),
                             ],
                             onChanged: (String? value) {
-                              value == "hotp"
+                              value == OtpType.hotp.value
                                   ? animationController.forward()
                                   : animationController.reverse();
                               context.read<ManualBloc>().add(
@@ -243,7 +248,7 @@ class Manual extends HookWidget {
                             child: DropdownButtonFormField2(
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
-                                labelText: "Interval",
+                                labelText: 'Interval',
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 decoration: BoxDecoration(
@@ -251,10 +256,19 @@ class Manual extends HookWidget {
                                 ),
                               ),
                               value: state.intervalValue,
-                              items: const [
-                                DropdownMenuItem(value: 30, child: Text("30s")),
-                                DropdownMenuItem(value: 45, child: Text("45s")),
-                                DropdownMenuItem(value: 60, child: Text("60s")),
+                              items: [
+                                DropdownMenuItem(
+                                  value: OtpPeriod.p30.value,
+                                  child: const Text('30s'),
+                                ),
+                                DropdownMenuItem(
+                                  value: OtpPeriod.p45.value,
+                                  child: const Text('45s'),
+                                ),
+                                DropdownMenuItem(
+                                  value: OtpPeriod.p60.value,
+                                  child: const Text('60s'),
+                                ),
                               ],
                               onChanged: (int? value) {
                                 if (value == null) return;
@@ -281,7 +295,7 @@ class Manual extends HookWidget {
                           child: DropdownButtonFormField2(
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Algorithm",
+                              labelText: 'Algorithm',
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -289,18 +303,18 @@ class Manual extends HookWidget {
                               ),
                             ),
                             value: state.algorithmValue,
-                            items: const [
+                            items: [
                               DropdownMenuItem(
-                                value: "SHA1",
-                                child: Text("SHA1"),
+                                value: OtpAlgorithm.sha1.value,
+                                child: const Text('SHA1'),
                               ),
                               DropdownMenuItem(
-                                value: "SHA256",
-                                child: Text("SHA256"),
+                                value: OtpAlgorithm.sha256.value,
+                                child: const Text('SHA256'),
                               ),
                               DropdownMenuItem(
-                                value: "SHA512",
-                                child: Text("SHA512"),
+                                value: OtpAlgorithm.sha512.value,
+                                child: const Text('SHA512'),
                               ),
                             ],
                             onChanged: (String? value) {
@@ -318,7 +332,7 @@ class Manual extends HookWidget {
                           child: DropdownButtonFormField2(
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Digits",
+                              labelText: 'Digits',
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -326,9 +340,15 @@ class Manual extends HookWidget {
                               ),
                             ),
                             value: state.digitsValue,
-                            items: const [
-                              DropdownMenuItem(value: 4, child: Text("4")),
-                              DropdownMenuItem(value: 6, child: Text("6")),
+                            items: [
+                              DropdownMenuItem(
+                                value: OtpDigits.d4.value,
+                                child: const Text('4'),
+                              ),
+                              DropdownMenuItem(
+                                value: OtpDigits.d6.value,
+                                child: const Text('6'),
+                              ),
                             ],
                             onChanged: (int? value) {
                               if (value == null) return;

@@ -11,10 +11,9 @@ import '../../routing/navigation_service.dart';
 @injectable
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository userRepository;
+  final NavigationService navigationService;
 
-  final NavigationService _navigationService = NavigationService();
-
-  LoginBloc({required this.userRepository})
+  LoginBloc({required this.userRepository, required this.navigationService})
     : super(const LoginState.initial()) {
     on<UrlSubmit>(_onUrlSubmit);
     on<UrlChanged>(_onUrlChanged);
@@ -23,13 +22,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   void _onUrlSubmit(UrlSubmit event, Emitter<LoginState> emit) {
     String url = state.url.trim();
 
-    url = url.endsWith("/") ? url.substring(0, url.length - 1) : url;
+    url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
 
-    if (url.toString() == "http://localhost") {
-      userRepository.update(User(url: url, appPassword: "test", isGuest: true));
-      _navigationService.resetToScreen(homeRoute);
+    if (url.toString() == 'http://localhost') {
+      userRepository.update(User(url: url, appPassword: 'test', isGuest: true));
+      navigationService.resetToScreen(homeRoute);
     } else {
-      _navigationService.navigateTo(webViewerRoute, arguments: url);
+      navigationService.navigateTo(webViewerRoute, arguments: url);
     }
   }
 

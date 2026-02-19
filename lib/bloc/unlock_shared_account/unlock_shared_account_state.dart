@@ -14,10 +14,10 @@ class UnlockSharedAccountState extends Equatable {
   });
 
   const UnlockSharedAccountState.initial()
-      : attempts = 3,
-        password = "",
-        message = "",
-        errorMsg = "";
+    : attempts = 3,
+      password = '',
+      message = '',
+      errorMsg = '';
   UnlockSharedAccountState copyWith({
     int? attempts,
     String? password,

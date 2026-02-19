@@ -22,8 +22,8 @@ import '../../routing/navigation_service.dart';
 class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
   final UserRepository userRepository;
   final OtpManagerApiClient otpManagerApiClient;
-
-  final NavigationService _navigationService = NavigationService();
+  final NavigationService navigationService;
+  final Logger logger;
 
   final String nextcloudUrl;
 
@@ -31,9 +31,11 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
   DynamiteResponse<LoginFlowV2, void>? _init;
 
   WebViewerBloc({
-    @factoryParam required this.nextcloudUrl,
     required this.userRepository,
     required this.otpManagerApiClient,
+    required this.navigationService,
+    required this.logger,
+    @factoryParam required this.nextcloudUrl,
   }) : super(const WebViewerState.initial()) {
     on<InitNextcloudLogin>(_onInitNextcloudLogin);
     on<UpdateLoadingScreen>(_onUpdateLoadingScreen);
@@ -84,7 +86,7 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
           baseUrl: nextcloudUrl,
           token: result.body.appPassword,
         );
-        _navigationService.resetToScreen(authRoute);
+        navigationService.resetToScreen(authRoute);
       });
     }
   }
@@ -96,18 +98,18 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
     await _nextcloudLoginFlowV2(
       emit,
     ).timeout(const Duration(seconds: 10)).catchError((error, stackTrace) {
-      getIt<Logger>().e(error);
+      logger.e(error);
 
       if (error is TimeoutException) {
         getIt<SnackbarService>().showMessage(
           'The server is taking too time to respond!',
         );
-        _navigationService.goBack();
+        navigationService.goBack();
       } else {
         getIt<SnackbarService>().showMessage(
           'The url is not of a valid nextcloud server!',
         );
-        _navigationService.goBack();
+        navigationService.goBack();
       }
     });
 

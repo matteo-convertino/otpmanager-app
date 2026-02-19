@@ -7,9 +7,7 @@ import 'package:otp_manager/bloc/web_viewer/web_viewer_event.dart';
 import 'package:otp_manager/bloc/web_viewer/web_viewer_state.dart';
 
 class WebViewer extends HookWidget {
-  WebViewer({super.key});
-
-  InAppWebViewController? _webViewController;
+  const WebViewer({super.key});
 
   Stack _loadingPage(double percentage) {
     return Stack(
@@ -40,6 +38,7 @@ class WebViewer extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final webViewController = useRef<InAppWebViewController?>(null);
     final progress = useState(0.0);
 
     useEffect(() {
@@ -51,8 +50,8 @@ class WebViewer extends HookWidget {
       backgroundColor: Colors.blue,
       body: BlocConsumer<WebViewerBloc, WebViewerState>(
         listener: (context, state) {
-          if (state.initUrl != '') {
-            _webViewController?.loadUrl(
+          if (state.initUrl.isNotEmpty) {
+            webViewController.value?.loadUrl(
               urlRequest: URLRequest(url: WebUri(state.initUrl)),
             );
           }
@@ -62,15 +61,12 @@ class WebViewer extends HookWidget {
             children: [
               InAppWebView(
                 initialSettings: InAppWebViewSettings(),
-                onWebViewCreated: (InAppWebViewController controller) {
-                  _webViewController = controller;
-                  //_webViewController?.loadUrl(urlRequest: initUrl.value!);
-                },
+                onWebViewCreated: (c) => webViewController.value = c,
                 onLoadStart:
                     (InAppWebViewController controller, WebUri? webUri) {
                       context.read<WebViewerBloc>().add(
                         UpdateLoadingScreen(
-                          isLogin: webUri?.toString().contains('flow') == true,
+                          isLogin: webUri?.toString().contains('flow'),
                         ),
                       );
                     },

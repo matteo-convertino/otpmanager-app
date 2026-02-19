@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class EmptyData extends StatelessWidget {
   const EmptyData({
-    Key? key,
+    super.key,
     required this.imageName,
     required this.title,
     required this.description,
-  }) : super(key: key);
+  });
 
   final String imageName;
   final String title;
@@ -24,9 +24,7 @@ class EmptyData extends StatelessWidget {
             children: [
               Image(
                 height: 300,
-                image: AssetImage(
-                  "./assets/images/$imageName.png",
-                ),
+                image: AssetImage('./assets/images/$imageName.png'),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10),

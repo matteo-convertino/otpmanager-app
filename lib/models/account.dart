@@ -1,5 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:otp/otp.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 
 @Entity()
 class Account {
@@ -62,7 +63,7 @@ class Account {
     int? dbAlgorithm,
     this.iconKey = 'default',
   }) {
-    if (type == 'hotp') {
+    if (type == OtpType.hotp.value) {
       this.counter = counter ?? -1;
     }
 

@@ -18,10 +18,10 @@ SharedAccountResponseDto _$SharedAccountResponseDtoFromJson(
   createdAt: json['createdAt'] as String,
   updatedAt: json['updatedAt'] as String,
   unlocked: json['unlocked'] as bool,
-  digits: (json['digits'] as num?)?.toInt(),
-  type: json['type'] as String?,
-  period: (json['period'] as num?)?.toInt(),
-  algorithm: json['algorithm'] as String?,
+  digits: $enumDecodeNullable(_$OtpDigitsEnumMap, json['digits']),
+  type: $enumDecodeNullable(_$OtpTypeEnumMap, json['type']),
+  period: $enumDecodeNullable(_$OtpPeriodEnumMap, json['period']),
+  algorithm: $enumDecodeNullable(_$OtpAlgorithmEnumMap, json['algorithm']),
   counter: (json['counter'] as num?)?.toInt(),
   userId: json['userId'] as String?,
   deletedAt: json['deletedAt'] as String?,
@@ -45,10 +45,10 @@ Map<String, dynamic> _$SharedAccountResponseDtoToJson(
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
   'unlocked': instance.unlocked,
-  'digits': instance.digits,
-  'type': instance.type,
-  'period': instance.period,
-  'algorithm': instance.algorithm,
+  'digits': _$OtpDigitsEnumMap[instance.digits],
+  'type': _$OtpTypeEnumMap[instance.type],
+  'period': _$OtpPeriodEnumMap[instance.period],
+  'algorithm': _$OtpAlgorithmEnumMap[instance.algorithm],
   'counter': instance.counter,
   'userId': instance.userId,
   'deletedAt': instance.deletedAt,
@@ -56,4 +56,20 @@ Map<String, dynamic> _$SharedAccountResponseDtoToJson(
   'expiredAt': instance.expiredAt,
   'password': instance.password,
   'iv': instance.iv,
+};
+
+const _$OtpDigitsEnumMap = {OtpDigits.d4: 4, OtpDigits.d6: 6};
+
+const _$OtpTypeEnumMap = {OtpType.totp: 'totp', OtpType.hotp: 'hotp'};
+
+const _$OtpPeriodEnumMap = {
+  OtpPeriod.p30: 30,
+  OtpPeriod.p45: 45,
+  OtpPeriod.p60: 60,
+};
+
+const _$OtpAlgorithmEnumMap = {
+  OtpAlgorithm.sha1: 'SHA1',
+  OtpAlgorithm.sha256: 'SHA256',
+  OtpAlgorithm.sha512: 'SHA512',
 };

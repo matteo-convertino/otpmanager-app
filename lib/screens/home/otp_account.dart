@@ -11,6 +11,7 @@ import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 import 'package:otp_manager/widgets/otp_manager_circular_countdown_timer.dart';
 import 'package:otp_manager/widgets/otp_manager_slidable_action.dart';
@@ -31,7 +32,7 @@ class OtpAccount extends HookWidget {
 
   final dynamic account; // Account | SharedAccount
 
-  final NavigationService _navigationService = NavigationService();
+  final NavigationService navigationService = getIt<NavigationService>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class OtpAccount extends HookWidget {
 
     useEffect(() {
       // account counter may have changed after sync -> regenerate code
-      if (account.type.toLowerCase() == 'hotp') {
+      if (account.type == OtpType.hotp.value) {
         context.read<OtpAccountBloc>().add(GenerateOtpCode(account: account));
       }
       return null;
@@ -52,14 +53,29 @@ class OtpAccount extends HookWidget {
       builder: (otpAccountContext, otpAccountState) {
         return BlocBuilder<OtpManagerBloc, OtpManagerState>(
           builder: (otpManagerContext, otpManagerState) {
+            final isLockedSharedAccount =
+                account is SharedAccount && !account.unlocked;
+
+            final hotpInvalidCounter =
+                account.type == OtpType.hotp.value && account.counter < 0;
+
+            final showTimer =
+                account.type == OtpType.totp.value && !isLockedSharedAccount;
+
+            final showQrAction = !isLockedSharedAccount;
+
+            final showSyncBadge =
+                account.toUpdate == true ||
+                (account is Account && account.isNew);
+
             return InkWell(
               onTap: () {
-                if (account is SharedAccount && !account.unlocked) {
+                if (isLockedSharedAccount) {
                   showOtpManagerUnlockSharedAccountModal(
                     context: otpManagerContext,
                     accountId: account.nextcloudAccountId,
                   );
-                } else if (account.type == 'hotp' && account.counter < 0) {
+                } else if (hotpInvalidCounter) {
                   otpManagerContext.read<OtpAccountBloc>().add(
                     IncrementCounter(account: account),
                   );
@@ -70,8 +86,9 @@ class OtpAccount extends HookWidget {
                   getIt<SnackbarService>().showMessage(
                     '${account.type.toUpperCase()} code copied',
                   );
+                  return;
                 } else {
-                  _navigationService.navigateTo(
+                  navigationService.navigateTo(
                     accountDetailsRoute,
                     arguments: account,
                   );
@@ -80,9 +97,7 @@ class OtpAccount extends HookWidget {
               child: Slidable(
                 closeOnScroll: true,
                 endActionPane: ActionPane(
-                  extentRatio: account is Account || account.unlocked
-                      ? 0.75
-                      : 0.5,
+                  extentRatio: showQrAction ? 0.75 : 0.5,
                   motion: const ScrollMotion(),
                   children: [
                     OtpManagerSlidableAction(
@@ -91,13 +106,12 @@ class OtpAccount extends HookWidget {
                       padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
                       backgroundColor: Colors.blue,
                       border: BorderRadius.circular(10.0),
-                      onPressed: () => _navigationService.navigateTo(
+                      onPressed: () => navigationService.navigateTo(
                         manualRoute,
                         arguments: {'account': account},
                       ),
                     ),
-                    if (account is Account ||
-                        (account is SharedAccount && account.unlocked))
+                    if (showQrAction)
                       OtpManagerSlidableAction(
                         label: 'QR',
                         icon: Icons.qr_code,
@@ -132,7 +146,7 @@ class OtpAccount extends HookWidget {
                   ),
                   child: ListTile(
                     isThreeLine: true,
-                    contentPadding: const EdgeInsets.all(0.0),
+                    contentPadding: EdgeInsets.zero,
                     leading: SizedBox(
                       height: 40,
                       width: 40,
@@ -163,25 +177,21 @@ class OtpAccount extends HookWidget {
                               Padding(
                                 padding: const EdgeInsets.only(right: 15.0),
                                 child: Text(
-                                  otpAccountState.otpCode ??
+                                  otpAccountState.otpMessage ??
+                                      otpAccountState.otpCode ??
                                       '- ' * account.digits!,
                                   style: TextStyle(
-                                    fontSize: otpAccountState.otpCode == null
+                                    fontSize: otpAccountState.otpMessage == null
                                         ? 28
-                                        : otpAccountState.otpCode!.startsWith(
-                                            'C',
-                                          )
-                                        ? 14
-                                        : 28,
+                                        : 14,
                                     color: Theme.of(context).primaryColor,
                                   ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if ((account is Account &&
-                                      account.type == 'totp') ||
-                                  (account is SharedAccount &&
-                                      account.unlocked &&
-                                      account.type == 'totp'))
+
+                              if (showTimer)
                                 OtpManagerCircularCountDownTimer(
                                   period: account.period!,
                                   callback: () => otpManagerContext
@@ -196,8 +206,7 @@ class OtpAccount extends HookWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (account.toUpdate == true ||
-                            (account is Account && account.isNew))
+                        if (showSyncBadge)
                           const Padding(
                             padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
                             child: OtpManagerTooltip(
@@ -209,7 +218,7 @@ class OtpAccount extends HookWidget {
                               ),
                             ),
                           ),
-                        if (account is SharedAccount && !account.unlocked)
+                        if (isLockedSharedAccount)
                           IconButton(
                             icon: const Icon(Icons.lock_open),
                             onPressed: () =>
@@ -218,7 +227,7 @@ class OtpAccount extends HookWidget {
                                   accountId: account.nextcloudAccountId,
                                 ),
                           ),
-                        if (account.type == 'hotp')
+                        if (account.type == OtpType.hotp.value)
                           IconButton(
                             icon: const Icon(Icons.refresh),
                             onPressed: otpAccountState.disableIncrement
@@ -230,7 +239,7 @@ class OtpAccount extends HookWidget {
                         if (otpManagerState.copyWithTap)
                           IconButton(
                             icon: const Icon(Icons.more_vert),
-                            onPressed: () => _navigationService.navigateTo(
+                            onPressed: () => navigationService.navigateTo(
                               accountDetailsRoute,
                               arguments: account,
                             ),

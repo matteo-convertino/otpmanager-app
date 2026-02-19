@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/di/injection.dart';
-import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/theme/color_schema.g.dart';
 
 import 'routing/router.dart';
@@ -31,7 +30,7 @@ class OtpManager extends HookWidget {
           themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
           onGenerateRoute: Router.generateRoute,
           initialRoute: state.initialRoute,
-          navigatorKey: NavigationService().navigatorKey,
+          navigatorKey: getIt<GlobalKey<NavigatorState>>(),
           scaffoldMessengerKey: getIt<GlobalKey<ScaffoldMessengerState>>(),
         );
       },
