@@ -18,7 +18,7 @@ import '../../models/shared_account.dart';
 import '../../routing/navigation_service.dart';
 import '../../service/encryption_service.dart';
 
-@injectable
+@lazySingleton
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final UserRepository userRepository;
   final AccountRepository accountRepository;
@@ -48,7 +48,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SearchBarValueChanged>(_onSearchBarValueChanged);
     on<IsAppUpdatedChanged>(_onIsAppUpdatedChanged);
 
-    add(GetAccounts());
+    add(NextcloudSync());
   }
 
   void _onIsAppUpdatedChanged(
@@ -60,15 +60,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onNextcloudSync(NextcloudSync event, Emitter<HomeState> emit) async {
     add(GetAccounts());
-
-    if (!state.isAppUpdated) {
-      getIt<SnackbarService>().showMessage(
-        'Update the app to the latest version to be able to synchronize',
-      );
-
-      emit(state.copyWith(syncStatus: SyncStatus.error));
-      return;
-    }
+    print(hashCode);
 
     if (state.isGuest) {
       emit(state.copyWith(syncStatus: SyncStatus.error));

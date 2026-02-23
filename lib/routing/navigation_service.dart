@@ -14,13 +14,8 @@ class NavigationService {
     );
   }
 
-  // Go to 'routeName' screen and remove all the other screen from navigator
   void resetToScreen(String routeName, {Object? arguments}) {
-    _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-      routeName,
-      (route) => false,
-      arguments: arguments,
-    );
+    _navigatorKey.currentState?.popUntil(ModalRoute.withName(routeName));
   }
 
   void replaceScreen(String routeName, {Object? arguments}) {

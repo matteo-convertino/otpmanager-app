@@ -25,7 +25,7 @@ class OtpAccountsList extends StatelessWidget {
             var account = state.accounts[index];
 
             return BlocProvider<OtpAccountBloc>(
-              key: ValueKey(account.hashCode),
+              key: ValueKey(account.encryptedSecret),
               create: (context) => getIt<OtpAccountBloc>(),
               child: OtpAccount(account: account),
             );

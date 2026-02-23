@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class OtpManagerQrScannerOverlayShape extends ShapeBorder {
   OtpManagerQrScannerOverlayShape({
-    this.borderColor = Colors.red,
-    this.borderWidth = 3.0,
-    this.overlayColor = const Color.fromRGBO(0, 0, 0, 80),
-    this.borderRadius = 0,
-    this.borderLength = 40,
+    this.borderColor = Colors.blueGrey,
+    this.borderWidth = 5,
+    this.overlayColor = const Color.fromRGBO(0, 0, 0, 0.8),
+    this.borderRadius = 10,
+    this.borderLength = 20,
     double? cutOutSize,
     double? cutOutWidth,
     double? cutOutHeight,

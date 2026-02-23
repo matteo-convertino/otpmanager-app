@@ -161,6 +161,7 @@ class OtpAccount extends HookWidget {
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
                       children: [
                         Text(
                           account.issuer ?? '',
@@ -170,36 +171,33 @@ class OtpAccount extends HookWidget {
                             color: Colors.grey,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 15.0),
-                                child: Text(
-                                  otpAccountState.otpMessage ??
-                                      otpAccountState.otpCode ??
-                                      '- ' * account.digits!,
-                                  style: TextStyle(
-                                    fontSize: otpAccountState.otpMessage == null
-                                        ? 28
-                                        : 14,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                        Row(
+                          spacing: 15,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                otpAccountState.otpMessage ??
+                                    otpAccountState.otpCode ??
+                                    '- ' * account.digits!,
+                                style: TextStyle(
+                                  fontSize: otpAccountState.otpMessage == null
+                                      ? 28
+                                      : 14,
+                                  color: Theme.of(context).primaryColor,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
+                            ),
 
-                              if (showTimer)
-                                OtpManagerCircularCountDownTimer(
-                                  period: account.period!,
-                                  callback: () => otpManagerContext
-                                      .read<OtpAccountBloc>()
-                                      .add(GenerateOtpCode(account: account)),
-                                ),
-                            ],
-                          ),
+                            if (showTimer)
+                              OtpManagerCircularCountDownTimer(
+                                period: account.period!,
+                                callback: () => otpManagerContext
+                                    .read<OtpAccountBloc>()
+                                    .add(GenerateOtpCode(account: account)),
+                              ),
+                          ],
                         ),
                       ],
                     ),
@@ -208,7 +206,7 @@ class OtpAccount extends HookWidget {
                       children: [
                         if (showSyncBadge)
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            padding: EdgeInsets.only(right: 8),
                             child: OtpManagerTooltip(
                               message: 'Have to be synchronised',
                               child: Icon(

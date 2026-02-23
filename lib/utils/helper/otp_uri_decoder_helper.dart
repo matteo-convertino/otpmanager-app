@@ -10,7 +10,7 @@ import '../../models/account.dart';
 
 class OtpUriDecoderHelper {
   static bool isValid(String uri) {
-    return uri.contains('otpauth');
+    return Uri.tryParse(uri) != null && uri.startsWith('otpauth');
   }
 
   static int getAlgorithmIndexFromString(String algorithm) => Algorithm.values
@@ -18,7 +18,8 @@ class OtpUriDecoderHelper {
       .index;
 
   static List<Account> decodeOtpUri(String uri) {
-    var uriDecoded = Uri.parse(uri);
+    var uriDecoded = Uri.tryParse(uri);
+    if (uriDecoded == null) return [];
 
     if (_isGoogle(uri)) return _decodeGoogleUri(uriDecoded);
 

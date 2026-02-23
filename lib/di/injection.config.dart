@@ -100,29 +100,10 @@ extension GetItInjectableX on _i174.GetIt {
         logger: gh<_i974.Logger>(),
       ),
     );
-    gh.factoryParam<_i560.ManualBloc, Object?, dynamic>(
-      (account, _) => _i560.ManualBloc(
-        account: account,
-        accountRepository: gh<_i129.AccountRepository>(),
-        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
-        accountService: gh<_i578.AccountService>(),
-        navigationService: gh<_i863.NavigationService>(),
-      ),
-    );
     gh.factory<_i95.LoginBloc>(
       () => _i95.LoginBloc(
         userRepository: gh<_i673.UserRepository>(),
         navigationService: gh<_i863.NavigationService>(),
-      ),
-    );
-    gh.factoryParam<_i767.AccountDetailsBloc, Object, dynamic>(
-      (account, _) => _i767.AccountDetailsBloc(
-        userRepository: gh<_i673.UserRepository>(),
-        accountRepository: gh<_i129.AccountRepository>(),
-        accountService: gh<_i578.AccountService>(),
-        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
-        navigationService: gh<_i863.NavigationService>(),
-        account: account,
       ),
     );
     gh.factory<_i147.OtpManagerBloc>(
@@ -133,13 +114,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i975.EncryptionService>(
       () => _i975.EncryptionService(userRepository: gh<_i673.UserRepository>()),
-    );
-    gh.factory<_i935.QrCodeScannerBloc>(
-      () => _i935.QrCodeScannerBloc(
-        accountRepository: gh<_i129.AccountRepository>(),
-        accountService: gh<_i578.AccountService>(),
-        navigationService: gh<_i863.NavigationService>(),
-      ),
     );
     gh.factoryParam<_i66.WebViewerBloc, String, dynamic>(
       (nextcloudUrl, _) => _i66.WebViewerBloc(
@@ -162,7 +136,7 @@ extension GetItInjectableX on _i174.GetIt {
         logger: gh<_i974.Logger>(),
       ),
     );
-    gh.factory<_i1019.HomeBloc>(
+    gh.lazySingleton<_i1019.HomeBloc>(
       () => _i1019.HomeBloc(
         userRepository: gh<_i673.UserRepository>(),
         accountRepository: gh<_i129.AccountRepository>(),
@@ -171,6 +145,27 @@ extension GetItInjectableX on _i174.GetIt {
         encryption: gh<_i975.EncryptionService>(),
         nextcloudService: gh<_i674.NextcloudService>(),
         navigationService: gh<_i863.NavigationService>(),
+      ),
+    );
+    gh.factoryParam<_i767.AccountDetailsBloc, Object, dynamic>(
+      (account, _) => _i767.AccountDetailsBloc(
+        userRepository: gh<_i673.UserRepository>(),
+        accountRepository: gh<_i129.AccountRepository>(),
+        accountService: gh<_i578.AccountService>(),
+        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+        navigationService: gh<_i863.NavigationService>(),
+        homeBloc: gh<_i1019.HomeBloc>(),
+        account: account,
+      ),
+    );
+    gh.factoryParam<_i560.ManualBloc, Object?, dynamic>(
+      (account, _) => _i560.ManualBloc(
+        accountRepository: gh<_i129.AccountRepository>(),
+        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+        accountService: gh<_i578.AccountService>(),
+        navigationService: gh<_i863.NavigationService>(),
+        homeBloc: gh<_i1019.HomeBloc>(),
+        account: account,
       ),
     );
     gh.factoryParam<_i511.UnlockSharedAccountBloc, int, dynamic>(
@@ -196,6 +191,14 @@ extension GetItInjectableX on _i174.GetIt {
         accountRepository: gh<_i129.AccountRepository>(),
         nextcloudService: gh<_i674.NextcloudService>(),
         sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+      ),
+    );
+    gh.factory<_i935.QrCodeScannerBloc>(
+      () => _i935.QrCodeScannerBloc(
+        accountRepository: gh<_i129.AccountRepository>(),
+        accountService: gh<_i578.AccountService>(),
+        navigationService: gh<_i863.NavigationService>(),
+        homeBloc: gh<_i1019.HomeBloc>(),
       ),
     );
     return this;

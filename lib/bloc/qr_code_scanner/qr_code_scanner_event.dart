@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrCodeScannerEvent extends Equatable {
   const QrCodeScannerEvent();
@@ -6,6 +7,8 @@ class QrCodeScannerEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class ShowImagePicker extends QrCodeScannerEvent {}
 
 class ErrorChanged extends QrCodeScannerEvent {
   const ErrorChanged({required this.error});
@@ -16,11 +19,11 @@ class ErrorChanged extends QrCodeScannerEvent {
   List<Object> get props => [error];
 }
 
-class DecodeAndStoreAccounts extends QrCodeScannerEvent {
-  const DecodeAndStoreAccounts({required this.accounts});
+class BarcodeCaptured extends QrCodeScannerEvent {
+  const BarcodeCaptured({required this.barcode});
 
-  final String accounts;
+  final BarcodeCapture barcode;
 
   @override
-  List<Object> get props => [accounts];
+  List<Object> get props => [barcode];
 }

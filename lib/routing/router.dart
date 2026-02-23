@@ -27,15 +27,20 @@ class Router {
     switch (settings.name) {
       case homeRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<HomeBloc>(
             create: (context) => getIt<HomeBloc>(),
             child: const Home(),
           ),
         );
       case importRoute:
-        return CupertinoPageRoute(builder: (_) => const Import());
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => const Import(),
+        );
       case settingsRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<SettingsBloc>(
             create: (context) => getIt<SettingsBloc>(),
             child: Settings(),
@@ -43,6 +48,7 @@ class Router {
         );
       case qrCodeScannerRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<QrCodeScannerBloc>(
             create: (context) => getIt<QrCodeScannerBloc>(),
             child: QrCodeScanner(),
@@ -50,6 +56,7 @@ class Router {
         );
       case accountDetailsRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<AccountDetailsBloc>(
             create: (context) =>
                 getIt<AccountDetailsBloc>(param1: settings.arguments),
@@ -58,6 +65,7 @@ class Router {
         );
       case loginRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<LoginBloc>(
             create: (context) => getIt<LoginBloc>(),
             child: const Login(),
@@ -65,6 +73,7 @@ class Router {
         );
       case webViewerRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<WebViewerBloc>(
             create: (context) =>
                 getIt<WebViewerBloc>(param1: settings.arguments),
@@ -76,6 +85,7 @@ class Router {
         var account = arguments['account'];
 
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<ManualBloc>(
             create: (context) => getIt<ManualBloc>(param1: account),
             child: const Manual(),
@@ -83,6 +93,7 @@ class Router {
         );
       case authRoute:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider<AuthBloc>(
             create: (context) => getIt<AuthBloc>(),
             child: const Auth(),
@@ -90,6 +101,7 @@ class Router {
         );
       default:
         return CupertinoPageRoute(
+          settings: settings,
           builder: (_) => Scaffold(
             body: Center(child: Text('No route defined for ${settings.name}')),
           ),

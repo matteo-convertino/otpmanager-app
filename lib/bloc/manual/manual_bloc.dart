@@ -1,6 +1,8 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:otp_manager/bloc/home/home_bloc.dart';
+import 'package:otp_manager/bloc/home/home_event.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
 import 'package:otp_manager/repository/local/interface/account_repository.dart';
@@ -21,18 +23,21 @@ import 'manual_state.dart';
 
 @injectable
 class ManualBloc extends Bloc<ManualEvent, ManualState> {
-  final Object? account; // Account | SharedAccount
   final AccountRepository accountRepository;
   final SharedAccountRepository sharedAccountRepository;
   final AccountService accountService;
   final NavigationService navigationService;
+  final HomeBloc homeBloc;
+
+  final Object? account; // Account | SharedAccount
 
   ManualBloc({
-    @factoryParam this.account,
     required this.accountRepository,
     required this.sharedAccountRepository,
     required this.accountService,
     required this.navigationService,
+    required this.homeBloc,
+    @factoryParam this.account,
   }) : super(ManualState.initial(account)) {
     on<AddOrEditAccount>(_onAddOrEditAccount);
     on<IconKeyChanged>(_onIconKeyChanged);
@@ -182,6 +187,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
         getIt<SnackbarService>().showMessage('Account has been edited');
       }
 
+      homeBloc.add(NextcloudSync());
       navigationService.resetToScreen(homeRoute);
     }
   }

@@ -43,7 +43,7 @@ class ManualState extends Equatable {
       secretKeyError = null,
       issuerError = null,
       nameError = null,
-      codeTypeValue = account?.type ?? OtpType.totp,
+      codeTypeValue = account?.type ?? OtpType.totp.value,
       intervalValue = account?.period ?? 30,
       algorithmValue =
           (account?.algorithm as Algorithm?)?.name ?? Algorithm.SHA1.name,

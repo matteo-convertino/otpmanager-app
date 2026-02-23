@@ -22,7 +22,6 @@ class Home extends HookWidget {
       },
       upgrader: Upgrader(
         debugLogging: false,
-        debugDisplayOnce: false,
         durationUntilAlertAgain: const Duration(hours: 2),
         willDisplayUpgrade:
             ({
@@ -34,7 +33,6 @@ class Home extends HookWidget {
                 context.read<HomeBloc>().add(
                   const IsAppUpdatedChanged(value: true),
                 );
-                context.read<HomeBloc>().add(NextcloudSync());
               }
             },
       ),
