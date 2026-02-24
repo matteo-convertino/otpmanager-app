@@ -60,7 +60,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onNextcloudSync(NextcloudSync event, Emitter<HomeState> emit) async {
     add(GetAccounts());
-    print(hashCode);
 
     if (state.isGuest) {
       emit(state.copyWith(syncStatus: SyncStatus.error));

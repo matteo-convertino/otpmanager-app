@@ -129,10 +129,10 @@ class OtpAccount extends HookWidget {
                       padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
                       backgroundColor: Colors.red,
                       border: BorderRadius.circular(10.0),
-                      onPressed: () => showOtpManagerDeleteModal(
+                      onPressed: () => showOtpManagerDeleteDialog(
                         otpManagerContext,
-                        account,
-                        () => otpManagerContext.read<HomeBloc>().add(
+                        account: account,
+                        onPressed: () => otpManagerContext.read<HomeBloc>().add(
                           DeleteAccount(account: account),
                         ),
                       ),

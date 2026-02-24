@@ -53,10 +53,11 @@ class AccountDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              showOtpManagerDeleteModal(
+              showOtpManagerDeleteDialog(
                 context,
-                context.read<AccountDetailsBloc>().state.account,
-                () => context.read<AccountDetailsBloc>().add(DeleteAccount()),
+                account: context.read<AccountDetailsBloc>().state.account,
+                onPressed: () =>
+                    context.read<AccountDetailsBloc>().add(DeleteAccount()),
               );
             },
           ),

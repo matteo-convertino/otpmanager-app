@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-void showOtpManagerDeleteModal(
-  BuildContext context,
-  dynamic account,
-  Function onPressed,
-) => showDialog(
+void showOtpManagerDeleteDialog(
+  BuildContext context, {
+  required dynamic account,
+  VoidCallback? onPressed,
+}) => showDialog(
   context: context,
   builder: (_) => AlertDialog(
     title: Text(
@@ -16,7 +16,7 @@ void showOtpManagerDeleteModal(
         child: const Text('No'),
         onPressed: () => Navigator.pop(context),
       ),
-      TextButton(child: const Text('Yes'), onPressed: () => onPressed()),
+      TextButton(onPressed: onPressed, child: const Text('Yes')),
     ],
   ),
 );
