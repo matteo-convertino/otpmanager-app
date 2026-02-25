@@ -1,21 +1,13 @@
 # OTP Manager
 
 [<img src="resources/img/google-play-badge.png" height="80">](https://play.google.com/store/apps/details?id=com.convertino.otp_manager)&nbsp;
-[<img src="resources/img/app-store-badge.png" height="80">](https://apps.apple.com/us/app/nextcloud-otp-manager/id6471510170)&nbsp;
-[<img src="resources/img/bmc-button.png" height="80">](https://www.paypal.me/matteoconvertino0)
-
-*Read this in other languages: [Italian](README.it.md)*
+<a href='https://ko-fi.com/M4M01NZ540' target='_blank'><img height='80' style='border:0px;height:80px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 *Official Nextcloud extension repository: [otpmanager-nextcloud](https://github.com/matteo-convertino/otpmanager-nextcloud)*
 
 # Screenshots
 
-Android:<br>
 <img src="resources/img/1.png" height="350">&emsp;<img src="resources/img/2.png" height="350">&emsp;<img src="resources/img/3.png" height="350"><br>
-iOS:<br>
-<img src="resources/img/4.PNG" height="350">&emsp;<img src="resources/img/5.PNG" height="350">&emsp;<img src="resources/img/6.PNG" height="350">
-
-<br>
 
 # Description
 
@@ -27,19 +19,7 @@ OTP Manager offers the convenient feature of importing OTP codes from Google Aut
 
 This way, the transition from Google Authenticator to OTP Manager will be quick and easy, without having to waste time manually resetting all your OTP codes.
 
-# Build instructions for iOS
-
-Make sure you are on stable build of flutter. You can check it `flutter --version`. You can change your flutter channel to stable with `flutter channel stable` command.
-
-1. Install Xcode and flutter
-2. Download the project and open in Terminal
-3. Run `flutter pub get`
-4. Run `flutter pub run build_runner build`
-5. Run `flutter build ios`
-6. This will give you Runner.app file, create a folder with name Payload and move Runner.app to it.
-7. Compress the folder and change the .zip extension to .ipa
-
-## Contributors ✨
+# Contributors ✨
 
 Special thanks go to these wonderful people:
 <table>
