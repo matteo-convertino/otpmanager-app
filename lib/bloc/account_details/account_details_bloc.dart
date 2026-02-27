@@ -49,6 +49,6 @@ class AccountDetailsBloc
     );
 
     homeBloc.add(NextcloudSync());
-    navigationService.resetToScreen(homeRoute);
+    navigationService.goBackToScreen(homeRoute);
   }
 }

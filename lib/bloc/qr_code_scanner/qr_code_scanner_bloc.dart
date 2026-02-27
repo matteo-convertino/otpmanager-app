@@ -87,7 +87,7 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
       );
 
       homeBloc.add(NextcloudSync());
-      navigationService.resetToScreen(homeRoute);
+      navigationService.goBackToScreen(homeRoute);
     }
   }
 }

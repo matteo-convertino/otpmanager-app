@@ -51,6 +51,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(NextcloudSync());
   }
 
+  @override
+  Future<void> close() async {
+    getIt.resetLazySingleton<HomeBloc>();
+    super.close();
+  }
+
   void _onIsAppUpdatedChanged(
     IsAppUpdatedChanged event,
     Emitter<HomeState> emit,

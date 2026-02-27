@@ -15,6 +15,14 @@ class NavigationService {
   }
 
   void resetToScreen(String routeName, {Object? arguments}) {
+    _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false,
+      arguments: arguments,
+    );
+  }
+
+  void goBackToScreen(String routeName, {Object? arguments}) {
     _navigatorKey.currentState?.popUntil(ModalRoute.withName(routeName));
   }
 

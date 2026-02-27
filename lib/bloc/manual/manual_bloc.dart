@@ -188,7 +188,7 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       }
 
       homeBloc.add(NextcloudSync());
-      navigationService.resetToScreen(homeRoute);
+      navigationService.goBackToScreen(homeRoute);
     }
   }
 
