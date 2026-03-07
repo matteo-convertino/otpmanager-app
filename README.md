@@ -3,7 +3,9 @@
 [<img src="resources/img/google-play-badge.png" height="80">](https://play.google.com/store/apps/details?id=com.convertino.otp_manager)&nbsp;
 <a href='https://ko-fi.com/M4M01NZ540' target='_blank'><img height='80' style='border:0px;height:80px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-*Official Nextcloud extension repository: [otpmanager-nextcloud](https://github.com/matteo-convertino/otpmanager-nextcloud)*
+# Useful Links
+- *Official Nextcloud extension repository: [otpmanager-nextcloud](https://github.com/matteo-convertino/otpmanager-nextcloud)*
+- *Medium article: [How to develop a Nextcloud App Extension (Part-1): A practical guide based on a real project](https://medium.com/@matteo-convertino/how-to-develop-a-nextcloud-app-extension-part-1-a-practical-guide-based-on-a-real-project-00b4395a64f7)*
 
 # Screenshots
 
