@@ -71,7 +71,7 @@ class Auth extends HookWidget {
                   icon: PhosphorIcon(
                     PhosphorIconsRegular.fingerprint,
                     size: 60,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
             ],

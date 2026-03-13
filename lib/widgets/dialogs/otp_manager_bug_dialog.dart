@@ -18,7 +18,7 @@ void showOtpManagerBugDialog(BuildContext context) => showDialog(
             'it to the developer, contact him via email on ',
         children: [
           TextSpan(
-            style: TextStyle(color: Theme.of(context).primaryColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
             text: 'matteo@convertino.cloud',
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -29,7 +29,7 @@ void showOtpManagerBugDialog(BuildContext context) => showDialog(
           ),
           const TextSpan(text: ' or open an issue on '),
           TextSpan(
-            style: TextStyle(color: Theme.of(context).primaryColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
             text: 'github',
             recognizer: TapGestureRecognizer()
               ..onTap = () {

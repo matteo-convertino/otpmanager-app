@@ -27,7 +27,7 @@ class OtpManagerCircularCountDownTimer extends HookWidget {
       width: 21,
       height: 21,
       ringColor: Theme.of(context).focusColor,
-      fillColor: Theme.of(context).primaryColor,
+      fillColor: Theme.of(context).colorScheme.primary,
       strokeWidth: 1.5,
       textStyle: const TextStyle(fontSize: 10.0, fontWeight: FontWeight.w600),
       isReverse: true,

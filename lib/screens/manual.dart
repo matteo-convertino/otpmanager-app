@@ -378,7 +378,6 @@ class Manual extends HookWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
         child: context.read<ManualBloc>().state.isEdit
             ? const PhosphorIcon(
                 PhosphorIconsRegular.check,

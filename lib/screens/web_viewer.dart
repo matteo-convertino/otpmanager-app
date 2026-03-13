@@ -25,7 +25,7 @@ class WebViewer extends HookWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,7 +47,7 @@ class WebViewer extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: BlocConsumer<WebViewerBloc, WebViewerState>(
         listener: (context, state) {
           if (state.initUrl.isNotEmpty) {

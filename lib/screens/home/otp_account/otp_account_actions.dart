@@ -43,7 +43,7 @@ class OtpAccountActions extends StatelessWidget {
                   child: PhosphorIcon(
                     PhosphorIconsRegular.arrowsClockwise,
                     size: 16,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),

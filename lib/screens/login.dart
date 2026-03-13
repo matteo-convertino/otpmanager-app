@@ -14,7 +14,7 @@ class Login extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           return Stack(

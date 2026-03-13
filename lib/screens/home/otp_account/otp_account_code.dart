@@ -30,7 +30,7 @@ class OtpAccountCode extends HookWidget {
           state.otpMessage ?? state.otpCode ?? '- ' * account.digits!,
           style: TextStyle(
             fontSize: state.otpMessage == null ? 28 : 14,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -44,7 +44,7 @@ class OtpAccountCode extends HookWidget {
                   particleConfig: ParticleConfig(
                     density: 1,
                     speed: 0.2,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     maxParticleSize: 1.5,
                   ),
                 ),

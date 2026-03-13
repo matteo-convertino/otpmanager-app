@@ -81,9 +81,7 @@ class HomeFab extends HookWidget {
             waving.stop();
             waving.value = 0;
           },
-          backgroundColor: Theme.of(context).primaryColor,
           animatedIcon: AnimatedIcons.menu_close,
-          foregroundColor: Colors.white,
           overlayOpacity: 0.5,
           children: [
             SpeedDialChild(

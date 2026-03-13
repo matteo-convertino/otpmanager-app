@@ -34,7 +34,7 @@ class OtpAccountSlidable extends StatelessWidget {
           OtpManagerSlidableAction(
             label: 'Edit',
             icon: const PhosphorIcon(PhosphorIconsRegular.pencilSimple),
-            backgroundColor: Theme.of(context).primaryColor,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () => getIt<NavigationService>().navigateTo(
               manualRoute,
               arguments: {'account': account},

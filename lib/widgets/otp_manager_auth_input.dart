@@ -61,7 +61,7 @@ class OtpManagerAuthInput extends HookWidget {
                     : PhosphorIconsRegular.eyeSlash,
                 color: errorMsg.isNotEmpty
                     ? Colors.red
-                    : Theme.of(context).primaryColor,
+                    : Theme.of(context).colorScheme.primary,
               ),
             ),
             suffixIcon: Padding(
@@ -72,7 +72,7 @@ class OtpManagerAuthInput extends HookWidget {
                   PhosphorIconsRegular.arrowRight,
                   color: errorMsg.isNotEmpty
                       ? Colors.red
-                      : Theme.of(context).primaryColor,
+                      : Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),

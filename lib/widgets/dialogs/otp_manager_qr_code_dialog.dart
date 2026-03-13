@@ -14,7 +14,7 @@ void showOtpManagerQrCodeDialog(BuildContext context, dynamic account) =>
               data: account.toUri(),
               decoration: PrettyQrDecoration(
                 shape: PrettyQrSmoothSymbol(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 image: const PrettyQrDecorationImage(
                   padding: EdgeInsets.all(20),

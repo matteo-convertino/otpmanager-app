@@ -53,7 +53,7 @@ class SnackbarService {
     maxLines: 3,
     linkColor: _scaffoldMessengerKey.currentContext == null
         ? Colors.blue
-        : Theme.of(_scaffoldMessengerKey.currentContext!).primaryColor,
+        : Theme.of(_scaffoldMessengerKey.currentContext!).colorScheme.primary,
     expandOnTextTap: true,
   );
 }

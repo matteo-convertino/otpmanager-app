@@ -5,11 +5,26 @@ import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/theme/color_schema.g.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import 'routing/router.dart';
 
 class OtpManager extends HookWidget {
   const OtpManager({super.key});
+
+  ThemeData _buildTheme(ColorScheme colorScheme) {
+    return ThemeData(
+      colorScheme: colorScheme,
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (_) =>
+            const PhosphorIcon(PhosphorIconsRegular.arrowLeft),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: Colors.white,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +32,8 @@ class OtpManager extends HookWidget {
       builder: (context, state) {
         return MaterialApp(
           title: 'OTP Manager',
-          theme: ThemeData(
-            colorScheme: lightColorScheme,
-            primaryColor: lightColorScheme.primary,
-          ),
-          darkTheme: ThemeData(
-            colorScheme: darkColorScheme,
-            primaryColor: darkColorScheme.primary,
-          ),
+          theme: _buildTheme(lightColorScheme),
+          darkTheme: _buildTheme(darkColorScheme),
           themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
           onGenerateRoute: Router.generateRoute,
           initialRoute: state.initialRoute,
