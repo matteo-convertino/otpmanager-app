@@ -6,7 +6,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/unlock_shared_account/unlock_shared_account_bloc.dart';
 import 'package:otp_manager/bloc/unlock_shared_account/unlock_shared_account_state.dart';
 import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:otp_manager/widgets/otp_manager_unlock_lottie.dart';
 
 import '../bloc/unlock_shared_account/unlock_shared_account_event.dart';
 import '../widgets/otp_manager_auth_input.dart';
@@ -30,35 +32,36 @@ class UnlockSharedAccount extends HookWidget {
             enabled.value = true;
           });
         }
+
+        if (state.isCorrectPassword) enabled.value = false;
       },
       builder: (context, state) {
-        return Stack(
-          alignment: Alignment.center,
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 250),
-              child: Icon(Icons.lock_open, size: 100, color: Colors.blue),
+            OtpManagerUnlockLottie(
+              isUnlocked: state.isCorrectPassword,
+              onEnd: () {
+                if (!enabled.value) {
+                  getIt<NavigationService>().goBack();
+                }
+              },
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                  child: OtpManagerAuthInput(
-                    label: 'Shared Password',
-                    helper:
-                        'Insert the password that was used to share this account',
-                    onChanged: (value) => context
-                        .read<UnlockSharedAccountBloc>()
-                        .add(PasswordChanged(password: value)),
-                    onSubmit: () => context.read<UnlockSharedAccountBloc>().add(
-                      PasswordSubmit(),
-                    ),
-                    enabled: enabled.value,
-                    errorMsg: state.errorMsg,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+              child: OtpManagerAuthInput(
+                label: 'Shared Password',
+                helper:
+                    'Insert the password that was used to share this account',
+                onChanged: (value) => context
+                    .read<UnlockSharedAccountBloc>()
+                    .add(PasswordChanged(password: value)),
+                onSubmit: () => context.read<UnlockSharedAccountBloc>().add(
+                  PasswordSubmit(),
                 ),
-              ],
+                enabled: enabled.value,
+                errorMsg: state.errorMsg,
+              ),
             ),
           ],
         );

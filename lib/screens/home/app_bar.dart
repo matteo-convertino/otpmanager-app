@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_icon_button/animate_change_icon.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/utils/sync_status.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
@@ -12,36 +13,54 @@ import '../../bloc/home/home_state.dart';
 class HomeAppBar extends HookWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
-  Icon _getSortIcon(
+  Widget _getSortIcon(
     bool? sortedByNameDesc,
     bool? sortedByIssuerDesc,
     bool? sortedByIdDesc,
   ) {
     if (sortedByNameDesc != null) {
-      return Icon(
+      return PhosphorIcon(
         sortedByNameDesc
-            ? MdiIcons.sortAlphabeticalDescending
-            : MdiIcons.sortAlphabeticalAscending,
+            ? PhosphorIconsRegular.sortDescending
+            : PhosphorIconsRegular.sortAscending,
       );
     }
 
     if (sortedByIssuerDesc != null) {
-      return Icon(
-        sortedByIssuerDesc
-            ? MdiIcons.orderAlphabeticalDescending
-            : MdiIcons.orderAlphabeticalAscending,
+      return Row(
+        crossAxisAlignment: sortedByIssuerDesc
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
+        children: [
+          const PhosphorIcon(PhosphorIconsRegular.building),
+          PhosphorIcon(
+            sortedByIssuerDesc
+                ? PhosphorIconsRegular.arrowUp
+                : PhosphorIconsRegular.arrowDown,
+            size: 14,
+          ),
+        ],
       );
     }
 
     if (sortedByIdDesc != null) {
-      return Icon(
-        sortedByIdDesc
-            ? MdiIcons.sortCalendarDescending
-            : MdiIcons.sortCalendarAscending,
+      return Row(
+        crossAxisAlignment: sortedByIdDesc
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
+        children: [
+          const PhosphorIcon(PhosphorIconsRegular.calendarBlank),
+          PhosphorIcon(
+            sortedByIdDesc
+                ? PhosphorIconsRegular.arrowUp
+                : PhosphorIconsRegular.arrowDown,
+            size: 14,
+          ),
+        ],
       );
     }
 
-    return const Icon(Icons.sort);
+    return const PhosphorIcon(PhosphorIconsRegular.funnel);
   }
 
   @override
@@ -52,6 +71,22 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
     final searchBarAnimationEnd = useState(true);
     final searchBarNode = useFocusNode();
 
+    final openSearchBarOnStartup = context
+        .read<OtpManagerBloc>()
+        .state
+        .openSearchBarOnStartup;
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (openSearchBarOnStartup) {
+          searchBarAnimationEnd.value = false;
+          showSearchBar.value = true;
+        }
+      });
+
+      return null;
+    }, const []);
+
     return AppBar(
       title: Row(
         children: [
@@ -61,16 +96,16 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
               padding: const EdgeInsets.only(left: 10),
               child: BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) => switch (state.syncStatus) {
-                  SyncStatus.success => const Icon(
-                    Icons.cloud_done,
+                  SyncStatus.success => const PhosphorIcon(
+                    PhosphorIconsRegular.cloudCheck,
                     color: Colors.green,
                   ),
-                  SyncStatus.error => const Icon(
-                    Icons.cloud_off,
+                  SyncStatus.error => const PhosphorIcon(
+                    PhosphorIconsRegular.cloudSlash,
                     color: Colors.redAccent,
                   ),
-                  SyncStatus.loading => const Icon(
-                    Icons.cloud_sync,
+                  SyncStatus.loading => const PhosphorIcon(
+                    PhosphorIconsRegular.cloudArrowUp,
                     color: Colors.amberAccent,
                   ),
                 },
@@ -84,8 +119,9 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
           padding: EdgeInsets.only(right: showSearchBar.value ? 15 : 5),
           child: AnimateChangeIcon(
             animateDuration: const Duration(milliseconds: 200),
-            firstIcon: const Icon(Icons.search),
-            secondIcon: const Icon(Icons.arrow_back),
+            firstIcon: const PhosphorIcon(PhosphorIconsRegular.magnifyingGlass),
+            secondIcon: const PhosphorIcon(PhosphorIconsRegular.arrowLeft),
+            initialPushed: openSearchBarOnStartup,
             onTap: () {
               if (searchBarAnimationEnd.value) {
                 searchBarAnimationEnd.value = false;

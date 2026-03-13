@@ -136,6 +136,12 @@ extension GetItInjectableX on _i174.GetIt {
         logger: gh<_i974.Logger>(),
       ),
     );
+    gh.factory<_i272.AuthBloc>(
+      () => _i272.AuthBloc(
+        userRepository: gh<_i673.UserRepository>(),
+        nextcloudService: gh<_i674.NextcloudService>(),
+      ),
+    );
     gh.lazySingleton<_i1019.HomeBloc>(
       () => _i1019.HomeBloc(
         userRepository: gh<_i673.UserRepository>(),
@@ -168,29 +174,21 @@ extension GetItInjectableX on _i174.GetIt {
         account: account,
       ),
     );
-    gh.factoryParam<_i511.UnlockSharedAccountBloc, int, dynamic>(
-      (accountId, _) => _i511.UnlockSharedAccountBloc(
-        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
-        nextcloudService: gh<_i674.NextcloudService>(),
-        userRepository: gh<_i673.UserRepository>(),
-        homeBloc: gh<_i1019.HomeBloc>(),
-        navigationService: gh<_i863.NavigationService>(),
-        accountId: accountId,
-      ),
-    );
-    gh.factory<_i272.AuthBloc>(
-      () => _i272.AuthBloc(
-        userRepository: gh<_i673.UserRepository>(),
-        nextcloudService: gh<_i674.NextcloudService>(),
-        navigationService: gh<_i863.NavigationService>(),
-      ),
-    );
     gh.factory<_i650.OtpAccountBloc>(
       () => _i650.OtpAccountBloc(
         homeBloc: gh<_i1019.HomeBloc>(),
         accountRepository: gh<_i129.AccountRepository>(),
         nextcloudService: gh<_i674.NextcloudService>(),
         sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+      ),
+    );
+    gh.factoryParam<_i511.UnlockSharedAccountBloc, int, dynamic>(
+      (accountId, _) => _i511.UnlockSharedAccountBloc(
+        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+        nextcloudService: gh<_i674.NextcloudService>(),
+        userRepository: gh<_i673.UserRepository>(),
+        homeBloc: gh<_i1019.HomeBloc>(),
+        accountId: accountId,
       ),
     );
     gh.factory<_i935.QrCodeScannerBloc>(

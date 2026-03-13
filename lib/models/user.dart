@@ -5,7 +5,7 @@ enum PasswordAskTime {
   oneMinutes,
   threeMinutes,
   fiveMinutes,
-  never
+  never,
 }
 
 @Entity()
@@ -17,6 +17,8 @@ class User {
 
   bool copyWithTap = false;
   bool darkTheme = false;
+  bool openSearchBarOnStartup = false;
+  bool clickToRevealCodes = false;
 
   // null = not selected, true = ascending, false = descending
   bool? sortedByNameDesc;
@@ -54,11 +56,7 @@ class User {
     }
   }
 
-  User({
-    required this.url,
-    required this.appPassword,
-    required this.isGuest,
-  }) {
+  User({required this.url, required this.appPassword, required this.isGuest}) {
     dbPasswordAskTime = 0;
   }
 
@@ -71,12 +69,15 @@ class User {
   }
 
   @override
-  toString() => '{'
+  toString() =>
+      '{'
       'id: $id, '
       'url: "$url", '
       'appPassword: "$appPassword", '
       'copyWithTap: $copyWithTap, '
       'darkTheme: $darkTheme, '
+      'openSearchBarOnStartup: $openSearchBarOnStartup, '
+      'clickToRevealCodes: $clickToRevealCodes, '
       'passwordAskTime: $passwordAskTime, '
       'passwordExpirationDate: $passwordExpirationDate, '
       'isGuest: $isGuest'

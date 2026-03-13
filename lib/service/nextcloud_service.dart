@@ -105,7 +105,9 @@ class NextcloudService {
         sharedAccountRepository.deleteOld(res.sharedAccounts.toDelete);
 
         if (_syncAccountsLocally(res.accounts, res.sharedAccounts)) {
-          if (accountService.repairPositionError()) await sync();
+          if (accountService.repairPositionError()) {
+            await sync(onFailed: onFailed, onError: onError);
+          }
         } else {
           getIt<SnackbarService>().showMessage(
             'Password has changed. Insert the new one.',

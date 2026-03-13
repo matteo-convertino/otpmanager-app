@@ -6,7 +6,7 @@ import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
 import '../../bloc/home/home_state.dart';
 import '../../bloc/otp_account/otp_account_bloc.dart';
-import 'otp_account.dart';
+import 'otp_account/otp_account.dart';
 
 class OtpAccountsList extends StatelessWidget {
   const OtpAccountsList({super.key});

@@ -6,6 +6,7 @@ class AuthState extends Equatable {
   final String message;
   final bool canShowFingerAuth;
   final bool isUserPasswordEmpty;
+  final bool isCorrectPassword;
 
   const AuthState({
     required this.attempts,
@@ -13,6 +14,7 @@ class AuthState extends Equatable {
     required this.message,
     required this.canShowFingerAuth,
     required this.isUserPasswordEmpty,
+    required this.isCorrectPassword,
   });
 
   const AuthState.initial()
@@ -20,7 +22,8 @@ class AuthState extends Equatable {
       password = '',
       message = '',
       canShowFingerAuth = false,
-      isUserPasswordEmpty = true;
+      isUserPasswordEmpty = true,
+      isCorrectPassword = false;
 
   AuthState copyWith({
     int? attempts,
@@ -28,6 +31,7 @@ class AuthState extends Equatable {
     String? message,
     bool? canShowFingerAuth,
     bool? isUserPasswordEmpty,
+    bool? isCorrectPassword,
   }) {
     return AuthState(
       attempts: attempts ?? this.attempts,
@@ -35,6 +39,7 @@ class AuthState extends Equatable {
       message: message ?? this.message,
       canShowFingerAuth: canShowFingerAuth ?? this.canShowFingerAuth,
       isUserPasswordEmpty: isUserPasswordEmpty ?? this.isUserPasswordEmpty,
+      isCorrectPassword: isCorrectPassword ?? this.isCorrectPassword,
     );
   }
 
@@ -45,5 +50,6 @@ class AuthState extends Equatable {
     message,
     canShowFingerAuth,
     isUserPasswordEmpty,
+    isCorrectPassword,
   ];
 }

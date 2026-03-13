@@ -10,7 +10,6 @@ import 'package:otp_manager/repository/local/interface/user_repository.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
 
-import '../../routing/navigation_service.dart';
 import '../home/home_bloc.dart';
 
 @injectable
@@ -19,7 +18,6 @@ class UnlockSharedAccountBloc
   final NextcloudService nextcloudService;
   final SharedAccountRepository sharedAccountRepository;
   final UserRepository userRepository;
-  final NavigationService navigationService;
   final HomeBloc homeBloc;
 
   final int accountId;
@@ -29,7 +27,6 @@ class UnlockSharedAccountBloc
     required this.nextcloudService,
     required this.userRepository,
     required this.homeBloc,
-    required this.navigationService,
     @factoryParam required this.accountId,
   }) : super(const UnlockSharedAccountState.initial()) {
     on<PasswordSubmit>(_onPasswordSubmit);
@@ -75,7 +72,7 @@ class UnlockSharedAccountBloc
         tempPassword: state.password,
       ),
       onComplete: (_) {
-        navigationService.goBack();
+        emit(state.copyWith(isCorrectPassword: true));
         getIt<SnackbarService>().showMessage(
           'Shared account unlocked with success',
         );

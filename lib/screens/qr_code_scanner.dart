@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_bloc.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_event.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_state.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../widgets/otp_manager_qr_scanner_overlay_shape.dart';
 
@@ -20,7 +21,7 @@ class QrCodeScanner extends HookWidget {
         title: const Text('QR Scanner'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.photo_library),
+            icon: const PhosphorIcon(PhosphorIconsRegular.images),
             onPressed: () =>
                 context.read<QrCodeScannerBloc>().add(ShowImagePicker()),
           ),

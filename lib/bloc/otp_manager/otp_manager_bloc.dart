@@ -17,6 +17,8 @@ class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
       ) {
     on<CopyWithTapToggled>(_onCopyWithTapToggled);
     on<DarkThemeToggled>(_onDarkThemeToggled);
+    on<OpenSearchBarOnStartupToggled>(_onOpenSearchBarOnStartupToggled);
+    on<ClickToRevealCodesToggled>(_onClickToRevealCodesToggled);
   }
 
   void _onCopyWithTapToggled(
@@ -37,5 +39,25 @@ class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
     user?.darkTheme = !user.darkTheme;
     userRepository.update(user!);
     emit(state.copyWith(darkTheme: user.darkTheme));
+  }
+
+  void _onOpenSearchBarOnStartupToggled(
+    OpenSearchBarOnStartupToggled event,
+    Emitter<OtpManagerState> emit,
+  ) {
+    final user = userRepository.get();
+    user?.openSearchBarOnStartup = !user.openSearchBarOnStartup;
+    userRepository.update(user!);
+    emit(state.copyWith(openSearchBarOnStartup: user.openSearchBarOnStartup));
+  }
+
+  void _onClickToRevealCodesToggled(
+    ClickToRevealCodesToggled event,
+    Emitter<OtpManagerState> emit,
+  ) {
+    final user = userRepository.get();
+    user?.clickToRevealCodes = !user.clickToRevealCodes;
+    userRepository.update(user!);
+    emit(state.copyWith(clickToRevealCodes: user.clickToRevealCodes));
   }
 }

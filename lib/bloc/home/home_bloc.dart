@@ -74,12 +74,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     emit(state.copyWith(syncStatus: SyncStatus.loading));
 
+    bool error = false;
+
     await nextcloudService.sync(
-      onFailed: (err) => emit(state.copyWith(syncStatus: SyncStatus.error)),
-      onError: () => emit(state.copyWith(syncStatus: SyncStatus.error)),
+      onFailed: (err) {
+        emit(state.copyWith(syncStatus: SyncStatus.error));
+        error = true;
+      },
+      onError: () {
+        emit(state.copyWith(syncStatus: SyncStatus.error));
+        error = true;
+      },
     );
 
-    emit(state.copyWith(syncStatus: SyncStatus.success));
+    if (!error) emit(state.copyWith(syncStatus: SyncStatus.success));
 
     add(GetAccounts());
   }

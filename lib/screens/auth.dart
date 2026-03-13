@@ -7,9 +7,13 @@ import 'package:otp_manager/bloc/auth/auth_bloc.dart';
 import 'package:otp_manager/bloc/auth/auth_event.dart';
 import 'package:otp_manager/bloc/auth/auth_state.dart';
 import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../widgets/otp_manager_auth_input.dart';
+import '../widgets/otp_manager_unlock_lottie.dart';
 
 class Auth extends HookWidget {
   const Auth({super.key});
@@ -32,44 +36,44 @@ class Auth extends HookWidget {
               enabled.value = true;
             });
           }
+
+          if (state.isCorrectPassword) enabled.value = false;
         },
         builder: (context, state) {
-          return Stack(
-            alignment: Alignment.center,
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.lock,
-                    size: 100,
+              OtpManagerUnlockLottie(
+                isUnlocked: state.isCorrectPassword,
+                onEnd: () {
+                  if (!enabled.value) {
+                    getIt<NavigationService>().replaceScreen(homeRoute);
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),
+                child: OtpManagerAuthInput(
+                  label: 'Password',
+                  onChanged: (value) => context.read<AuthBloc>().add(
+                    PasswordChanged(password: value),
+                  ),
+                  onSubmit: () =>
+                      context.read<AuthBloc>().add(PasswordSubmit()),
+                  enabled: enabled.value,
+                  errorMsg: state.message,
+                ),
+              ),
+              if (state.canShowFingerAuth)
+                IconButton(
+                  onPressed: () =>
+                      context.read<AuthBloc>().add(ShowFingerAuth()),
+                  icon: PhosphorIcon(
+                    PhosphorIconsRegular.fingerprint,
+                    size: 60,
                     color: Theme.of(context).primaryColor,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),
-                    child: OtpManagerAuthInput(
-                      label: 'Password',
-                      onChanged: (value) => context.read<AuthBloc>().add(
-                        PasswordChanged(password: value),
-                      ),
-                      onSubmit: () =>
-                          context.read<AuthBloc>().add(PasswordSubmit()),
-                      enabled: enabled.value,
-                      errorMsg: state.message,
-                    ),
-                  ),
-                  if (state.canShowFingerAuth)
-                    IconButton(
-                      onPressed: () =>
-                          context.read<AuthBloc>().add(ShowFingerAuth()),
-                      icon: Icon(
-                        Icons.fingerprint,
-                        size: 60,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                ],
-              ),
+                ),
             ],
           );
         },

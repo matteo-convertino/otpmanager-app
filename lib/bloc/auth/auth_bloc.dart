@@ -11,28 +11,22 @@ import 'package:otp_manager/bloc/auth/auth_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/dto/request/password_check_request_dto.dart';
 import 'package:otp_manager/repository/local/interface/user_repository.dart';
-import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
 
 import '../../models/user.dart';
-import '../../routing/navigation_service.dart';
 
 @injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserRepository userRepository;
   final NextcloudService nextcloudService;
-  final NavigationService navigationService;
 
   late final User _user = userRepository.get()!;
 
   final _localAuth = LocalAuthentication();
 
-  AuthBloc({
-    required this.userRepository,
-    required this.nextcloudService,
-    required this.navigationService,
-  }) : super(const AuthState.initial()) {
+  AuthBloc({required this.userRepository, required this.nextcloudService})
+    : super(const AuthState.initial()) {
     on<Authenticated>(_onAuthenticated);
     on<PasswordSubmit>(_onPasswordSubmit);
     on<PasswordChanged>(_onPasswordChanged);
@@ -120,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthenticated(Authenticated event, Emitter<AuthState> emit) {
     _updatePasswordExpirationDate();
-    navigationService.replaceScreen(homeRoute);
+    emit(state.copyWith(isCorrectPassword: true));
   }
 
   void _onPasswordSubmit(PasswordSubmit event, Emitter<AuthState> emit) async {

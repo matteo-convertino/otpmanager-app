@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "2:7664507538808873390",
-      "lastPropertyId": "14:6803514055320618522",
+      "lastPropertyId": "16:5055211582555398322",
       "name": "User",
       "properties": [
         {
@@ -72,6 +72,16 @@
         {
           "id": "14:6803514055320618522",
           "name": "sortedByIdDesc",
+          "type": 1
+        },
+        {
+          "id": "15:2953303239448117671",
+          "name": "openSearchBarOnStartup",
+          "type": 1
+        },
+        {
+          "id": "16:5055211582555398322",
+          "name": "clickToRevealCodes",
           "type": 1
         }
       ],

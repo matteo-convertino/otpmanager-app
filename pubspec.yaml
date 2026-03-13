@@ -38,7 +38,6 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   dropdown_button2: ^2.3.9
   flutter_slidable: ^4.0.3
-  material_design_icons_flutter: ^7.0.7296
   circular_countdown_timer: ^0.2.4
   simple_icons: ^14.6.1
   flutter_animated_icon_button: ^1.1.3
@@ -75,6 +74,15 @@ dependencies:
   encrypter_plus: ^5.1.0
   crypto: ^3.0.7
   lottie: ^3.3.2
+  phosphor_flutter: ^2.1.0
+  spoiler_widget:
+    git:
+      url: https://github.com/matteo-convertino/spoiler_widget
+      ref: main
+  el_tooltip:
+    git:
+      url: https://github.com/matteo-convertino/el_tooltip
+      ref: main
 
 dev_dependencies:
   flutter_test:

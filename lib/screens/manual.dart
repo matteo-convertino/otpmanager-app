@@ -12,6 +12,7 @@ import 'package:otp_manager/utils/enum/otp_digits.dart';
 import 'package:otp_manager/utils/enum/otp_period.dart';
 import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../bloc/icon_picker/icon_picker_bloc.dart';
 import '../bloc/manual/manual_state.dart';
@@ -133,8 +134,11 @@ class Manual extends HookWidget {
                             hintText: 'e.g. Username/Email',
                             errorText: state.nameError,
                             suffixIcon: state.nameError == null
-                                ? const Icon(Icons.drive_file_rename_outline)
-                                : const Icon(Icons.error, color: Colors.red),
+                                ? const PhosphorIcon(PhosphorIconsRegular.user)
+                                : const PhosphorIcon(
+                                    PhosphorIconsRegular.warningCircle,
+                                    color: Colors.red,
+                                  ),
                           ),
                           onChanged: (value) {
                             context.read<ManualBloc>().add(
@@ -156,8 +160,11 @@ class Manual extends HookWidget {
                       errorText: state.issuerError,
                       hintText: 'e.g. Google/Facebook/Github',
                       suffixIcon: state.issuerError == null
-                          ? const Icon(Icons.account_box)
-                          : const Icon(Icons.error, color: Colors.red),
+                          ? const PhosphorIcon(PhosphorIconsRegular.building)
+                          : const PhosphorIcon(
+                              PhosphorIconsRegular.warningCircle,
+                              color: Colors.red,
+                            ),
                     ),
                     onChanged: (value) {
                       context.read<ManualBloc>().add(
@@ -177,8 +184,11 @@ class Manual extends HookWidget {
                         labelText: 'Secret key',
                         errorText: state.secretKeyError,
                         suffixIcon: state.secretKeyError == null
-                            ? const Icon(Icons.vpn_key)
-                            : const Icon(Icons.error, color: Colors.red),
+                            ? const PhosphorIcon(PhosphorIconsRegular.key)
+                            : const PhosphorIcon(
+                                PhosphorIconsRegular.warningCircle,
+                                color: Colors.red,
+                              ),
                       ),
                       onChanged: (value) {
                         context.read<ManualBloc>().add(
@@ -370,8 +380,14 @@ class Manual extends HookWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         child: context.read<ManualBloc>().state.isEdit
-            ? const Icon(Icons.save_as, color: Colors.white)
-            : const Icon(Icons.add, color: Colors.white),
+            ? const PhosphorIcon(
+                PhosphorIconsRegular.check,
+                color: Colors.white,
+              )
+            : const PhosphorIcon(
+                PhosphorIconsRegular.plus,
+                color: Colors.white,
+              ),
         onPressed: () => context.read<ManualBloc>().add(AddOrEditAccount()),
       ),
     );

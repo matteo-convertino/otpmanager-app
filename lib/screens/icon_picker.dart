@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_bloc.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_event.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_state.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class IconPicker extends HookWidget {
   const IconPicker({super.key});
@@ -29,7 +30,9 @@ class IconPicker extends HookWidget {
                 child: TextFormField(
                   initialValue: state.searchBarValue,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const PhosphorIcon(
+                      PhosphorIconsRegular.magnifyingGlass,
+                    ),
                     isDense: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),

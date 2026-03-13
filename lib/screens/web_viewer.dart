@@ -9,33 +9,6 @@ import 'package:otp_manager/bloc/web_viewer/web_viewer_state.dart';
 class WebViewer extends HookWidget {
   const WebViewer({super.key});
 
-  Stack _loadingPage(double percentage) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.blue,
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(color: Colors.white),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(50, 50, 50, 0),
-              child: LinearProgressIndicator(
-                value: percentage,
-                color: Colors.white,
-                backgroundColor: Colors.white38,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final webViewController = useRef<InAppWebViewController?>(null);
@@ -46,8 +19,35 @@ class WebViewer extends HookWidget {
       return null;
     }, []);
 
+    Stack _loadingPage(double percentage) {
+      return Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(50, 50, 50, 0),
+                child: LinearProgressIndicator(
+                  value: percentage,
+                  color: Colors.white,
+                  backgroundColor: Colors.white38,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Theme.of(context).primaryColor,
       body: BlocConsumer<WebViewerBloc, WebViewerState>(
         listener: (context, state) {
           if (state.initUrl.isNotEmpty) {

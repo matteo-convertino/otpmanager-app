@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +5,7 @@ import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
 import 'package:otp_manager/bloc/account_details/account_details_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../bloc/account_details/account_details_event.dart';
 import '../routing/constants.dart';
@@ -40,7 +39,7 @@ class AccountDetails extends StatelessWidget {
         title: const Text('Account details'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const PhosphorIcon(PhosphorIconsRegular.pencilSimple),
             onPressed: () {
               getIt<NavigationService>().navigateTo(
                 manualRoute,
@@ -51,7 +50,7 @@ class AccountDetails extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const PhosphorIcon(PhosphorIconsRegular.trashSimple),
             onPressed: () {
               showOtpManagerDeleteDialog(
                 context,
@@ -106,12 +105,13 @@ class AccountDetails extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
                   child: Row(
+                    spacing: 10,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Stack(
                         alignment: Alignment.center,
                         children: [
-                          const Icon(Icons.person),
+                          const PhosphorIcon(PhosphorIconsRegular.user),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(100.0),
                             child: Image.network(
@@ -120,18 +120,12 @@ class AccountDetails extends StatelessWidget {
                               height: 50.0,
                               width: 50.0,
                               errorBuilder: (_, _, _) =>
-                                  const Icon(Icons.person),
+                                  const PhosphorIcon(PhosphorIconsRegular.user),
                             ),
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Transform.rotate(
-                          angle: 90 * pi / 180,
-                          child: const Icon(Icons.link),
-                        ),
-                      ),
+                      const PhosphorIcon(PhosphorIconsRegular.link),
                     ],
                   ),
                 ),

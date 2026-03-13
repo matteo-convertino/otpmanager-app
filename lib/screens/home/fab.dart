@@ -7,6 +7,7 @@ import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_logout.dart';
 import 'package:otp_manager/widgets/otp_manager_animated_gradient.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../routing/constants.dart';
 import '../../routing/navigation_service.dart';
@@ -29,6 +30,33 @@ class HomeFab extends HookWidget {
       (b) => b.state.darkTheme,
     );
 
+    useEffect(() {
+      void listener(AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          Future.delayed(const Duration(milliseconds: 2000), bird.reverse);
+        } else if (status == AnimationStatus.dismissed && !isFabOpen.value) {
+          Future.delayed(const Duration(milliseconds: 2000), bird.forward);
+        }
+      }
+
+      bird.addStatusListener(listener);
+      return () => bird.removeStatusListener(listener);
+    }, [bird]);
+
+    useEffect(() {
+      void listener(AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          Future.delayed(
+            const Duration(milliseconds: 1000),
+            () => waving.forward(from: 0),
+          );
+        }
+      }
+
+      waving.addStatusListener(listener);
+      return () => waving.removeStatusListener(listener);
+    }, [waving]);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -38,24 +66,7 @@ class HomeFab extends HookWidget {
             'assets/lottie/bird.json',
             controller: bird,
             width: 56,
-            onLoaded: (composition) {
-              bird.addStatusListener((status) {
-                if (status == AnimationStatus.completed) {
-                  Future.delayed(
-                    const Duration(milliseconds: 2000),
-                    bird.reverse,
-                  );
-                } else if (status == AnimationStatus.dismissed &&
-                    !isFabOpen.value) {
-                  Future.delayed(
-                    const Duration(milliseconds: 2000),
-                    bird.forward,
-                  );
-                }
-              });
-
-              bird.forward();
-            },
+            onLoaded: (composition) => bird.forward(),
           ),
         ),
         SpeedDial(
@@ -76,7 +87,7 @@ class HomeFab extends HookWidget {
           overlayOpacity: 0.5,
           children: [
             SpeedDialChild(
-              child: const Icon(Icons.keyboard),
+              child: const PhosphorIcon(PhosphorIconsRegular.keyboard),
               label: 'Type configuration manually',
               onTap: () => getIt<NavigationService>().navigateTo(
                 manualRoute,
@@ -84,23 +95,23 @@ class HomeFab extends HookWidget {
               ),
             ),
             SpeedDialChild(
-              child: const Icon(Icons.qr_code_scanner),
+              child: const PhosphorIcon(PhosphorIconsRegular.qrCode),
               label: 'Scan QR code',
               onTap: () =>
                   getIt<NavigationService>().navigateTo(qrCodeScannerRoute),
             ),
             SpeedDialChild(
-              child: const Icon(Icons.library_add_outlined),
+              child: const PhosphorIcon(PhosphorIconsRegular.stackPlus),
               label: 'Import OTP',
               onTap: () => getIt<NavigationService>().navigateTo(importRoute),
             ),
             SpeedDialChild(
-              child: const Icon(Icons.settings),
+              child: const PhosphorIcon(PhosphorIconsRegular.gearSix),
               label: 'Settings',
               onTap: () => getIt<NavigationService>().navigateTo(settingsRoute),
             ),
             SpeedDialChild(
-              child: const Icon(Icons.logout),
+              child: const PhosphorIcon(PhosphorIconsRegular.signOut),
               label: 'Logout',
               onTap: () => showOtpManagerLogoutDialog(context),
             ),
@@ -122,18 +133,7 @@ class HomeFab extends HookWidget {
                 child: Lottie.asset(
                   'assets/lottie/bird_waving.json',
                   controller: waving,
-                  onLoaded: (composition) {
-                    waving.addStatusListener((status) {
-                      if (status == AnimationStatus.completed) {
-                        Future.delayed(
-                          const Duration(milliseconds: 1000),
-                          () => waving.forward(from: 0),
-                        );
-                      }
-                    });
-
-                    waving.forward();
-                  },
+                  onLoaded: (composition) => waving.forward(),
                 ),
               ),
               backgroundColor: darkTheme

@@ -10,3 +10,7 @@ class OtpManagerEvent extends Equatable {
 class CopyWithTapToggled extends OtpManagerEvent {}
 
 class DarkThemeToggled extends OtpManagerEvent {}
+
+class OpenSearchBarOnStartupToggled extends OtpManagerEvent {}
+
+class ClickToRevealCodesToggled extends OtpManagerEvent {}

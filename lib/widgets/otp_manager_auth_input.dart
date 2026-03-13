@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../bloc/otp_manager/otp_manager_bloc.dart';
 import '../bloc/otp_manager/otp_manager_state.dart';
@@ -54,18 +55,24 @@ class OtpManagerAuthInput extends HookWidget {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             prefixIcon: IconButton(
               onPressed: toggleObscured,
-              icon: Icon(
-                obscured.value ? Icons.visibility : Icons.visibility_off,
-                color: errorMsg.isNotEmpty ? Colors.red : Colors.blue,
+              icon: PhosphorIcon(
+                obscured.value
+                    ? PhosphorIconsRegular.eye
+                    : PhosphorIconsRegular.eyeSlash,
+                color: errorMsg.isNotEmpty
+                    ? Colors.red
+                    : Theme.of(context).primaryColor,
               ),
             ),
             suffixIcon: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
               child: IconButton(
                 onPressed: onSubmit,
-                icon: Icon(
-                  Icons.arrow_forward,
-                  color: errorMsg.isNotEmpty ? Colors.red : Colors.blue,
+                icon: PhosphorIcon(
+                  PhosphorIconsRegular.arrowRight,
+                  color: errorMsg.isNotEmpty
+                      ? Colors.red
+                      : Theme.of(context).primaryColor,
                 ),
               ),
             ),
