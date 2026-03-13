@@ -33,10 +33,8 @@ class OtpAccountSlidable extends StatelessWidget {
         children: [
           OtpManagerSlidableAction(
             label: 'Edit',
-            icon: PhosphorIconsRegular.pencilSimple,
-            padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
-            backgroundColor: Colors.blue,
-            border: BorderRadius.circular(10.0),
+            icon: const PhosphorIcon(PhosphorIconsRegular.pencilSimple),
+            backgroundColor: Theme.of(context).primaryColor,
             onPressed: () => getIt<NavigationService>().navigateTo(
               manualRoute,
               arguments: {'account': account},
@@ -45,18 +43,14 @@ class OtpAccountSlidable extends StatelessWidget {
           if (showQrAction)
             OtpManagerSlidableAction(
               label: 'QR',
-              icon: PhosphorIconsRegular.qrCode,
-              padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
+              icon: const PhosphorIcon(PhosphorIconsRegular.qrCode),
               backgroundColor: Colors.grey,
-              border: BorderRadius.circular(10.0),
               onPressed: () => showOtpManagerQrCodeDialog(context, account),
             ),
           OtpManagerSlidableAction(
             label: 'Delete',
-            icon: PhosphorIconsRegular.trashSimple,
-            padding: const EdgeInsets.fromLTRB(0, 10, 7, 10),
+            icon: const PhosphorIcon(PhosphorIconsRegular.trashSimple),
             backgroundColor: Colors.red,
-            border: BorderRadius.circular(10.0),
             onPressed: () => showOtpManagerDeleteDialog(
               context,
               account: account,

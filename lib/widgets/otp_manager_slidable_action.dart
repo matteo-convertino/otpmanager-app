@@ -5,20 +5,20 @@ class OtpManagerSlidableAction extends StatelessWidget {
     super.key,
     required this.label,
     required this.icon,
-    required this.padding,
     required this.backgroundColor,
-    required this.border,
-    this.iconColor = Colors.white,
     required this.onPressed,
+    this.padding = const EdgeInsets.only(top: 10, bottom: 10, right: 10),
+    this.borderRadius = 10.0,
+    this.border = BorderSide.none,
   });
 
   final String label;
-  final IconData icon;
-  final EdgeInsetsGeometry padding;
+  final Icon icon;
   final Color backgroundColor;
-  final BorderRadiusGeometry border;
-  final Color iconColor;
   final Function() onPressed;
+  final EdgeInsetsGeometry padding;
+  final double borderRadius;
+  final BorderSide border;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +30,19 @@ class OtpManagerSlidableAction extends StatelessWidget {
             onPressed: onPressed,
             style: OutlinedButton.styleFrom(
               backgroundColor: backgroundColor,
-              shape: RoundedRectangleBorder(borderRadius: border),
-              side: BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+              side: border,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 4,
               children: [
-                Icon(icon, color: iconColor),
+                IconTheme(
+                  data: const IconThemeData(color: Colors.white, size: 20),
+                  child: icon,
+                ),
                 Text(
                   label,
                   style: const TextStyle(
