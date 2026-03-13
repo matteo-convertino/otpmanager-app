@@ -25,14 +25,14 @@ class OtpManagerState extends Equatable {
         openSearchBarOnStartup: user?.openSearchBarOnStartup ?? false,
         clickToRevealCodes: user?.clickToRevealCodes ?? false,
         initialRoute: isLogged
-            ? (user?.password != null &&
-                      user?.iv != null &&
+            ? ((user?.password != null && user?.iv != null) ||
+                          user?.isGuest == true) &&
                       (user?.passwordExpirationDate == null ||
                           DateTime.now().isBefore(
                             user!.passwordExpirationDate!,
                           ))
                   ? homeRoute
-                  : authRoute)
+                  : authRoute
             : loginRoute,
       );
 

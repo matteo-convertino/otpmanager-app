@@ -107,7 +107,12 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i147.OtpManagerBloc>(
-      () => _i147.OtpManagerBloc(userRepository: gh<_i673.UserRepository>()),
+      () => _i147.OtpManagerBloc(
+        userRepository: gh<_i673.UserRepository>(),
+        accountRepository: gh<_i129.AccountRepository>(),
+        sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+        navigationService: gh<_i863.NavigationService>(),
+      ),
     );
     gh.factory<_i1050.SettingsBloc>(
       () => _i1050.SettingsBloc(userRepository: gh<_i673.UserRepository>()),

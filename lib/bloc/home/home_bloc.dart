@@ -7,7 +7,6 @@ import 'package:otp_manager/models/account.dart';
 import 'package:otp_manager/repository/local/interface/account_repository.dart';
 import 'package:otp_manager/repository/local/interface/shared_account_repository.dart';
 import 'package:otp_manager/repository/local/interface/user_repository.dart';
-import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/service/account_service.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
@@ -39,7 +38,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }) : super(HomeState.initial(userRepository.get()!)) {
     on<NextcloudSync>(_onNextcloudSync);
     on<GetAccounts>(_onGetAccounts);
-    on<Logout>(_onLogout);
     on<Reorder>(_onReorder);
     on<DeleteAccount>(_onDeleteAccount);
     on<SortByName>(_onSortByName);
@@ -123,13 +121,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
-  }
-
-  void _onLogout(Logout event, Emitter<HomeState> emit) {
-    userRepository.removeAll();
-    accountRepository.removeAll();
-    sharedAccountRepository.removeAll();
-    navigationService.resetToScreen(loginRoute);
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {

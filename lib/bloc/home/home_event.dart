@@ -18,8 +18,6 @@ class IsAppUpdatedChanged extends HomeEvent {
   List<Object> get props => [value];
 }
 
-class Logout extends HomeEvent {}
-
 class SortById extends HomeEvent {}
 
 class SortByName extends HomeEvent {}

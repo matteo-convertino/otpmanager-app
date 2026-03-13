@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otp_manager/bloc/home/home_bloc.dart';
-import 'package:otp_manager/bloc/home/home_event.dart';
+import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
+import 'package:otp_manager/bloc/otp_manager/otp_manager_event.dart';
 
 void showOtpManagerLogoutDialog(BuildContext context) {
   showDialog(
@@ -18,7 +18,7 @@ void showOtpManagerLogoutDialog(BuildContext context) {
         ),
         TextButton(
           child: const Text('Yes'),
-          onPressed: () => context.read<HomeBloc>().add(Logout()),
+          onPressed: () => context.read<OtpManagerBloc>().add(Logout()),
         ),
       ],
     ),

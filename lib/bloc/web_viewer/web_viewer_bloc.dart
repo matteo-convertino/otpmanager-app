@@ -75,7 +75,7 @@ class WebViewerBloc extends Bloc<WebViewerEvent, WebViewerState> {
       });
 
       _client!.core.clientFlowLoginV2.poll($body: body).then((result) {
-        userRepository.update(
+        userRepository.add(
           User(
             url: nextcloudUrl,
             appPassword: result.body.appPassword,

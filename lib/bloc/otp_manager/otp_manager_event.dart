@@ -7,6 +7,8 @@ class OtpManagerEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class Logout extends OtpManagerEvent {}
+
 class CopyWithTapToggled extends OtpManagerEvent {}
 
 class DarkThemeToggled extends OtpManagerEvent {}
