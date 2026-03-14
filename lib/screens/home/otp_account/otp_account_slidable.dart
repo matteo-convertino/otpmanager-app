@@ -28,7 +28,7 @@ class OtpAccountSlidable extends StatelessWidget {
     return Slidable(
       closeOnScroll: true,
       endActionPane: ActionPane(
-        extentRatio: showQrAction ? 0.75 : 0.5,
+        extentRatio: showQrAction ? 0.80 : 0.5,
         motion: const ScrollMotion(),
         children: [
           OtpManagerSlidableAction(

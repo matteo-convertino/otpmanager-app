@@ -39,45 +39,50 @@ class OtpManagerAuthInput extends HookWidget {
 
     return BlocBuilder<OtpManagerBloc, OtpManagerState>(
       builder: (context, state) {
-        return TextField(
-          enabled: enabled,
-          onChanged: onChanged,
-          keyboardType: TextInputType.visiblePassword,
-          obscureText: obscured.value,
-          focusNode: passwordFocusNode,
-          decoration: InputDecoration(
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            labelText: label,
-            helperText: helper,
-            filled: true,
-            fillColor: state.darkTheme ? Colors.grey.shade800 : null,
-            isDense: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            prefixIcon: IconButton(
-              onPressed: toggleObscured,
-              icon: PhosphorIcon(
-                obscured.value
-                    ? PhosphorIconsRegular.eye
-                    : PhosphorIconsRegular.eyeSlash,
-                color: errorMsg.isNotEmpty
-                    ? Colors.red
-                    : Theme.of(context).colorScheme.primary,
+        return AutofillGroup(
+          child: TextField(
+            autofillHints: const [AutofillHints.password],
+            enableSuggestions: true,
+            enabled: enabled,
+            onChanged: onChanged,
+            obscureText: obscured.value,
+            focusNode: passwordFocusNode,
+            decoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: label,
+              helperText: helper,
+              filled: true,
+              fillColor: state.darkTheme ? Colors.grey.shade800 : null,
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
-              child: IconButton(
-                onPressed: onSubmit,
+              prefixIcon: IconButton(
+                onPressed: toggleObscured,
                 icon: PhosphorIcon(
-                  PhosphorIconsRegular.arrowRight,
+                  obscured.value
+                      ? PhosphorIconsRegular.eye
+                      : PhosphorIconsRegular.eyeSlash,
                   color: errorMsg.isNotEmpty
                       ? Colors.red
                       : Theme.of(context).colorScheme.primary,
                 ),
               ),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                child: IconButton(
+                  onPressed: onSubmit,
+                  icon: PhosphorIcon(
+                    PhosphorIconsRegular.arrowRight,
+                    color: errorMsg.isNotEmpty
+                        ? Colors.red
+                        : Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+              errorText: errorMsg.isNotEmpty ? errorMsg : null,
+              errorMaxLines: 5,
             ),
-            errorText: errorMsg.isNotEmpty ? errorMsg : null,
-            errorMaxLines: 5,
           ),
         );
       },
