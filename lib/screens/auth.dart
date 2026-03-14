@@ -32,9 +32,7 @@ class Auth extends HookWidget {
             );
             enabled.value = false;
 
-            Timer(const Duration(seconds: 5), () {
-              enabled.value = true;
-            });
+            Timer(const Duration(seconds: 5), () => enabled.value = true);
           }
 
           if (state.isCorrectPassword) enabled.value = false;
@@ -64,13 +62,15 @@ class Auth extends HookWidget {
                   errorMsg: state.message,
                 ),
               ),
-              if (state.canShowFingerAuth)
+              if (state.canShowDeviceAuth)
                 IconButton(
                   onPressed: () =>
-                      context.read<AuthBloc>().add(ShowFingerAuth()),
+                      context.read<AuthBloc>().add(ShowDeviceAuth()),
                   icon: PhosphorIcon(
-                    PhosphorIconsRegular.fingerprint,
-                    size: 60,
+                    state.canShowFingerAuth
+                        ? PhosphorIconsRegular.fingerprint
+                        : PhosphorIconsRegular.numpad,
+                    size: state.canShowFingerAuth ? 60 : 50,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),

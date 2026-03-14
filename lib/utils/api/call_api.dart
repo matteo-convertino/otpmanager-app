@@ -15,10 +15,6 @@ Future<void> callApi<T>({
     e,
     st,
   ) {
-    print(e);
-    print(e is DioException);
-    print(e.error is ErrorDto);
-
     if (e is DioException && e.error is ErrorDto) {
       final errorDto = e.error as ErrorDto;
 

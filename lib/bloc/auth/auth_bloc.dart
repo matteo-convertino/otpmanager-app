@@ -31,31 +31,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<PasswordSubmit>(_onPasswordSubmit);
     on<PasswordChanged>(_onPasswordChanged);
     on<ResetAttempts>(_onResetAttempts);
-    on<ShowFingerAuth>(_onShowFingerAuth);
+    on<ShowDeviceAuth>(_onShowDeviceAuth);
+    on<InitAuth>(_onInitAuth);
 
-    if (_user.password != null) {
-      add(ShowFingerAuth());
-    }
+    add(InitAuth());
+  }
+
+  Future<void> _onInitAuth(InitAuth event, Emitter<AuthState> emit) async {
+    final hasBiometrics = await _hasBiometrics();
+    final isDeviceSupported = await _localAuth.isDeviceSupported();
+
+    emit(
+      state.copyWith(
+        canShowFingerAuth: hasBiometrics,
+        canShowDeviceAuth: isDeviceSupported,
+      ),
+    );
+
+    if (hasBiometrics) add(ShowDeviceAuth());
   }
 
   void _updatePasswordExpirationDate() {
-    if (_user.passwordAskTime == PasswordAskTime.never) {
-      _user.passwordExpirationDate = null;
-    } else if (_user.passwordAskTime == PasswordAskTime.everyOpening) {
-      _user.passwordExpirationDate = DateTime.now();
-    } else if (_user.passwordAskTime == PasswordAskTime.oneMinutes) {
-      _user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 1),
-      );
-    } else if (_user.passwordAskTime == PasswordAskTime.threeMinutes) {
-      _user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 3),
-      );
-    } else if (_user.passwordAskTime == PasswordAskTime.fiveMinutes) {
-      _user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 5),
-      );
-    }
+    final now = DateTime.now();
+
+    _user.passwordExpirationDate = switch (_user.passwordAskTime) {
+      PasswordAskTime.never => null,
+      PasswordAskTime.everyOpening => now,
+      PasswordAskTime.oneMinutes => now.add(const Duration(minutes: 1)),
+      PasswordAskTime.threeMinutes => now.add(const Duration(minutes: 3)),
+      PasswordAskTime.fiveMinutes => now.add(const Duration(minutes: 5)),
+    };
 
     userRepository.update(_user);
   }
@@ -81,16 +86,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onShowFingerAuth(ShowFingerAuth event, Emitter<AuthState> emit) async {
-    final hasBiometrics = await _hasBiometrics();
-
-    emit(state.copyWith(canShowFingerAuth: hasBiometrics));
-
-    if (hasBiometrics) {
+  void _onShowDeviceAuth(ShowDeviceAuth event, Emitter<AuthState> emit) async {
+    if (state.canShowDeviceAuth) {
       try {
         final res = await _localAuth.authenticate(
-          localizedReason: 'Scan Fingerprint to Authenticate',
-          biometricOnly: true,
+          localizedReason: 'Scan fingerprint to authenticate',
         );
 
         if (res) add(Authenticated());

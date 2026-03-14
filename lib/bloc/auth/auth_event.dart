@@ -22,4 +22,6 @@ class PasswordSubmit extends AuthEvent {}
 
 class ResetAttempts extends AuthEvent {}
 
-class ShowFingerAuth extends AuthEvent {}
+class ShowDeviceAuth extends AuthEvent {}
+
+class InitAuth extends AuthEvent {}

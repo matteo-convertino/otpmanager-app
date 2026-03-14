@@ -25,7 +25,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
 
     if (url.toString() == 'http://localhost') {
-      print(User(url: url, appPassword: 'test', isGuest: true));
       userRepository.add(User(url: url, appPassword: 'test', isGuest: true));
       navigationService.resetToScreen(homeRoute);
     } else {
