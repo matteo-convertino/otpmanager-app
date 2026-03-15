@@ -5,6 +5,7 @@ import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/theme/color_schema.g.dart';
+import 'package:otp_manager/utils/enum/theme_mode.dart' as otp_manager;
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import 'routing/router.dart';
@@ -33,8 +34,14 @@ class OtpManager extends HookWidget {
         return MaterialApp(
           title: 'OTP Manager',
           theme: _buildTheme(lightColorScheme),
-          darkTheme: _buildTheme(darkColorScheme),
-          themeMode: state.darkTheme ? ThemeMode.dark : ThemeMode.light,
+          darkTheme: _buildTheme(
+            state.blackTheme ? blackColorScheme : darkColorScheme,
+          ),
+          themeMode: switch (state.themeMode) {
+            otp_manager.ThemeMode.light => ThemeMode.light,
+            otp_manager.ThemeMode.dark => ThemeMode.dark,
+            otp_manager.ThemeMode.system => ThemeMode.system,
+          },
           onGenerateRoute: Router.generateRoute,
           initialRoute: state.initialRoute,
           navigatorKey: getIt<GlobalKey<NavigatorState>>(),

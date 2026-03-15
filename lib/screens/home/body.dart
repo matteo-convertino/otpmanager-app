@@ -27,7 +27,7 @@ class HomeBody extends StatelessWidget {
                 right: 0,
                 height: 35,
                 child: Container(
-                  color: Theme.of(context).brightness == Brightness.light
+                  color: Theme.brightnessOf(context) == Brightness.light
                       ? Theme.of(context).colorScheme.secondary
                       : Theme.of(context).colorScheme.primaryContainer,
                   child: Align(
@@ -44,7 +44,7 @@ class HomeBody extends StatelessWidget {
                           'You are are using the test (offline) mode',
                           style: TextStyle(
                             color:
-                                Theme.of(context).brightness == Brightness.light
+                                Theme.brightnessOf(context) == Brightness.light
                                 ? Colors.white
                                 : Colors.white70,
                           ),

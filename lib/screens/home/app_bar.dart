@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_icon_button/animate_change_icon.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/utils/sync_status.dart';
+import 'package:otp_manager/widgets/otp_manager_animate_change_icon.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../bloc/home/home_bloc.dart';
@@ -117,12 +117,14 @@ class HomeAppBar extends HookWidget implements PreferredSizeWidget {
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(right: showSearchBar.value ? 15 : 5),
-          child: AnimateChangeIcon(
+          child: OtpManagerAnimateChangeIcon(
             animateDuration: const Duration(milliseconds: 200),
-            firstIcon: const PhosphorIcon(PhosphorIconsRegular.magnifyingGlass),
-            secondIcon: const PhosphorIcon(PhosphorIconsRegular.arrowLeft),
-            initialPushed: openSearchBarOnStartup,
-            onTap: () {
+            icons: const [
+              PhosphorIcon(PhosphorIconsRegular.magnifyingGlass),
+              PhosphorIcon(PhosphorIconsRegular.arrowLeft),
+            ],
+            initialIndex: openSearchBarOnStartup ? 1 : 0,
+            onTap: (_) {
               if (searchBarAnimationEnd.value) {
                 searchBarAnimationEnd.value = false;
                 showSearchBar.value = !showSearchBar.value;

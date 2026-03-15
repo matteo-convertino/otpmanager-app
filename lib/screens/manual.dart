@@ -87,14 +87,14 @@ class Manual extends HookWidget {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color:
-                                      Theme.of(context).brightness ==
+                                      Theme.brightnessOf(context) ==
                                           Brightness.light
                                       ? Theme.of(
                                           context,
                                         ).scaffoldBackgroundColor
                                       : const Color(0xFF313131),
                                   boxShadow: [
-                                    if (Theme.of(context).brightness ==
+                                    if (Theme.brightnessOf(context) ==
                                         Brightness.light)
                                       BoxShadow(
                                         color: Colors.grey[300]!,

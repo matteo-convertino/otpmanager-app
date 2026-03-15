@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:lottie/lottie.dart';
-import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_logout.dart';
 import 'package:otp_manager/widgets/otp_manager_animated_gradient.dart';
@@ -25,10 +23,6 @@ class HomeFab extends HookWidget {
       duration: const Duration(milliseconds: 3000),
     );
     final isFabOpen = useState(false);
-
-    final darkTheme = context.select<OtpManagerBloc, bool>(
-      (b) => b.state.darkTheme,
-    );
 
     useEffect(() {
       void listener(AnimationStatus status) {
@@ -134,7 +128,7 @@ class HomeFab extends HookWidget {
                   onLoaded: (composition) => waving.forward(),
                 ),
               ),
-              backgroundColor: darkTheme
+              backgroundColor: Theme.brightnessOf(context) == Brightness.dark
                   ? Colors.amber.shade100
                   : Colors.amber.shade50,
               onTap: () => showOtpManagerSupportDialog(context),

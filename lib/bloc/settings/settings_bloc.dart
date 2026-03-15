@@ -45,31 +45,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(selectedAskTimeIndex: event.index));
 
     User user = userRepository.get()!;
-
     user.dbPasswordAskTime = event.index;
-
-    _updatePasswordExpirationDate(user);
+    user.updatePasswordExpirationDate();
 
     userRepository.update(user);
-  }
-
-  void _updatePasswordExpirationDate(User user) {
-    if (user.passwordAskTime == PasswordAskTime.never) {
-      user.passwordExpirationDate = null;
-    } else if (user.passwordAskTime == PasswordAskTime.everyOpening) {
-      user.passwordExpirationDate = DateTime.now();
-    } else if (user.passwordAskTime == PasswordAskTime.oneMinutes) {
-      user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 1),
-      );
-    } else if (user.passwordAskTime == PasswordAskTime.threeMinutes) {
-      user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 3),
-      );
-    } else if (user.passwordAskTime == PasswordAskTime.fiveMinutes) {
-      user.passwordExpirationDate = DateTime.now().add(
-        const Duration(minutes: 5),
-      );
-    }
   }
 }

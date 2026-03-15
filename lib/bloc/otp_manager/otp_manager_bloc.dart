@@ -28,9 +28,10 @@ class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
        ) {
     on<Logout>(_onLogout);
     on<CopyWithTapToggled>(_onCopyWithTapToggled);
-    on<DarkThemeToggled>(_onDarkThemeToggled);
+    on<ThemeModeChanged>(_onThemeModeChanged);
     on<OpenSearchBarOnStartupToggled>(_onOpenSearchBarOnStartupToggled);
     on<ClickToRevealCodesToggled>(_onClickToRevealCodesToggled);
+    on<BlackThemeToggled>(_onBlackThemeToggled);
   }
 
   void _onLogout(Logout event, Emitter<OtpManagerState> emit) {
@@ -51,14 +52,14 @@ class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
     emit(state.copyWith(copyWithTap: user.copyWithTap));
   }
 
-  void _onDarkThemeToggled(
-    DarkThemeToggled event,
+  void _onThemeModeChanged(
+    ThemeModeChanged event,
     Emitter<OtpManagerState> emit,
   ) {
-    final user = userRepository.get();
-    user?.darkTheme = !user.darkTheme;
-    userRepository.update(user!);
-    emit(state.copyWith(darkTheme: user.darkTheme));
+    final user = userRepository.get()!;
+    user.themeMode = event.themeMode;
+    userRepository.update(user);
+    emit(state.copyWith(themeMode: event.themeMode));
   }
 
   void _onOpenSearchBarOnStartupToggled(
@@ -79,5 +80,15 @@ class OtpManagerBloc extends Bloc<OtpManagerEvent, OtpManagerState> {
     user?.clickToRevealCodes = !user.clickToRevealCodes;
     userRepository.update(user!);
     emit(state.copyWith(clickToRevealCodes: user.clickToRevealCodes));
+  }
+
+  void _onBlackThemeToggled(
+    BlackThemeToggled event,
+    Emitter<OtpManagerState> emit,
+  ) {
+    final user = userRepository.get();
+    user?.blackTheme = !user.blackTheme;
+    userRepository.update(user!);
+    emit(state.copyWith(blackTheme: user.blackTheme));
   }
 }

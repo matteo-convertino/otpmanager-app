@@ -51,20 +51,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (hasBiometrics) add(ShowDeviceAuth());
   }
 
-  void _updatePasswordExpirationDate() {
-    final now = DateTime.now();
-
-    _user.passwordExpirationDate = switch (_user.passwordAskTime) {
-      PasswordAskTime.never => null,
-      PasswordAskTime.everyOpening => now,
-      PasswordAskTime.oneMinutes => now.add(const Duration(minutes: 1)),
-      PasswordAskTime.threeMinutes => now.add(const Duration(minutes: 3)),
-      PasswordAskTime.fiveMinutes => now.add(const Duration(minutes: 5)),
-    };
-
-    userRepository.update(_user);
-  }
-
   void _onResetAttempts(ResetAttempts event, Emitter<AuthState> emit) {
     emit(state.copyWith(attempts: 3));
   }
@@ -113,7 +99,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onAuthenticated(Authenticated event, Emitter<AuthState> emit) {
-    _updatePasswordExpirationDate();
+    _user.updatePasswordExpirationDate();
+
+    userRepository.update(_user);
+
     emit(state.copyWith(isCorrectPassword: true));
   }
 

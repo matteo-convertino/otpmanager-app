@@ -52,7 +52,9 @@ class OtpManagerAuthInput extends HookWidget {
               labelText: label,
               helperText: helper,
               filled: true,
-              fillColor: state.darkTheme ? Colors.grey.shade800 : null,
+              fillColor: Theme.brightnessOf(context) == Brightness.dark
+                  ? Colors.grey.shade800
+                  : null,
               isDense: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

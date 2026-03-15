@@ -20,7 +20,7 @@ class OtpManagerTooltip extends StatelessWidget {
       showModal: false,
       showChildAboveOverlay: false,
       position: .bottomCenter,
-      color: Theme.of(context).brightness == Brightness.dark
+      color: Theme.brightnessOf(context) == Brightness.dark
           ? Theme.of(context).colorScheme.primaryContainer
           : Theme.of(context).colorScheme.secondary,
       content: Text(message, style: const TextStyle(color: Colors.white)),
