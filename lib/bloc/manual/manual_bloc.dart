@@ -44,16 +44,18 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     on<NameChanged>(_onNameChanged);
     on<IssuerChanged>(_onIssuerChanged);
     on<SecretKeyChanged>(_onSecretKeyChanged);
-    on<CodeTypeValueChanged>(_onCodeTypeValueChanged);
-    on<IntervalValueChanged>(_onIntervalValueChanged);
-    on<AlgorithmValueChanged>(_onAlgorithmValueChanged);
-    on<DigitsValueChanged>(_onDigitsValueChanged);
+    on<TypeChanged>(_onCodeTypeValueChanged);
+    on<PeriodChanged>(_onIntervalValueChanged);
+    on<AlgorithmChanged>(_onAlgorithmValueChanged);
+    on<DigitsChanged>(_onDigitsValueChanged);
+    on<CounterChanged>(_onCounterChanged);
   }
 
   bool _isFormValid(
     String name,
     String issuer,
     String secretKey,
+    int? counter,
     Emitter<ManualState> emit,
   ) {
     bool isValid = true;
@@ -115,6 +117,11 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
       isValid = false;
     }
 
+    if (state.counter.isNotEmpty && counter == null) {
+      emit(state.copyWith(counterError: Optional('Counter must be a number')));
+      isValid = false;
+    }
+
     return isValid;
   }
 
@@ -122,74 +129,72 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     String name = Uri.decodeFull(removeDiacritics(state.name.trim()));
     String issuer = Uri.decodeFull(removeDiacritics(state.issuer.trim()));
     String secretKey = state.secretKey.trim().toUpperCase();
+    int? counter = state.counter.isEmpty ? null : int.tryParse(state.counter);
 
-    if (_isFormValid(name, issuer, secretKey, emit)) {
-      int position = accountService.getLastPosition() + 1;
+    if (!_isFormValid(name, issuer, secretKey, counter, emit)) return;
 
-      final acc = account;
+    int position = accountService.getLastPosition() + 1;
 
-      if (acc == null) {
-        Account newAccount = Account(
-          iconKey: state.iconKey,
-          secret: secretKey,
-          name: name,
-          issuer: issuer,
-          dbAlgorithm: OtpUriDecoderHelper.getAlgorithmIndexFromString(
-            state.algorithmValue,
-          ),
-          digits: state.digitsValue,
-          type: state.codeTypeValue,
-          period: state.codeTypeValue == OtpType.totp.value
-              ? state.intervalValue
-              : null,
-          position: position,
-        );
+    final acc = account;
 
-        Account? sameAccount = accountRepository.getBySecret(secretKey);
+    if (acc == null) {
+      Account newAccount = Account(
+        iconKey: state.iconKey,
+        secret: secretKey,
+        name: name,
+        issuer: issuer,
+        dbAlgorithm: OtpUriDecoderHelper.getAlgorithmIndexFromString(
+          state.algorithm,
+        ),
+        digits: state.digits,
+        type: state.type,
+        period: state.type == OtpType.totp.value ? state.period : null,
+        position: position,
+        counter: state.counter.isEmpty ? null : int.tryParse(state.counter),
+      );
 
-        if (sameAccount == null) {
-          accountRepository.add(newAccount);
-          getIt<SnackbarService>().showMessage('New account has been added');
-        } else if (sameAccount.deleted) {
-          newAccount.id = sameAccount.id;
-          accountRepository.add(newAccount);
-          getIt<SnackbarService>().showMessage('New account has been added');
-        } else {
-          emit(
-            state.copyWith(
-              secretKeyError: Optional('This secret key already exists'),
-            ),
-          );
-          return;
-        }
+      Account? sameAccount = accountRepository.getBySecret(secretKey);
+
+      if (sameAccount == null) {
+        accountRepository.add(newAccount);
+        getIt<SnackbarService>().showMessage('New account has been added');
+      } else if (sameAccount.deleted) {
+        newAccount.id = sameAccount.id;
+        accountRepository.add(newAccount);
+        getIt<SnackbarService>().showMessage('New account has been added');
       } else {
-        (acc as dynamic).iconKey = state.iconKey;
-        (acc as dynamic).name = name;
-        (acc as dynamic).issuer = issuer;
+        emit(
+          state.copyWith(
+            secretKeyError: Optional('This secret key already exists'),
+          ),
+        );
+        return;
+      }
+    } else {
+      (acc as dynamic).iconKey = state.iconKey;
+      (acc as dynamic).name = name;
+      (acc as dynamic).issuer = issuer;
 
-        if (acc is Account) {
-          acc.dbAlgorithm = OtpUriDecoderHelper.getAlgorithmIndexFromString(
-            state.algorithmValue,
-          );
-          acc.digits = state.digitsValue;
-          acc.type = state.codeTypeValue;
-          acc.period = state.codeTypeValue == OtpType.totp.value
-              ? state.intervalValue
-              : null;
-        }
-
-        if (acc is Account) {
-          accountRepository.update(acc);
-        } else if (acc is SharedAccount) {
-          sharedAccountRepository.update(acc);
-        }
-
-        getIt<SnackbarService>().showMessage('Account has been edited');
+      if (acc is Account) {
+        acc.dbAlgorithm = OtpUriDecoderHelper.getAlgorithmIndexFromString(
+          state.algorithm,
+        );
+        acc.digits = state.digits;
+        acc.type = state.type;
+        acc.period = state.type == OtpType.totp.value ? state.period : null;
       }
 
-      homeBloc.add(NextcloudSync());
-      navigationService.goBackToScreen(homeRoute);
+      if (acc is Account) {
+        accountRepository.update(acc);
+      } else if (acc is SharedAccount) {
+        sharedAccountRepository.update(acc);
+      }
+
+      getIt<SnackbarService>().showMessage('Account has been edited');
     }
+
+    homeBloc.add(NextcloudSync());
+    navigationService.goBackToScreen(homeRoute);
   }
 
   void _onIconKeyChanged(IconKeyChanged event, Emitter<ManualState> emit) {
@@ -221,31 +226,26 @@ class ManualBloc extends Bloc<ManualEvent, ManualState> {
     );
   }
 
-  void _onCodeTypeValueChanged(
-    CodeTypeValueChanged event,
-    Emitter<ManualState> emit,
-  ) {
-    emit(state.copyWith(codeTypeValue: event.codeTypeValue));
+  void _onCodeTypeValueChanged(TypeChanged event, Emitter<ManualState> emit) {
+    emit(state.copyWith(type: event.type));
   }
 
-  void _onIntervalValueChanged(
-    IntervalValueChanged event,
-    Emitter<ManualState> emit,
-  ) {
-    emit(state.copyWith(intervalValue: event.intervalValue));
+  void _onIntervalValueChanged(PeriodChanged event, Emitter<ManualState> emit) {
+    emit(state.copyWith(period: event.period));
   }
 
   void _onAlgorithmValueChanged(
-    AlgorithmValueChanged event,
+    AlgorithmChanged event,
     Emitter<ManualState> emit,
   ) {
-    emit(state.copyWith(algorithmValue: event.algorithmValue));
+    emit(state.copyWith(algorithm: event.algorithm));
   }
 
-  void _onDigitsValueChanged(
-    DigitsValueChanged event,
-    Emitter<ManualState> emit,
-  ) {
-    emit(state.copyWith(digitsValue: event.digitsValue));
+  void _onDigitsValueChanged(DigitsChanged event, Emitter<ManualState> emit) {
+    emit(state.copyWith(digits: event.digits));
+  }
+
+  void _onCounterChanged(CounterChanged event, Emitter<ManualState> emit) {
+    emit(state.copyWith(counter: event.counter, counterError: Optional(null)));
   }
 }

@@ -45,38 +45,47 @@ class SecretKeyChanged extends ManualEvent {
   List<Object> get props => [secretKey];
 }
 
-class CodeTypeValueChanged extends ManualEvent {
-  const CodeTypeValueChanged({required this.codeTypeValue});
+class TypeChanged extends ManualEvent {
+  const TypeChanged({required this.type});
 
-  final String codeTypeValue;
+  final String type;
 
   @override
-  List<Object> get props => [codeTypeValue];
+  List<Object> get props => [type];
 }
 
-class IntervalValueChanged extends ManualEvent {
-  const IntervalValueChanged({required this.intervalValue});
+class PeriodChanged extends ManualEvent {
+  const PeriodChanged({required this.period});
 
-  final int intervalValue;
+  final int period;
 
   @override
-  List<Object> get props => [intervalValue];
+  List<Object> get props => [period];
 }
 
-class AlgorithmValueChanged extends ManualEvent {
-  const AlgorithmValueChanged({required this.algorithmValue});
+class AlgorithmChanged extends ManualEvent {
+  const AlgorithmChanged({required this.algorithm});
 
-  final String algorithmValue;
+  final String algorithm;
 
   @override
-  List<Object> get props => [algorithmValue];
+  List<Object> get props => [algorithm];
 }
 
-class DigitsValueChanged extends ManualEvent {
-  const DigitsValueChanged({required this.digitsValue});
+class DigitsChanged extends ManualEvent {
+  const DigitsChanged({required this.digits});
 
-  final int digitsValue;
+  final int digits;
 
   @override
-  List<Object> get props => [digitsValue];
+  List<Object> get props => [digits];
+}
+
+class CounterChanged extends ManualEvent {
+  const CounterChanged({required this.counter});
+
+  final String counter;
+
+  @override
+  List<Object> get props => [counter];
 }

@@ -12,6 +12,7 @@ ReceiverResponseDto _$ReceiverResponseDtoFromJson(Map<String, dynamic> json) =>
       label: json['label'] as String?,
       value: json['value'] as String?,
       image: json['image'] as String?,
+      isExternal: json['isExternal'] as bool?,
     );
 
 Map<String, dynamic> _$ReceiverResponseDtoToJson(
@@ -21,4 +22,5 @@ Map<String, dynamic> _$ReceiverResponseDtoToJson(
   'label': instance.label,
   'value': instance.value,
   'image': instance.image,
+  'isExternal': instance.isExternal,
 };

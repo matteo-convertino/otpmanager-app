@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/manual/manual_bloc.dart';
 import 'package:otp_manager/bloc/manual/manual_event.dart';
 import 'package:otp_manager/di/injection.dart';
@@ -18,26 +17,11 @@ import '../bloc/icon_picker/icon_picker_bloc.dart';
 import '../bloc/manual/manual_state.dart';
 import 'icon_picker.dart';
 
-class Manual extends HookWidget {
+class Manual extends StatelessWidget {
   const Manual({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 150),
-    );
-    final animation = useAnimation(
-      IntTween(begin: 3, end: 0).animate(animationController),
-    );
-
-    useEffect(() {
-      if (context.read<ManualBloc>().state.codeTypeValue ==
-          OtpType.hotp.value) {
-        animationController.forward();
-      }
-      return null;
-    }, []);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -223,7 +207,7 @@ class Manual extends HookWidget {
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
                             ),
-                            value: state.codeTypeValue,
+                            value: state.type,
                             items: [
                               DropdownMenuItem(
                                 value: OtpType.totp.value,
@@ -234,61 +218,70 @@ class Manual extends HookWidget {
                                 child: const Text('Counter based (HOTP)'),
                               ),
                             ],
-                            onChanged: (String? value) {
-                              value == OtpType.hotp.value
-                                  ? animationController.forward()
-                                  : animationController.reverse();
-                              context.read<ManualBloc>().add(
-                                CodeTypeValueChanged(codeTypeValue: value!),
-                              );
-                            },
+                            onChanged: (String? value) => context
+                                .read<ManualBloc>()
+                                .add(TypeChanged(type: value!)),
                           ),
                         ),
                       ),
-                      if (animation != 0)
-                        Expanded(
-                          flex: animation,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              0,
-                              15.0,
-                              15.0,
-                              15.0,
-                            ),
-                            child: DropdownButtonFormField2(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Interval',
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                              ),
-                              value: state.intervalValue,
-                              items: [
-                                DropdownMenuItem(
-                                  value: OtpPeriod.p30.value,
-                                  child: const Text('30s'),
-                                ),
-                                DropdownMenuItem(
-                                  value: OtpPeriod.p45.value,
-                                  child: const Text('45s'),
-                                ),
-                                DropdownMenuItem(
-                                  value: OtpPeriod.p60.value,
-                                  child: const Text('60s'),
-                                ),
-                              ],
-                              onChanged: (int? value) {
-                                if (value == null) return;
-                                context.read<ManualBloc>().add(
-                                  IntervalValueChanged(intervalValue: value),
-                                );
-                              },
-                            ),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            0,
+                            15.0,
+                            15.0,
+                            15.0,
                           ),
+                          child: state.type == OtpType.totp.value
+                              ? DropdownButtonFormField2(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Interval',
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                    ),
+                                  ),
+                                  value: state.period,
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: OtpPeriod.p30.value,
+                                      child: const Text('30s'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: OtpPeriod.p45.value,
+                                      child: const Text('45s'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: OtpPeriod.p60.value,
+                                      child: const Text('60s'),
+                                    ),
+                                  ],
+                                  onChanged: (int? value) {
+                                    if (value == null) return;
+                                    context.read<ManualBloc>().add(
+                                      PeriodChanged(period: value),
+                                    );
+                                  },
+                                )
+                              : TextFormField(
+                                  initialValue: state.counter,
+                                  readOnly: state.isEdit,
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(),
+                                    labelText: 'Counter',
+                                    errorText: state.counterError,
+                                  ),
+                                  onChanged: (value) {
+                                    context.read<ManualBloc>().add(
+                                      CounterChanged(counter: value),
+                                    );
+                                  },
+                                ),
                         ),
+                      ),
                     ],
                   ),
                   Row(
@@ -312,7 +305,7 @@ class Manual extends HookWidget {
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
                             ),
-                            value: state.algorithmValue,
+                            value: state.algorithm,
                             items: [
                               DropdownMenuItem(
                                 value: OtpAlgorithm.sha1.value,
@@ -329,7 +322,7 @@ class Manual extends HookWidget {
                             ],
                             onChanged: (String? value) {
                               context.read<ManualBloc>().add(
-                                AlgorithmValueChanged(algorithmValue: value!),
+                                AlgorithmChanged(algorithm: value!),
                               );
                             },
                           ),
@@ -349,7 +342,7 @@ class Manual extends HookWidget {
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
                             ),
-                            value: state.digitsValue,
+                            value: state.digits,
                             items: [
                               DropdownMenuItem(
                                 value: OtpDigits.d4.value,
@@ -363,7 +356,7 @@ class Manual extends HookWidget {
                             onChanged: (int? value) {
                               if (value == null) return;
                               context.read<ManualBloc>().add(
-                                DigitsValueChanged(digitsValue: value),
+                                DigitsChanged(digits: value),
                               );
                             },
                           ),

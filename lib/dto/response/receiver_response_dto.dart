@@ -9,6 +9,7 @@ class ReceiverResponseDto {
     this.label,
     this.value,
     this.image,
+    this.isExternal,
   });
 
   factory ReceiverResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -18,6 +19,7 @@ class ReceiverResponseDto {
   final String? label;
   final String? value;
   final String? image;
+  final bool? isExternal;
 
   Map<String, dynamic> toJson() => _$ReceiverResponseDtoToJson(this);
 }
