@@ -20,7 +20,7 @@ class _PasswordApiRepository implements PasswordApiRepository {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<PasswordCheckResponseDto> check(
+  Future<PasswordResponseDto> check(
     PasswordCheckRequestDto passwordCheckRequestDto,
   ) async {
     final _extra = <String, dynamic>{};
@@ -28,7 +28,7 @@ class _PasswordApiRepository implements PasswordApiRepository {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(passwordCheckRequestDto.toJson());
-    final _options = _setStreamType<PasswordCheckResponseDto>(
+    final _options = _setStreamType<PasswordResponseDto>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -39,9 +39,39 @@ class _PasswordApiRepository implements PasswordApiRepository {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late PasswordCheckResponseDto _value;
+    late PasswordResponseDto _value;
     try {
-      _value = PasswordCheckResponseDto.fromJson(_result.data!);
+      _value = PasswordResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PasswordResponseDto> update(
+    PasswordUpdateRequestDto passwordUpdateRequestDto,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(passwordUpdateRequestDto.toJson());
+    final _options = _setStreamType<PasswordResponseDto>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PasswordResponseDto _value;
+    try {
+      _value = PasswordResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

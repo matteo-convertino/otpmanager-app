@@ -10,3 +10,4 @@ const String webViewerRoute = 'web_viewer';
 const String manualRoute = 'manual';
 const String authRoute = 'auth';
 const String passwordRoute = 'password';
+const String recoverPasswordRoute = 'recover_password';

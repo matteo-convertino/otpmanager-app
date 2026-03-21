@@ -5,12 +5,13 @@ import 'package:otp_manager/dto/error_dto.dart';
 import 'package:otp_manager/dto/request/account_sync_request_dto.dart';
 import 'package:otp_manager/dto/request/account_update_counter_request_dto.dart';
 import 'package:otp_manager/dto/request/password_check_request_dto.dart';
+import 'package:otp_manager/dto/request/password_update_request_dto.dart';
 import 'package:otp_manager/dto/request/shared_account_sync_request_dto.dart';
 import 'package:otp_manager/dto/request/shared_account_unlock_request_dto.dart';
 import 'package:otp_manager/dto/request/sync_request_dto.dart';
 import 'package:otp_manager/dto/response/account_response_dto.dart';
 import 'package:otp_manager/dto/response/accounts_sync_response_dto.dart';
-import 'package:otp_manager/dto/response/password_check_response_dto.dart';
+import 'package:otp_manager/dto/response/password_response_dto.dart';
 import 'package:otp_manager/dto/response/shared_account_response_dto.dart';
 import 'package:otp_manager/dto/response/shared_accounts_sync_response_dto.dart';
 import 'package:otp_manager/models/account.dart';
@@ -53,7 +54,7 @@ class NextcloudService {
 
   Future<void> checkPassword(
     PasswordCheckRequestDto passwordCheckRequestDto, {
-    required void Function(PasswordCheckResponseDto) onComplete,
+    required void Function(PasswordResponseDto) onComplete,
     void Function(ErrorDto)? onFailed,
     void Function()? onError,
   }) async {
@@ -210,6 +211,20 @@ class NextcloudService {
           : otpManagerApiClient.account.updateCounter(
               accountUpdateCounterRequestDto,
             ),
+      onComplete: onComplete,
+      onFailed: onFailed,
+      onError: onError,
+    );
+  }
+
+  Future<void> updatePassword(
+    PasswordUpdateRequestDto passwordUpdateRequestDto, {
+    required Function(PasswordResponseDto) onComplete,
+    void Function(ErrorDto)? onFailed,
+    void Function()? onError,
+  }) async {
+    return callApi(
+      api: () => otpManagerApiClient.password.update(passwordUpdateRequestDto),
       onComplete: onComplete,
       onFailed: onFailed,
       onError: onError,

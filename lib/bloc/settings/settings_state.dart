@@ -8,12 +8,14 @@ class SettingsState extends Equatable {
   final PackageInfo packageInfo;
   final String url;
   final int selectedAskTimeIndex;
+  final bool canRecoverPassword;
 
   const SettingsState({
     required this.copiedToClipboard,
     required this.packageInfo,
     required this.url,
     required this.selectedAskTimeIndex,
+    required this.canRecoverPassword,
   });
 
   SettingsState.initial(User user)
@@ -25,7 +27,8 @@ class SettingsState extends Equatable {
         buildNumber: 'Unknown',
       ),
       url = user.url,
-      selectedAskTimeIndex = user.passwordAskTime.index;
+      selectedAskTimeIndex = user.passwordAskTime.index,
+      canRecoverPassword = !user.isGuest;
 
   SettingsState copyWith({
     bool? copiedToClipboard,
@@ -37,6 +40,7 @@ class SettingsState extends Equatable {
       packageInfo: packageInfo ?? this.packageInfo,
       url: url,
       selectedAskTimeIndex: selectedAskTimeIndex ?? this.selectedAskTimeIndex,
+      canRecoverPassword: canRecoverPassword,
     );
   }
 

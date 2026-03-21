@@ -24,6 +24,8 @@ import 'package:otp_manager/bloc/otp_account/otp_account_bloc.dart' as _i650;
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart' as _i147;
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_bloc.dart'
     as _i935;
+import 'package:otp_manager/bloc/recover_password/recover_password_bloc.dart'
+    as _i447;
 import 'package:otp_manager/bloc/settings/settings_bloc.dart' as _i1050;
 import 'package:otp_manager/bloc/unlock_shared_account/unlock_shared_account_bloc.dart'
     as _i511;
@@ -141,12 +143,6 @@ extension GetItInjectableX on _i174.GetIt {
         logger: gh<_i974.Logger>(),
       ),
     );
-    gh.factory<_i272.AuthBloc>(
-      () => _i272.AuthBloc(
-        userRepository: gh<_i673.UserRepository>(),
-        nextcloudService: gh<_i674.NextcloudService>(),
-      ),
-    );
     gh.lazySingleton<_i1019.HomeBloc>(
       () => _i1019.HomeBloc(
         userRepository: gh<_i673.UserRepository>(),
@@ -169,6 +165,13 @@ extension GetItInjectableX on _i174.GetIt {
         account: account,
       ),
     );
+    gh.factoryParam<_i272.AuthBloc, bool, dynamic>(
+      (isRecoveringPassword, _) => _i272.AuthBloc(
+        userRepository: gh<_i673.UserRepository>(),
+        nextcloudService: gh<_i674.NextcloudService>(),
+        isRecoveringPassword: isRecoveringPassword,
+      ),
+    );
     gh.factoryParam<_i560.ManualBloc, Object?, dynamic>(
       (account, _) => _i560.ManualBloc(
         accountRepository: gh<_i129.AccountRepository>(),
@@ -185,6 +188,12 @@ extension GetItInjectableX on _i174.GetIt {
         accountRepository: gh<_i129.AccountRepository>(),
         nextcloudService: gh<_i674.NextcloudService>(),
         sharedAccountRepository: gh<_i736.SharedAccountRepository>(),
+      ),
+    );
+    gh.factory<_i447.RecoverPasswordBloc>(
+      () => _i447.RecoverPasswordBloc(
+        nextcloudService: gh<_i674.NextcloudService>(),
+        userRepository: gh<_i673.UserRepository>(),
       ),
     );
     gh.factoryParam<_i511.UnlockSharedAccountBloc, int, dynamic>(

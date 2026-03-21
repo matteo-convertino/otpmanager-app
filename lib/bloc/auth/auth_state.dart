@@ -8,6 +8,7 @@ class AuthState extends Equatable {
   final bool canShowFingerAuth;
   final bool isUserPasswordEmpty;
   final bool isCorrectPassword;
+  final bool isRecoveringPassword;
 
   const AuthState({
     required this.attempts,
@@ -17,9 +18,10 @@ class AuthState extends Equatable {
     required this.canShowFingerAuth,
     required this.isUserPasswordEmpty,
     required this.isCorrectPassword,
+    required this.isRecoveringPassword,
   });
 
-  const AuthState.initial()
+  const AuthState.initial({this.isRecoveringPassword = false})
     : attempts = 3,
       password = '',
       message = '',
@@ -45,6 +47,7 @@ class AuthState extends Equatable {
       canShowFingerAuth: canShowFingerAuth ?? this.canShowFingerAuth,
       isUserPasswordEmpty: isUserPasswordEmpty ?? this.isUserPasswordEmpty,
       isCorrectPassword: isCorrectPassword ?? this.isCorrectPassword,
+      isRecoveringPassword: isRecoveringPassword,
     );
   }
 

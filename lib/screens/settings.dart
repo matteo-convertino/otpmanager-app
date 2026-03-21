@@ -13,6 +13,7 @@ import 'package:otp_manager/service/snackbar_service.dart';
 import 'package:otp_manager/utils/enum/password_ask_time.dart';
 import 'package:otp_manager/utils/enum/theme_mode.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_bug_dialog.dart';
+import 'package:otp_manager/widgets/dialogs/otp_manager_recover_password_dialog.dart';
 import 'package:otp_manager/widgets/otp_manager_animate_change_icon.dart';
 import 'package:otp_manager/widgets/otp_manager_switch.dart';
 import 'package:otp_manager/widgets/tooltip/otp_manager_tooltip.dart';
@@ -28,20 +29,33 @@ class Settings extends HookWidget {
       return null;
     }, []);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        actions: [
-          IconButton(
-            onPressed: () => showOtpManagerBugDialog(context),
-            icon: const PhosphorIcon(PhosphorIconsRegular.bugBeetle),
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Settings'),
+            actions: [
+              if (state.canRecoverPassword)
+                IconButton(
+                  onPressed: () => showOtpManagerRecoverPasswordDialog(context),
+                  icon: const PhosphorIcon(PhosphorIconsRegular.key),
+                ),
+              IconButton(
+                onPressed: () => showOtpManagerBugDialog(context),
+                icon: const PhosphorIcon(PhosphorIconsRegular.bugBeetle),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, state) {
-          return ListView(
+          body: ListView(
             children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                child: Text(
+                  'Information',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+
               ListTile(
                 title: const Text('Nextcloud server'),
                 trailing: SizedBox(
@@ -59,6 +73,23 @@ class Settings extends HookWidget {
                   Clipboard.setData(ClipboardData(text: state.url));
                   getIt<SnackbarService>().showMessage('URL copied');
                 },
+              ),
+              ListTile(
+                title: const Text('Version number'),
+                trailing: Text(
+                  '${state.packageInfo.version}.${state.packageInfo.buildNumber}',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 16, top: 24, bottom: 8),
+                child: Text(
+                  'Preferences',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
               ListTile(
                 title: const Text('Theme mode'),
@@ -103,22 +134,6 @@ class Settings extends HookWidget {
                 ),
               ),
               ListTile(
-                title: const Text('Copy code with tap'),
-                trailing: OtpManagerSwitch(
-                  iconSelected: const PhosphorIcon(
-                    PhosphorIconsRegular.handTap,
-                  ),
-                  iconAny: const PhosphorIcon(PhosphorIconsRegular.handTap),
-                  onChanged: (value) =>
-                      context.read<OtpManagerBloc>().add(CopyWithTapToggled()),
-                  value: context.select(
-                    (OtpManagerBloc bloc) => bloc.state.copyWithTap,
-                  ),
-                ),
-                onTap: () =>
-                    context.read<OtpManagerBloc>().add(CopyWithTapToggled()),
-              ),
-              ListTile(
                 title: const Row(
                   spacing: 8,
                   children: [
@@ -142,6 +157,22 @@ class Settings extends HookWidget {
                 ),
                 onTap: () =>
                     context.read<OtpManagerBloc>().add(BlackThemeToggled()),
+              ),
+              ListTile(
+                title: const Text('Copy code with tap'),
+                trailing: OtpManagerSwitch(
+                  iconSelected: const PhosphorIcon(
+                    PhosphorIconsRegular.handTap,
+                  ),
+                  iconAny: const PhosphorIcon(PhosphorIconsRegular.handTap),
+                  onChanged: (value) =>
+                      context.read<OtpManagerBloc>().add(CopyWithTapToggled()),
+                  value: context.select(
+                    (OtpManagerBloc bloc) => bloc.state.copyWithTap,
+                  ),
+                ),
+                onTap: () =>
+                    context.read<OtpManagerBloc>().add(CopyWithTapToggled()),
               ),
               ListTile(
                 title: const Text('Open search bar on startup'),
@@ -218,20 +249,10 @@ class Settings extends HookWidget {
                   ),
                 ),
               ),
-              ListTile(
-                title: const Text('Version number'),
-                trailing: Text(
-                  '${state.packageInfo.version}.${state.packageInfo.buildNumber}',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

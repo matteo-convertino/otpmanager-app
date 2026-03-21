@@ -11,6 +11,8 @@ import 'package:otp_manager/bloc/auth/auth_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/dto/request/password_check_request_dto.dart';
 import 'package:otp_manager/repository/local/interface/user_repository.dart';
+import 'package:otp_manager/routing/constants.dart';
+import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/service/nextcloud_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
 
@@ -20,13 +22,17 @@ import '../../models/user.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserRepository userRepository;
   final NextcloudService nextcloudService;
+  final bool isRecoveringPassword;
 
   late final User _user = userRepository.get()!;
 
   final _localAuth = LocalAuthentication();
 
-  AuthBloc({required this.userRepository, required this.nextcloudService})
-    : super(const AuthState.initial()) {
+  AuthBloc({
+    required this.userRepository,
+    required this.nextcloudService,
+    @factoryParam required this.isRecoveringPassword,
+  }) : super(AuthState.initial(isRecoveringPassword: isRecoveringPassword)) {
     on<Authenticated>(_onAuthenticated);
     on<PasswordSubmit>(_onPasswordSubmit);
     on<PasswordChanged>(_onPasswordChanged);
@@ -39,7 +45,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onInitAuth(InitAuth event, Emitter<AuthState> emit) async {
     final hasBiometrics = await _hasBiometrics();
-    final isDeviceSupported = await _localAuth.isDeviceSupported();
+    final isDeviceSupported =
+        await _localAuth.isDeviceSupported() &&
+        _user.password != null &&
+        _user.iv != null;
 
     emit(
       state.copyWith(
@@ -48,7 +57,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
 
-    if (hasBiometrics) add(ShowDeviceAuth());
+    if (!isDeviceSupported && isRecoveringPassword) {
+      getIt<NavigationService>().replaceScreen(recoverPasswordRoute);
+    } else if (hasBiometrics) {
+      add(ShowDeviceAuth());
+    }
   }
 
   void _onResetAttempts(ResetAttempts event, Emitter<AuthState> emit) {

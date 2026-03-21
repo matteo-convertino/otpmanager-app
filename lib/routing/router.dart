@@ -6,8 +6,10 @@ import 'package:otp_manager/bloc/auth/auth_bloc.dart';
 import 'package:otp_manager/bloc/login/login_bloc.dart';
 import 'package:otp_manager/bloc/manual/manual_bloc.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_bloc.dart';
+import 'package:otp_manager/bloc/recover_password/recover_password_bloc.dart';
 import 'package:otp_manager/bloc/settings/settings_bloc.dart';
 import 'package:otp_manager/di/injection.dart';
+import 'package:otp_manager/screens/recover_password.dart';
 
 import '../bloc/home/home_bloc.dart';
 import '../bloc/web_viewer/web_viewer_bloc.dart';
@@ -28,7 +30,7 @@ class Router {
       case homeRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<HomeBloc>(
+          builder: (_) => BlocProvider(
             create: (context) => getIt<HomeBloc>(),
             child: const Home(),
           ),
@@ -41,15 +43,15 @@ class Router {
       case settingsRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<SettingsBloc>(
+          builder: (_) => BlocProvider(
             create: (context) => getIt<SettingsBloc>(),
-            child: Settings(),
+            child: const Settings(),
           ),
         );
       case qrCodeScannerRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<QrCodeScannerBloc>(
+          builder: (_) => BlocProvider(
             create: (context) => getIt<QrCodeScannerBloc>(),
             child: QrCodeScanner(),
           ),
@@ -57,7 +59,7 @@ class Router {
       case accountDetailsRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<AccountDetailsBloc>(
+          builder: (_) => BlocProvider(
             create: (context) =>
                 getIt<AccountDetailsBloc>(param1: settings.arguments),
             child: const AccountDetails(),
@@ -66,7 +68,7 @@ class Router {
       case loginRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<LoginBloc>(
+          builder: (_) => BlocProvider(
             create: (context) => getIt<LoginBloc>(),
             child: const Login(),
           ),
@@ -74,7 +76,7 @@ class Router {
       case webViewerRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<WebViewerBloc>(
+          builder: (_) => BlocProvider(
             create: (context) =>
                 getIt<WebViewerBloc>(param1: settings.arguments),
             child: const WebViewer(),
@@ -86,7 +88,7 @@ class Router {
 
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<ManualBloc>(
+          builder: (_) => BlocProvider(
             create: (context) => getIt<ManualBloc>(param1: account),
             child: const Manual(),
           ),
@@ -94,9 +96,18 @@ class Router {
       case authRoute:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider<AuthBloc>(
-            create: (context) => getIt<AuthBloc>(),
+          builder: (_) => BlocProvider(
+            create: (context) =>
+                getIt<AuthBloc>(param1: settings.arguments ?? false),
             child: const Auth(),
+          ),
+        );
+      case recoverPasswordRoute:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<RecoverPasswordBloc>(),
+            child: const RecoverPassword(),
           ),
         );
       default:

@@ -10,15 +10,15 @@ class OtpManagerAuthInput extends HookWidget {
   const OtpManagerAuthInput({
     super.key,
     required this.onChanged,
-    required this.onSubmit,
-    required this.enabled,
+    this.onSubmit,
+    this.enabled = true,
     required this.errorMsg,
     required this.label,
     this.helper,
   });
 
   final Function(String) onChanged;
-  final Function() onSubmit;
+  final Function()? onSubmit;
   final bool enabled;
   final String errorMsg;
   final String label;
@@ -54,7 +54,7 @@ class OtpManagerAuthInput extends HookWidget {
               filled: true,
               fillColor: Theme.brightnessOf(context) == Brightness.dark
                   ? Colors.grey.shade800
-                  : null,
+                  : Colors.grey.shade50,
               isDense: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -70,18 +70,20 @@ class OtpManagerAuthInput extends HookWidget {
                       : Theme.of(context).colorScheme.primary,
                 ),
               ),
-              suffixIcon: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
-                child: IconButton(
-                  onPressed: onSubmit,
-                  icon: PhosphorIcon(
-                    PhosphorIconsRegular.arrowRight,
-                    color: errorMsg.isNotEmpty
-                        ? Colors.red
-                        : Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
+              suffixIcon: onSubmit == null
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: IconButton(
+                        onPressed: onSubmit,
+                        icon: PhosphorIcon(
+                          PhosphorIconsRegular.arrowRight,
+                          color: errorMsg.isNotEmpty
+                              ? Colors.red
+                              : Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
               errorText: errorMsg.isNotEmpty ? errorMsg : null,
               errorMaxLines: 5,
             ),

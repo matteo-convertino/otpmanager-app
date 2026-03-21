@@ -40,27 +40,37 @@ class Auth extends HookWidget {
         builder: (context, state) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: .stretch,
             children: [
               OtpManagerUnlockLottie(
                 isUnlocked: state.isCorrectPassword,
                 onEnd: () {
-                  if (!enabled.value) {
-                    getIt<NavigationService>().replaceScreen(homeRoute);
-                  }
+                  if (enabled.value) return;
+
+                  getIt<NavigationService>().replaceScreen(
+                    state.isRecoveringPassword
+                        ? recoverPasswordRoute
+                        : homeRoute,
+                  );
                 },
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),
-                child: OtpManagerAuthInput(
-                  label: 'Password',
-                  onChanged: (value) => context.read<AuthBloc>().add(
-                    PasswordChanged(password: value),
-                  ),
-                  onSubmit: () =>
-                      context.read<AuthBloc>().add(PasswordSubmit()),
-                  enabled: enabled.value,
-                  errorMsg: state.message,
-                ),
+                child: state.isRecoveringPassword
+                    ? const Text(
+                        'Please verify your identity before changing your password',
+                        textAlign: .center,
+                      )
+                    : OtpManagerAuthInput(
+                        label: 'Password',
+                        onChanged: (value) => context.read<AuthBloc>().add(
+                          PasswordChanged(password: value),
+                        ),
+                        onSubmit: () =>
+                            context.read<AuthBloc>().add(PasswordSubmit()),
+                        enabled: enabled.value,
+                        errorMsg: state.message,
+                      ),
               ),
               if (state.canShowDeviceAuth)
                 IconButton(

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:otp_manager/dto/request/password_check_request_dto.dart';
-import 'package:otp_manager/dto/response/password_check_response_dto.dart';
+import 'package:otp_manager/dto/request/password_update_request_dto.dart';
+import 'package:otp_manager/dto/response/password_response_dto.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'generated/password_api_repository.g.dart';
@@ -11,7 +12,12 @@ abstract class PasswordApiRepository {
       _PasswordApiRepository;
 
   @POST('/check')
-  Future<PasswordCheckResponseDto> check(
+  Future<PasswordResponseDto> check(
     @Body() PasswordCheckRequestDto passwordCheckRequestDto,
+  );
+
+  @PUT('')
+  Future<PasswordResponseDto> update(
+    @Body() PasswordUpdateRequestDto passwordUpdateRequestDto,
   );
 }

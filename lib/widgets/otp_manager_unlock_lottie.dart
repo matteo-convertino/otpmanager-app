@@ -39,6 +39,7 @@ class OtpManagerUnlockLottie extends HookWidget {
       'assets/lottie/unlock.json',
       controller: controller,
       width: 125,
+      height: 125
     );
   }
 }
