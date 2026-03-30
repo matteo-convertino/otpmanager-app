@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/repository/api/otp_manager_api_client.dart';
@@ -13,6 +14,7 @@ import 'otp_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
   await configureDependencies();
 
   // ignore bad server certificate

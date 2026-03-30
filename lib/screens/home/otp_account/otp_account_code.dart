@@ -18,6 +18,9 @@ class OtpAccountCode extends HookWidget {
   final dynamic account; // Account | SharedAccount
   final ValueNotifier<bool> blurredCode;
 
+  String _groupOtpCode(String code) =>
+      '${code.substring(0, code.length ~/ 2)} ${code.substring(code.length ~/ 2)}';
+
   @override
   Widget build(BuildContext context) {
     final clickToRevealCodes = context.select(
@@ -27,7 +30,8 @@ class OtpAccountCode extends HookWidget {
     return BlocBuilder<OtpAccountBloc, OtpAccountState>(
       builder: (context, state) {
         final otpCode = Text(
-          state.otpMessage ?? state.otpCode ?? '- ' * account.digits!,
+          state.otpMessage ??
+              _groupOtpCode(state.otpCode ?? '- ' * account.digits!),
           style: TextStyle(
             fontSize: state.otpMessage == null ? 28 : 14,
             color: Theme.of(context).colorScheme.primary,

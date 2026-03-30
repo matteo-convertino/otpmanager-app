@@ -27,9 +27,9 @@ class OtpManagerUnlockLottie extends HookWidget {
 
     useEffect(() {
       if (!isUnlocked) {
-        controller.animateTo(0.25, duration: const Duration(seconds: 1));
+        controller.animateTo(0.25, duration: const Duration(milliseconds: 800));
       } else {
-        controller.animateTo(1.0, duration: const Duration(seconds: 2));
+        controller.animateTo(1.0, duration: const Duration(milliseconds: 1200));
       }
 
       return null;
@@ -39,7 +39,7 @@ class OtpManagerUnlockLottie extends HookWidget {
       'assets/lottie/unlock.json',
       controller: controller,
       width: 125,
-      height: 125
+      height: 125,
     );
   }
 }
