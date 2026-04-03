@@ -45,9 +45,7 @@ class RecoverPasswordBloc
           number: RegExp(r'\d').hasMatch(event.newPassword),
           lowercase: RegExp(r'[a-z]').hasMatch(event.newPassword),
           uppercase: RegExp(r'[A-Z]').hasMatch(event.newPassword),
-          specialChar: RegExp(
-            r"[$&+,:;=?@#|'<>.^*()%!-]",
-          ).hasMatch(event.newPassword),
+          specialChar: RegExp(r'[!-/:-@[-`{-~]').hasMatch(event.newPassword),
         ),
         errorMsg: '',
       ),
