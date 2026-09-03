@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/otp_manager/otp_manager_bloc.dart';
 import 'package:otp_manager/utils/sync_status.dart';
 import 'package:otp_manager/widgets/otp_manager_animate_change_icon.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';

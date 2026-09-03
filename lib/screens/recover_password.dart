@@ -8,7 +8,7 @@ import 'package:otp_manager/bloc/recover_password/recover_password_event.dart';
 import 'package:otp_manager/bloc/recover_password/recover_password_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../widgets/otp_manager_auth_input.dart';
 

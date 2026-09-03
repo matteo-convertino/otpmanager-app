@@ -17,7 +17,7 @@ import 'package:otp_manager/widgets/dialogs/otp_manager_recover_password_dialog.
 import 'package:otp_manager/widgets/otp_manager_animate_change_icon.dart';
 import 'package:otp_manager/widgets/otp_manager_switch.dart';
 import 'package:otp_manager/widgets/tooltip/otp_manager_tooltip.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class Settings extends HookWidget {
   const Settings({super.key});
@@ -145,10 +145,8 @@ class Settings extends HookWidget {
                   ],
                 ),
                 trailing: OtpManagerSwitch(
-                  iconSelected: const PhosphorIcon(PhosphorIconsRegular.circle),
-                  iconAny: const PhosphorIcon(
-                    PhosphorIconsRegular.circleDashed,
-                  ),
+                  iconSelected: const Icon(PhosphorIconsRegular.circle),
+                  iconAny: const Icon(PhosphorIconsRegular.circleDashed),
                   onChanged: (value) =>
                       context.read<OtpManagerBloc>().add(BlackThemeToggled()),
                   value: context.select(
@@ -161,10 +159,8 @@ class Settings extends HookWidget {
               ListTile(
                 title: const Text('Copy code with tap'),
                 trailing: OtpManagerSwitch(
-                  iconSelected: const PhosphorIcon(
-                    PhosphorIconsRegular.handTap,
-                  ),
-                  iconAny: const PhosphorIcon(PhosphorIconsRegular.handTap),
+                  iconSelected: const Icon(PhosphorIconsRegular.handTap),
+                  iconAny: const Icon(PhosphorIconsRegular.handTap),
                   onChanged: (value) =>
                       context.read<OtpManagerBloc>().add(CopyWithTapToggled()),
                   value: context.select(
@@ -177,12 +173,10 @@ class Settings extends HookWidget {
               ListTile(
                 title: const Text('Open search bar on startup'),
                 trailing: OtpManagerSwitch(
-                  iconSelected: const PhosphorIcon(
+                  iconSelected: const Icon(
                     PhosphorIconsRegular.magnifyingGlass,
                   ),
-                  iconAny: const PhosphorIcon(
-                    PhosphorIconsRegular.magnifyingGlass,
-                  ),
+                  iconAny: const Icon(PhosphorIconsRegular.magnifyingGlass),
                   onChanged: (value) => context.read<OtpManagerBloc>().add(
                     OpenSearchBarOnStartupToggled(),
                   ),
@@ -210,8 +204,8 @@ class Settings extends HookWidget {
                   ],
                 ),
                 trailing: OtpManagerSwitch(
-                  iconSelected: const PhosphorIcon(PhosphorIconsRegular.eye),
-                  iconAny: const PhosphorIcon(PhosphorIconsRegular.eyeSlash),
+                  iconSelected: const Icon(PhosphorIconsRegular.eye),
+                  iconAny: const Icon(PhosphorIconsRegular.eyeSlash),
                   onChanged: (value) => context.read<OtpManagerBloc>().add(
                     ClickToRevealCodesToggled(),
                   ),

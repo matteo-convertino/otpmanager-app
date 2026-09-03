@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/login/login_bloc.dart';
 import 'package:otp_manager/bloc/login/login_event.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 import '../bloc/login/login_state.dart';

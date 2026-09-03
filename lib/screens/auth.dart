@@ -10,7 +10,7 @@ import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/service/snackbar_service.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../widgets/otp_manager_auth_input.dart';
 import '../widgets/otp_manager_unlock_lottie.dart';

@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.2.2+34
+version: 2.2.3+35
 
 environment:
   sdk: ^3.10.7
@@ -39,7 +39,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter_slidable: ^4.0.3
   circular_countdown_timer: ^0.2.4
-  simple_icons: ^14.6.1
+  simple_icons: ^16.23.0
   arrow_path: ^3.1.0
   pretty_qr_code: ^3.6.0
   objectbox: ^5.2.0
@@ -73,7 +73,7 @@ dependencies:
   encrypter_plus: ^5.1.0
   crypto: ^3.0.7
   lottie: ^3.3.2
-  phosphor_flutter: ^2.1.0
+  phosphoricons_flutter: ^1.0.0
   spoiler_widget:
     git:
       url: https://github.com/matteo-convertino/spoiler_widget

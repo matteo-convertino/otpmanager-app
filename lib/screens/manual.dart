@@ -11,7 +11,7 @@ import 'package:otp_manager/utils/enum/otp_digits.dart';
 import 'package:otp_manager/utils/enum/otp_period.dart';
 import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../bloc/icon_picker/icon_picker_bloc.dart';
 import '../bloc/manual/manual_state.dart';

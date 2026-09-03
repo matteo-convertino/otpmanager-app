@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_bloc.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_event.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_state.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class IconPicker extends HookWidget {
   const IconPicker({super.key});

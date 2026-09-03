@@ -5,7 +5,7 @@ import 'package:otp_manager/bloc/account_details/account_details_bloc.dart';
 import 'package:otp_manager/bloc/account_details/account_details_state.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/models/shared_account.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../bloc/account_details/account_details_event.dart';
 import '../routing/constants.dart';

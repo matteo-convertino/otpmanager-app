@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/routing/constants.dart';
 import 'package:otp_manager/routing/navigation_service.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 void showOtpManagerRecoverPasswordDialog(BuildContext context) => showDialog(
   context: context,

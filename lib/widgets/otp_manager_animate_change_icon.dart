@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class OtpManagerAnimateChangeIcon extends StatefulWidget {
   const OtpManagerAnimateChangeIcon({
@@ -17,7 +18,7 @@ class OtpManagerAnimateChangeIcon extends StatefulWidget {
   }) : assert(icons.length >= 2, 'icons must contain at least 2 items');
 
   /// The list of icons to show cyclically.
-  final List<Icon> icons;
+  final List<PhosphorIcon> icons;
 
   /// Animation duration.
   final Duration animateDuration;
@@ -170,8 +171,8 @@ class OtpManagerAnimateChangeIconState
           ),
         );
 
-    final Icon currentIcon = widget.icons[_currentIndex];
-    final Icon nextIcon = widget.icons[_nextIndex];
+    final currentIcon = widget.icons[_currentIndex];
+    final nextIcon = widget.icons[_nextIndex];
 
     return GestureDetector(
       onTap: () {

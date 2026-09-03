@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_manager/screens/home/empty_data.dart';
 import 'package:otp_manager/screens/home/otp_accounts_list.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';

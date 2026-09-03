@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:otp_manager/di/injection.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_logout.dart';
 import 'package:otp_manager/widgets/otp_manager_animated_gradient.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../routing/constants.dart';
 import '../../routing/navigation_service.dart';

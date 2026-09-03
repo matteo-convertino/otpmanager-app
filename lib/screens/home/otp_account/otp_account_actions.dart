@@ -13,7 +13,7 @@ import 'package:otp_manager/service/snackbar_service.dart';
 import 'package:otp_manager/utils/enum/otp_type.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_unlock_shared_account_dialog.dart';
 import 'package:otp_manager/widgets/tooltip/otp_manager_tooltip.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class OtpAccountActions extends StatelessWidget {
   const OtpAccountActions({

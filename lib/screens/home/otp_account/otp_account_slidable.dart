@@ -9,7 +9,7 @@ import 'package:otp_manager/routing/navigation_service.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_delete_dialog.dart';
 import 'package:otp_manager/widgets/dialogs/otp_manager_qr_code_dialog.dart';
 import 'package:otp_manager/widgets/otp_manager_slidable_action.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class OtpAccountSlidable extends StatelessWidget {
   const OtpAccountSlidable({
@@ -33,7 +33,7 @@ class OtpAccountSlidable extends StatelessWidget {
         children: [
           OtpManagerSlidableAction(
             label: 'Edit',
-            icon: const PhosphorIcon(PhosphorIconsRegular.pencilSimple),
+            icon: const Icon(PhosphorIconsRegular.pencilSimple),
             backgroundColor: Theme.of(context).colorScheme.primary,
             onPressed: () => getIt<NavigationService>().navigateTo(
               manualRoute,
@@ -43,13 +43,13 @@ class OtpAccountSlidable extends StatelessWidget {
           if (showQrAction)
             OtpManagerSlidableAction(
               label: 'QR',
-              icon: const PhosphorIcon(PhosphorIconsRegular.qrCode),
+              icon: const Icon(PhosphorIconsRegular.qrCode),
               backgroundColor: Colors.grey,
               onPressed: () => showOtpManagerQrCodeDialog(context, account),
             ),
           OtpManagerSlidableAction(
             label: 'Delete',
-            icon: const PhosphorIcon(PhosphorIconsRegular.trashSimple),
+            icon: const Icon(PhosphorIconsRegular.trashSimple),
             backgroundColor: Colors.red,
             onPressed: () => showOtpManagerDeleteDialog(
               context,
