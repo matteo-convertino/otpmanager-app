@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 class OtpIconsHelper {
+  static Map<String, Icon> find(String toFind) {
+    toFind = toFind.replaceAll(' ', '').toLowerCase();
+
+    return Map.from(simpleIcons)
+      ..removeWhere((key, value) => !key.contains(toFind));
+  }
+
   static String findFirst(String toFind) {
     toFind = toFind.replaceAll(' ', '').toLowerCase();
 

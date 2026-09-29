@@ -8,8 +8,8 @@ abstract class BaseAccountRepository<AccountType> {
     box.put(account);
   }
 
-  void update(AccountType account) {
-    (account as dynamic).toUpdate = true;
+  void update(AccountType account, {bool markForSync = true}) {
+    if (markForSync) (account as dynamic).toUpdate = true;
     box.put(account);
   }
 

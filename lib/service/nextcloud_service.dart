@@ -84,7 +84,7 @@ class NextcloudService {
 
     for (var e in accounts) {
       e.encryptedSecret ??= encryption.encrypt(data: e.secret);
-      accountRepository.add(e);
+      accountRepository.update(e, markForSync: false);
     }
 
     final appInfo = await PackageInfo.fromPlatform();

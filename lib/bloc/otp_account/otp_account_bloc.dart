@@ -102,9 +102,9 @@ class OtpAccountBloc extends Bloc<OtpAccountEvent, OtpAccountState> {
         event.account.counter = res.counter;
 
         if (event.account is SharedAccount) {
-          sharedAccountRepository.add(event.account);
+          sharedAccountRepository.update(event.account, markForSync: false);
         } else {
-          accountRepository.add(event.account);
+          accountRepository.update(event.account, markForSync: false);
         }
 
         _getOtpCodeOrMessage(emit, event.account);

@@ -33,12 +33,7 @@ class IconPickerBloc extends Bloc<IconPickerEvent, IconPickerState> {
     if (event.value.isEmpty) {
       emit(state.copyWith(icons: OtpIconsHelper.simpleIcons));
     } else {
-      emit(
-        state.copyWith(
-          icons: Map.from(OtpIconsHelper.simpleIcons)
-            ..removeWhere((k, v) => !k.contains(event.value)),
-        ),
-      );
+      emit(state.copyWith(icons: OtpIconsHelper.find(event.value)));
     }
   }
 }
