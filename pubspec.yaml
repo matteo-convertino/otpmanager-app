@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.2.3+35
+version: 2.2.4+36
 
 environment:
   sdk: ^3.10.7
@@ -55,6 +55,7 @@ dependencies:
   dio: ^5.9.1
   json_annotation: ^4.10.0
   mobile_scanner: ^7.1.4
+  image: ^4.7.2
   image_picker: ^1.2.1
   local_auth: ^3.0.0
   path_provider: ^2.1.5
@@ -83,6 +84,7 @@ dependencies:
       url: https://github.com/matteo-convertino/el_tooltip
       ref: main
   google_fonts: ^8.0.2
+  shared_preferences_android: ^2.4.21
 
 dev_dependencies:
   flutter_test:
@@ -121,7 +123,7 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
-    - assets/fonts/
+    - assets/fonts/Roboto/static/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

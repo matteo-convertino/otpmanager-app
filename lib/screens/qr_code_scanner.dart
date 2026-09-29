@@ -6,6 +6,8 @@ import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_bloc.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_event.dart';
 import 'package:otp_manager/bloc/qr_code_scanner/qr_code_scanner_state.dart';
 import 'package:otp_manager/hooks/mobile_scanner_controller_hook.dart';
+import 'package:otp_manager/utils/helper/qr_code_scanner_helper.dart';
+import 'package:otp_manager/hooks/mobile_scanner_controller_hook.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../widgets/otp_manager_qr_scanner_overlay_shape.dart';
@@ -33,7 +35,8 @@ class QrCodeScanner extends HookWidget {
         listener: (context, state) async {
           if (state.image == null) return;
 
-          final barcode = await cameraController.analyzeImage(
+          final barcode = await QrCodeScannerHelper.analyzeImage(
+            cameraController,
             state.image!.path,
           );
 

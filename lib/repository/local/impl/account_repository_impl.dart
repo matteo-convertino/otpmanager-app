@@ -13,25 +13,28 @@ class AccountRepositoryImpl extends AccountRepository {
   AccountRepositoryImpl({required this.logger});
 
   @override
+  void add(Account account) {
+    if (account.iconKey == 'default' &&
+        account.issuer != null &&
+        account.issuer!.isNotEmpty) {
+      final iconKey = OtpIconsHelper.findFirst(account.issuer!);
+
+      if (iconKey != 'default') {
+        account.iconKey = iconKey;
+        account.toUpdate = true;
+      }
+    }
+
+    super.add(account);
+  }
+
+  @override
   void addNew(List<Account> accounts) {
     logger.d('AccountRepositoryImpl._addNew start');
 
-    for (var account in accounts) {
-      String iconKey = 'default';
-      bool toUpdate = false;
-
-      if (account.iconKey != 'default') {
-        iconKey = account.iconKey;
-      } else if (account.issuer != null && account.issuer!.isNotEmpty) {
-        iconKey = OtpIconsHelper.findFirst(account.issuer!);
-        toUpdate = iconKey != 'default';
-      }
-
-      account.iconKey = iconKey;
-      account.toUpdate = toUpdate;
+    for (final account in accounts) {
       account.isNew = false;
-
-      super.box.put(account);
+      add(account);
     }
   }
 

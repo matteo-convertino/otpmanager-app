@@ -90,37 +90,62 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(GetAccounts());
   }
 
-  List mergeResults(
-    List<Account> accounts,
-    List<SharedAccount> sharedAccounts,
-  ) {
-    List result = [...accounts, ...sharedAccounts];
-
-    result.sort((a, b) => a.position.compareTo(b.position));
-
-    return result;
-  }
-
   void _onGetAccounts(GetAccounts event, Emitter<HomeState> emit) {
-    if (state.searchBarValue.isEmpty) {
-      emit(
-        state.copyWith(
-          accounts: mergeResults(
-            accountRepository.getVisible(),
-            sharedAccountRepository.getVisible(),
-          ),
-        ),
-      );
+    final searchValue = state.searchBarValue;
+
+    List accounts = searchValue.isEmpty
+        ? [
+            ...accountRepository.getVisible(),
+            ...sharedAccountRepository.getVisible(),
+          ]
+        : [
+            ...accountRepository.getVisibleFiltered(searchValue),
+            ...sharedAccountRepository.getVisibleFiltered(searchValue),
+          ];
+
+    if (state.sortedByNameDesc != null) {
+      accounts.sort((a, b) {
+        final comparison = a.name.compareTo(b.name);
+        return state.sortedByNameDesc! ? -comparison : comparison;
+      });
+    } else if (state.sortedByIssuerDesc != null) {
+      accounts.sort((a, b) {
+        final comparison = (a.issuer ?? '').compareTo(b.issuer ?? '');
+        return state.sortedByIssuerDesc! ? -comparison : comparison;
+      });
+    } else if (state.sortedByIdDesc != null) {
+      accounts.sort((a, b) {
+        final comparison = a.id.compareTo(b.id);
+        return state.sortedByIdDesc! ? comparison : -comparison;
+      });
     } else {
-      emit(
-        state.copyWith(
-          accounts: mergeResults(
-            accountRepository.getVisibleFiltered(state.searchBarValue),
-            sharedAccountRepository.getVisibleFiltered(state.searchBarValue),
-          ),
-        ),
-      );
+      accounts.sort((a, b) => a.position.compareTo(b.position));
     }
+
+    var hasUpdatedAccounts = false;
+
+    if (state.sortedByNameDesc != null ||
+        state.sortedByIssuerDesc != null ||
+        state.sortedByIdDesc != null) {
+      for (var i = 0; i < accounts.length; i++) {
+        final account = accounts[i];
+
+        if (account.position == i) continue;
+
+        account.position = i;
+        hasUpdatedAccounts = true;
+
+        if (account is Account) {
+          accountRepository.update(account);
+        } else if (account is SharedAccount) {
+          sharedAccountRepository.update(account);
+        }
+      }
+    }
+
+    if (hasUpdatedAccounts) add(NextcloudSync());
+
+    emit(state.copyWith(accounts: accounts));
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {
@@ -162,14 +187,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onSortById(SortById event, Emitter<HomeState> emit) {
-    List<Account> accounts = accountRepository.getVisible();
-
-    if (state.sortedByIdDesc == null || state.sortedByIdDesc == true) {
-      accounts.sort((b, a) => a.id.compareTo(b.id));
-    } else {
-      accounts.sort((a, b) => a.id.compareTo(b.id));
-    }
-
     emit(
       state.copyWith(
         sortedByIdDesc: state.sortedByIdDesc == null
@@ -180,18 +197,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ),
     );
 
-    _updateSorting(accounts);
+    _updateSorting();
   }
 
   void _onSortByName(SortByName event, Emitter<HomeState> emit) {
-    List<Account> accounts = accountRepository.getVisible();
-
-    if (state.sortedByNameDesc == null || state.sortedByNameDesc == true) {
-      accounts.sort((a, b) => a.name.compareTo(b.name));
-    } else {
-      accounts.sort((b, a) => a.name.compareTo(b.name));
-    }
-
     emit(
       state.copyWith(
         sortedByNameDesc: state.sortedByNameDesc == null
@@ -202,18 +211,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ),
     );
 
-    _updateSorting(accounts);
+    _updateSorting();
   }
 
   void _onSortByIssuer(SortByIssuer event, Emitter<HomeState> emit) {
-    List<Account> accounts = accountRepository.getVisible();
-
-    if (state.sortedByIssuerDesc == null || state.sortedByIssuerDesc == true) {
-      accounts.sort((a, b) => (a.issuer ?? '').compareTo(b.issuer ?? ''));
-    } else {
-      accounts.sort((b, a) => (a.issuer ?? '').compareTo(b.issuer ?? ''));
-    }
-
     emit(
       state.copyWith(
         sortedByIssuerDesc: state.sortedByIssuerDesc == null
@@ -224,20 +225,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ),
     );
 
-    _updateSorting(accounts);
+    _updateSorting();
   }
 
-  void _updateSorting(List<Account> accounts) {
+  void _updateSorting() {
     final user = userRepository.get()!;
     user.sortedByNameDesc = state.sortedByNameDesc;
     user.sortedByIssuerDesc = state.sortedByIssuerDesc;
     user.sortedByIdDesc = state.sortedByIdDesc;
     userRepository.update(user);
-
-    for (int i = 0; i < accounts.length; i++) {
-      accounts[i].position = i;
-      accountRepository.update(accounts[i]);
-    }
 
     add(NextcloudSync());
   }
