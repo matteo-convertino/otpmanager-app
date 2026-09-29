@@ -53,6 +53,11 @@ class QrCodeScannerBloc extends Bloc<QrCodeScannerEvent, QrCodeScannerState> {
     BarcodeCaptured event,
     Emitter<QrCodeScannerState> emit,
   ) async {
+    if (event.barcode.barcodes.isEmpty) {
+      emit(state.copyWith(error: 'No QR code found in the image'));
+      return;
+    }
+
     final raw = event.barcode.barcodes.first.rawValue;
 
     if (raw == null || !OtpUriDecoderHelper.isValid(raw)) {

@@ -55,6 +55,7 @@ dependencies:
   dio: ^5.9.1
   json_annotation: ^4.10.0
   mobile_scanner: ^7.1.4
+  image: ^4.7.2
   image_picker: ^1.2.1
   local_auth: ^3.0.0
   path_provider: ^2.1.5
