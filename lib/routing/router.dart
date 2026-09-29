@@ -57,7 +57,7 @@ class Router {
           settings: settings,
           builder: (_) => BlocProvider(
             create: (_) => getIt<QrCodeScannerBloc>(),
-            child: QrCodeScanner(),
+            child: const QrCodeScanner(),
           ),
         );
       case accountDetailsRoute:
