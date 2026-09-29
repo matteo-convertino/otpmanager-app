@@ -101,6 +101,11 @@ dev_dependencies:
   json_serializable: ^6.12.0
   injectable_generator: ^2.12.0
 
+# 2.6.0 uses an Objective-C native asset whose framework path is not resolved
+# correctly by current Flutter versions on recent iOS simulators.
+dependency_overrides:
+  path_provider_foundation: 2.5.1
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
