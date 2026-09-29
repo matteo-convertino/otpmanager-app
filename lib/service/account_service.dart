@@ -109,10 +109,9 @@ class AccountService {
     List<SharedAccount> sharedAccountsBetween;
 
     int difference;
-    int newPosition = newIndex;
+    final newPosition = newIndex;
 
     if (newIndex > oldIndex) {
-      newPosition -= 1;
       accountsBetween = accountRepository.getBetweenPositions(
         oldIndex,
         newPosition,

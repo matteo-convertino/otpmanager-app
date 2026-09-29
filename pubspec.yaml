@@ -116,7 +116,7 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
-    - assets/fonts/
+    - assets/fonts/Roboto/static/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
