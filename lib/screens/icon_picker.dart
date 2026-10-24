@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_bloc.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_event.dart';
 import 'package:otp_manager/bloc/icon_picker/icon_picker_state.dart';
+import 'package:otp_manager/utils/helper/otp_icons_helper.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class IconPicker extends HookWidget {
@@ -65,7 +66,6 @@ class IconPicker extends HookWidget {
                     itemCount: state.iconsBestMatch.length,
                     itemBuilder: (BuildContext context, int index) {
                       String key = state.iconsBestMatch.keys.elementAt(index);
-                      Icon icon = state.iconsBestMatch[key]!;
 
                       return InkWell(
                         onTap: () => Navigator.pop(context, key),
@@ -75,7 +75,7 @@ class IconPicker extends HookWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              icon,
+                              OtpIconsHelper.getIcon(context, key),
                               Positioned(
                                 bottom: 5,
                                 width: 70,
@@ -107,7 +107,6 @@ class IconPicker extends HookWidget {
                   itemCount: state.icons.length,
                   itemBuilder: (BuildContext context, int index) {
                     String key = state.icons.keys.elementAt(index);
-                    Icon icon = state.icons[key]!;
 
                     return InkWell(
                       onTap: () => Navigator.pop(context, key),
@@ -117,7 +116,7 @@ class IconPicker extends HookWidget {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            icon,
+                            OtpIconsHelper.getIcon(context, key),
                             Positioned(
                               bottom: 5,
                               width: 70,

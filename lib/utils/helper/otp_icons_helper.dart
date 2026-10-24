@@ -1,7 +1,40 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 class OtpIconsHelper {
+  static const double _minimumIconContrastRatio = 3.0;
+
+  static Icon getIcon(
+    BuildContext context,
+    String? iconKey, {
+    Color? backgroundColor,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final background = backgroundColor ?? colorScheme.surface;
+    final icon = simpleIcons[iconKey] ?? simpleIcons['default']!;
+    final foreground = icon.color ?? colorScheme.onSurface;
+
+    final color =
+        colorScheme.brightness == Brightness.light ||
+            _contrastRatio(foreground, background) >= _minimumIconContrastRatio
+        ? foreground
+        : colorScheme.onSurface;
+
+    return Icon(icon.icon, color: color);
+  }
+
+  static double _contrastRatio(Color foreground, Color background) {
+    final foregroundLuminance = foreground.computeLuminance();
+    final backgroundLuminance = background.computeLuminance();
+
+    final lighter = max(foregroundLuminance, backgroundLuminance);
+    final darker = min(foregroundLuminance, backgroundLuminance);
+
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
   static Map<String, Icon> find(String toFind) {
     toFind = toFind.replaceAll(' ', '').toLowerCase();
 

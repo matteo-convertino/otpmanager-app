@@ -87,9 +87,10 @@ class Manual extends StatelessWidget {
                                       ),
                                   ],
                                 ),
-                                child:
-                                    OtpIconsHelper.simpleIcons[state.iconKey] ??
-                                    OtpIconsHelper.simpleIcons['default'],
+                                child: OtpIconsHelper.getIcon(
+                                  context,
+                                  state.iconKey,
+                                ),
                               ),
                             ),
                             const Padding(

@@ -34,7 +34,7 @@ class Import extends StatelessWidget {
         child: ListView(
           children: <Widget>[
             listItem(
-              OtpIconsHelper.simpleIcons['google'],
+              OtpIconsHelper.getIcon(context, 'google'),
               'Google Authenticator',
               () => getIt<NavigationService>().navigateTo(qrCodeScannerRoute),
             ),

@@ -38,9 +38,7 @@ class OtpAccountListTile extends HookWidget {
           leading: SizedBox(
             height: 40,
             width: 40,
-            child:
-                OtpIconsHelper.simpleIcons[account.iconKey] ??
-                OtpIconsHelper.simpleIcons['default'],
+            child: OtpIconsHelper.getIcon(context, account.iconKey),
           ),
           title: Text(
             issuerNotEmpty ? account.issuer : account.name,
