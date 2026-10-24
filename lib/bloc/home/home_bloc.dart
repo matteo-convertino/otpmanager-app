@@ -124,9 +124,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     var hasUpdatedAccounts = false;
 
-    if (state.sortedByNameDesc != null ||
-        state.sortedByIssuerDesc != null ||
-        state.sortedByIdDesc != null) {
+    if (searchValue.isEmpty &&
+        (state.sortedByNameDesc != null ||
+            state.sortedByIssuerDesc != null ||
+            state.sortedByIdDesc != null)) {
       for (var i = 0; i < accounts.length; i++) {
         final account = accounts[i];
 
@@ -149,6 +150,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onReorder(Reorder event, Emitter<HomeState> emit) {
+    if (state.searchBarValue.isNotEmpty) return;
+
     emit(
       state.copyWith(
         sortedByIdDesc: Optional(null),

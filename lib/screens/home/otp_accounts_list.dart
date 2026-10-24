@@ -22,6 +22,7 @@ class OtpAccountsList extends StatelessWidget {
       builder: (context, state) {
         return ReorderableListView.builder(
           shrinkWrap: true,
+          buildDefaultDragHandles: state.searchBarValue.isEmpty,
           scrollDirection: Axis.vertical,
           itemCount: state.accounts.length,
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 150),
@@ -50,9 +51,13 @@ class OtpAccountsList extends StatelessWidget {
               ),
             );
           },
-          onReorderItem: (oldIndex, newIndex) => context.read<HomeBloc>().add(
-            Reorder(oldIndex: oldIndex, newIndex: newIndex),
-          ),
+          onReorderItem: (oldIndex, newIndex) {
+            if (state.searchBarValue.isNotEmpty) return;
+
+            context.read<HomeBloc>().add(
+              Reorder(oldIndex: oldIndex, newIndex: newIndex),
+            );
+          },
         );
       },
     );
